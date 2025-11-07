@@ -1,9 +1,8 @@
-import React, { ReactNode, useState } from "react";
+import React, { type ReactNode, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { 
   FiHome,
   FiUser,
-  FiTrendingUp,
   FiBriefcase,
   FiClock,
   FiBell,
@@ -13,8 +12,8 @@ import {
   FiMenu,
   FiX
 } from "react-icons/fi";
-import { BsFillMegaphoneFill } from "react-icons/bs";
 import Topbar from "./Topbar";
+import Logo from "../../assets/white_logo.png"
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -40,11 +39,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     { name: "Profile", icon: <FiUser size={20} />, path: "/employee/profile" },
 
-    {
-      name: "Performance",
-      icon: <FiTrendingUp size={20} />,
-      path: "/employee/performance",
-    },
+    // {
+    //   name: "Performance",
+    //   icon: <FiTrendingUp size={20} />,
+    //   path: "/employee/performance",
+    // },
 
     {
       name: "Project Status",
@@ -52,11 +51,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       path: "/employee/project-status",
     },
 
-    {
-      name: "Announcements",
-      icon: <BsFillMegaphoneFill size={20} />,
-      path: "/employee/announcements",
-    },
+    // {
+    //   name: "Announcements",
+    //   icon: <BsFillMegaphoneFill size={20} />,
+    //   path: "/employee/announcements",
+    // },
 
     { name: "Attendances", icon: <FiClock size={20} />, path: "/employee/attendances" },
 
@@ -98,8 +97,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         className={`${isSidebarOpen ? "w-64" : "w-20"} 
         bg-blue-800 text-white transition-all duration-300 ease-in-out`}
       >
-        <div className="p-4 flex items-center justify-between">
-          {isSidebarOpen && <h1 className="text-xl font-bold">HR Portal</h1>}
+        <div className="p-4 flex items-center justify-center">
+          {isSidebarOpen && <img src={Logo} alt="logo" className="h-24"/>}
           <button
             onClick={toggleSidebar}
             className="p-2 rounded-lg hover:bg-blue-700"

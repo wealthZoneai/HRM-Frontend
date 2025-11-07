@@ -2,7 +2,7 @@ import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import TimeCard  from "../../components/dashboard/TimeCard";
 import AttendanceStat from "../../components/dashboard/AttendanceStat";
 import PerformanceChart from "../../components/dashboard/PerformanceChart";
-import AttendanceChart from "../../components/dashboard/AttendanceChart";
+// import AttendanceChart from "../../components/dashboard/AttendanceChart";
 import Announcements from "../../components/dashboard/Announcements";
 import { UpcomingHolidays } from "../../components/dashboard/UpcomingHolidays";
 import LeaveRequests from "../../components/dashboard/LeaveRequests";
@@ -24,12 +24,12 @@ export default function EmployeeDashboard() {
         {/* Performance + Attendance Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <PerformanceChart />
-          <AttendanceChart />
+          {/* <AttendanceChart /> */}
+          <Announcements />
         </div>
 
         {/* Bottom Grid: Announcements, Holidays, Leaves */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <Announcements />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <UpcomingHolidays />
           <LeaveRequests />
         </div>
