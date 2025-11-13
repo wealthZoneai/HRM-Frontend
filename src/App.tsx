@@ -4,17 +4,18 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import EmployeeLogin from "./pages/Employee/EmployeeLogin";
-import EmployeeDashboard from "./pages/Employee/EmployeeDashboard";
-import Profile from "./pages/Employee/Profile";
-import Performance from "./pages/Employee/Performance";
-import ProjectStatus from "./pages/Employee/ProjectStatus";
-import AttendancePage from "./pages/Employee/Attendance";
-import Notifications from "./pages/Employee/Notifications";
-import LeaveManagement from "./pages/Employee/LeaveManagement";
-import ApplyLeaveFormPage from "./components/leave-management/Apply-Leave/ApplyLeaveFormPage";
-import ApplyLeaveSuccess from "./components/leave-management/Apply-Leave/ApplyLeaveSuccess";
-import Payroll from "./pages/Employee/Payroll";
+import EmployeeLogin from "./pages/dashboard/Employee/EmployeeLogin";
+import EmployeeDashboard from "./pages/dashboard/Employee/EmployeeDashboard";
+import Profile from "./pages/Profile/Profile";
+import Performance from "./pages/performance/Performance";
+import ProjectStatus from "./pages/projectStatus/ProjectStatus";
+import Attendance from "./pages/attendance/Attendance";
+import Notifications from "./pages/notifications/Notifications";
+import LeaveManagement from "./pages/leave-management/LeaveManagement";
+import ApplyLeaveFormPage from "./pages/leave-management/Apply-Leave/ApplyLeaveFormPage";
+import ApplyLeaveSuccess from "./pages/leave-management/Apply-Leave/ApplyLeaveSuccess";
+import Payroll from "./pages/payroll/Payroll";
+import WelcomePage from "./components/auth/Welcome";
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
         <Route path="/employee/profile" element={<Profile />} />
         <Route path="/employee/performance" element={<Performance />} />
         <Route path="/employee/project-status" element={<ProjectStatus />} />
-        <Route path="/employee/attendances" element={<AttendancePage />} />
+        <Route path="/employee/attendances" element={<Attendance />} />
         <Route path="/employee/notifications" element={<Notifications />} />
         <Route path="/employee/leave-management" element={<LeaveManagement />} />
         <Route
@@ -38,6 +39,7 @@ function App() {
           element={<ApplyLeaveSuccess />}
         />
         <Route path="/employee/payroll" element={<Payroll />} />
+        <Route path="/welcome" element={<WelcomePage />} />
       </Routes>
     </Router>
   );
