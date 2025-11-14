@@ -17,6 +17,9 @@ import WelcomePage from "../components/auth/Welcome";
 
 import { Outlet } from "react-router-dom";
 import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
+import Calendar from "../pages/Employee/calendar/Calendar";
+import Policies from "../pages/Employee/policies/Policies";
+// import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
 
 function AppRouters() {
   return (
@@ -52,6 +55,10 @@ function AppRouters() {
         <Route path="leave-management/success" element={<ApplyLeaveSuccess />} />
         <Route path="payroll" element={<Payroll />} />
         <Route path="welcome" element={<WelcomePage />} />
+        <Route path="calendar" element={<Calendar />} />
+        <Route path="policy" element={<Policies />} />
+        {/* <Route path="/upload/:type" element={<UploadPage />} /> */}
+
       </Route>
 
       {/* HR ROUTES */}
