@@ -3,8 +3,9 @@ import ContactInformation from "./tabs/ContactInformation";
 import JobInformation from "./tabs/JobInformation";
 import BankDetails from "./tabs/BankDetails";
 import Identification from "./tabs/Identification";
+import PFDetails from "./tabs/PFDetails";
 
-const tabs = ["Contact Information", "Job Information", "Bank Details", "Identification"];
+const tabs = ["Contact Information", "Job Information", "Bank Details", "Identification", "PF Details"];
 
 const ProfileTabs = () => {
   const [active, setActive] = useState(0);
@@ -15,6 +16,7 @@ const ProfileTabs = () => {
       case 1: return <JobInformation />;
       case 2: return <BankDetails />;
       case 3: return <Identification />;
+      case 4: return <PFDetails />;
       default: return null;
     }
   };

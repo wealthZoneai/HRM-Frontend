@@ -12,7 +12,7 @@ import {
   FiX
 } from "react-icons/fi";
 import Topbar from "./Topbar";
-import Logo from "../../assets/white_logo.png"
+import Logo from "../../../assets/white_logo.png"
 
 type DashboardLayoutProps = {
   children: ReactNode;

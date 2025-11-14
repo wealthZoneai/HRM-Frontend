@@ -2,7 +2,7 @@ import { useState } from "react";
 import { tasks as initialTasks } from "./taskData";
 import TaskItem from "./TaskItem";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MessageSquare } from "lucide-react";
+import { X, MessageSquare, Inbox } from "lucide-react";
 
 export default function TaskList() {
   const [active, setActive] = useState("All");
@@ -26,6 +26,14 @@ export default function TaskList() {
     setTaskList(updated);
   };
 
+  // Empty State Component
+  const EmptyState = ({ message }: { message: string }) => (
+    <div className="flex flex-col items-center justify-center py-12 text-center text-gray-500">
+      <Inbox size={42} className="mb-3 text-gray-400" />
+      <p className="text-sm font-medium">{message}</p>
+    </div>
+  );
+
   return (
     <div className="p-6 border border-gray-200 rounded-2xl bg-white shadow-md hover:shadow-lg transition-all duration-300">
       {/* Header */}
@@ -47,7 +55,9 @@ export default function TaskList() {
               }`}
             >
               {tab}
-              {tab === "Challenges" && <span className="text-blue-500 font-bold ml-1">*</span>}
+              {tab === "Challenges" && (
+                <span className="text-blue-500 font-bold ml-1">*</span>
+              )}
             </button>
           ))}
         </div>
@@ -55,16 +65,28 @@ export default function TaskList() {
 
       {/* Task List */}
       <div className="space-y-3">
-        {filteredTasks.map((task, index) => (
-          <TaskItem
-            key={index}
-            title={task.title}
-            priority={task.priority as any}
-            due={task.due}
-            status={task.status as any}
-            onStatusChange={(newStatus) => handleStatusChange(index, newStatus)}
+        {filteredTasks.length === 0 ? (
+          <EmptyState
+            message={
+              active === "Due Today"
+                ? "No tasks due today."
+                : active === "Over due"
+                ? "No overdue tasks. Good job."
+                : "No tasks found."
+            }
           />
-        ))}
+        ) : (
+          filteredTasks.map((task, index) => (
+            <TaskItem
+              key={index}
+              title={task.title}
+              priority={task.priority as any}
+              due={task.due}
+              status={task.status as any}
+              onStatusChange={(newStatus) => handleStatusChange(index, newStatus)}
+            />
+          ))
+        )}
       </div>
 
       {/* Challenges Popup */}

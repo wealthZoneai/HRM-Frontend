@@ -4,18 +4,19 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import EmployeeLogin from "./pages/dashboard/Employee/EmployeeLogin";
-import EmployeeDashboard from "./pages/dashboard/Employee/EmployeeDashboard";
-import Profile from "./pages/Profile/Profile";
-import Performance from "./pages/performance/Performance";
-import ProjectStatus from "./pages/projectStatus/ProjectStatus";
-import Attendance from "./pages/attendance/Attendance";
-import Notifications from "./pages/notifications/Notifications";
-import LeaveManagement from "./pages/leave-management/LeaveManagement";
-import ApplyLeaveFormPage from "./pages/leave-management/Apply-Leave/ApplyLeaveFormPage";
-import ApplyLeaveSuccess from "./pages/leave-management/Apply-Leave/ApplyLeaveSuccess";
-import Payroll from "./pages/payroll/Payroll";
+import EmployeeLogin from "./pages/Employee/dashboard/Employee/EmployeeLogin";
+import EmployeeDashboard from "./pages/Employee/dashboard/Employee/EmployeeDashboard";
+import Profile from "./pages/Employee/Profile/Profile";
+import Performance from "./pages/Employee/performance/Performance";
+import ProjectStatus from "./pages/Employee/projectStatus/ProjectStatus";
+import Attendance from "./pages/Employee/projectStatus/ProjectStatus";
+import Notifications from "./pages/Employee/notifications/Notifications";
+import LeaveManagement from "./pages/Employee/leave-management/LeaveManagement";
+import ApplyLeaveFormPage from "./pages/Employee/leave-management/Apply-Leave/ApplyLeaveFormPage";
+import ApplyLeaveSuccess from "./pages/Employee/leave-management/Apply-Leave/ApplyLeaveSuccess";
+import Payroll from "./pages/Employee/payroll/Payroll";
 import WelcomePage from "./components/auth/Welcome";
+import Sidebar from "./pages/HR/Sidebar";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         />
         <Route path="/employee/payroll" element={<Payroll />} />
         <Route path="/welcome" element={<WelcomePage />} />
+        <Route path="/hr" element={<Sidebar />} />
       </Routes>
     </Router>
   );

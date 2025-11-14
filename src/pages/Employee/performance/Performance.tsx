@@ -1,5 +1,5 @@
 import DashboardLayout from "../dashboard/DashboardLayout";
-import { performanceData } from "../../data/performanceData";
+import { performanceData } from "../../../data/performanceData";
 import PerformanceChart from "../performance/PerformanceChart";
 import MetricsCard from "../performance/MetricsCard";
 import CurrentObjectives from "../performance/CurrentObjectives";

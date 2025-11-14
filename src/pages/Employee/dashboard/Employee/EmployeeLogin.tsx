@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import Logo from "../../../assets/WG_logo.png";
-import Illustration from "../../../assets/login_illustration.jpg";
+import Logo from "../../../../assets/WG_logo.png";
+import Illustration from "../../../../assets/login_illustration.jpg";
 
 import {
   HiOutlineMail,
