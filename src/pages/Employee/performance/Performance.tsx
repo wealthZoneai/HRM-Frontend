@@ -8,7 +8,6 @@ export default function Performance() {
   const { metrics, weeklyPerformance, objectives, feedback } = performanceData;
 
   return (
-    <DashboardLayout>
       <div className="space-y-6 p-6">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">Performance Dashboard</h1>
@@ -65,6 +64,5 @@ export default function Performance() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
   );
 }

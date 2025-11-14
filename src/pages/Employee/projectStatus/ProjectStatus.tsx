@@ -4,11 +4,9 @@ import DashboardLayout from "../dashboard/DashboardLayout";
 
 export default function ProjectStatus() {
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         <TaskList />
         <ProjectOverview />
       </div>
-    </DashboardLayout>
   );
 }

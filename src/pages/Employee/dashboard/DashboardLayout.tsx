@@ -1,6 +1,6 @@
-import React, { type ReactNode, useState } from "react";
+import React, { useState, type ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { 
+import {
   FiHome,
   FiUser,
   FiBriefcase,
@@ -12,7 +12,7 @@ import {
   FiX
 } from "react-icons/fi";
 import Topbar from "./Topbar";
-import Logo from "../../../assets/white_logo.png"
+import Logo from "../../../assets/white_logo.png";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -30,32 +30,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const navItems: NavItem[] = [
-    {
-      name: "Dashboard",
-      icon: <FiHome size={20} />,
-      path: "/employee",
-    },
-
+    { name: "Dashboard", icon: <FiHome size={20} />, path: "/employee/dashboard" },
     { name: "Profile", icon: <FiUser size={20} />, path: "/employee/profile" },
-
-    // {
-    //   name: "Performance",
-    //   icon: <FiTrendingUp size={20} />,
-    //   path: "/employee/performance",
-    // },
-
-    {
-      name: "Project Status",
-      icon: <FiBriefcase size={20} />,
-      path: "/employee/project-status",
-    },
-
-    // {
-    //   name: "Announcements",
-    //   icon: <BsFillMegaphoneFill size={20} />,
-    //   path: "/employee/announcements",
-    // },
-
+    { name: "Project Status", icon: <FiBriefcase size={20} />, path: "/employee/project-status" },
     { name: "Attendances", icon: <FiClock size={20} />, path: "/employee/attendances" },
 
     // {
@@ -86,34 +63,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    navigate("/employeelogin");
+    localStorage.removeItem("role");
+    navigate("/login");
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  // Get the current user's name and ID from your authentication context or API
-  // For now, using placeholder values - replace these with actual user data
   const currentUser = {
-    name: "Raviteja", // Replace with actual user name
-    id: "WZG-AI-0029"      // Replace with actual user ID
+    name: "Raviteja",
+    id: "WZG-AI-0029"
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
+
       {/* Sidebar */}
       <div
-        className={`${isSidebarOpen ? "w-64" : "w-20"} 
-        bg-blue-800 text-white transition-all duration-300 ease-in-out`}
+        className={`${isSidebarOpen ? "w-64" : "w-20"}
+          bg-blue-800 text-white transition-all duration-300`}
       >
-        <div className="p-4 flex items-center justify-center">
-          {isSidebarOpen && <img src={Logo} alt="logo" className="h-24"/>}
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-blue-700"
-          >
-            {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        <div className="p-4 flex items-center justify-between">
+          {isSidebarOpen && <img src={Logo} className="h-16" />}
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-lg">
+            {isSidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
           </button>
         </div>
 
@@ -122,22 +92,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div
               key={item.name}
               onClick={() => navigate(item.path)}
-              className={`flex items-center px-6 py-3 cursor-pointer transition-colors ${
-                location.pathname === item.path
-                  ? "bg-blue-700"
-                  : "hover:bg-blue-700"
-              }`}
+              className={`flex items-center px-6 py-3 cursor-pointer transition 
+              ${location.pathname === item.path ? "bg-blue-700" : "hover:bg-blue-700"}`}
             >
               <span className="mr-4">{item.icon}</span>
-              {isSidebarOpen && <span className="text-sm">{item.name}</span>}
+              {isSidebarOpen && <span>{item.name}</span>}
             </div>
           ))}
 
+          {/* Logout */}
           <div
-            className="absolute bottom-0 w-full left-0 p-4 cursor-pointer flex items-center"
+            className="absolute bottom-0 left-0 w-full px-6 py-4 cursor-pointer flex items-center hover:bg-blue-700"
             onClick={handleLogout}
           >
-            <FiLogOut size={20} className="mr-4" />
+            <FiLogOut className="mr-4" />
             {isSidebarOpen && <span>Logout</span>}
           </div>
         </nav>
@@ -145,14 +113,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Topbar */}
         <Topbar name={currentUser.name} id={currentUser.id} />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-100">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-6">
-            {navItems.find((item) => item.path === location.pathname)?.name || "Dashboard"}
-          </h1>
+        <main className="flex-1 p-6 overflow-y-auto">
           {children}
         </main>
       </div>

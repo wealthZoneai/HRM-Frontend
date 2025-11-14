@@ -2,7 +2,6 @@ import { useRef } from "react";
 import CurrentShiftCard from "../attendance/CurrentShiftCard";
 import MonthSummaryCard from "../attendance/MonthSummaryCard";
 import AttendanceTable from "../attendance/AttendanceTable";
-import DashboardLayout from "../dashboard/DashboardLayout";
 import { motion } from "framer-motion";
 
 export default function Attendance() {
@@ -19,7 +18,6 @@ export default function Attendance() {
   };
 
   return (
-    <DashboardLayout>
       <div className="space-y-8">
         {/* Page Title */}
         <motion.div
@@ -54,6 +52,5 @@ export default function Attendance() {
           </motion.div>
         </div>
       </div>
-    </DashboardLayout>
   );
 }

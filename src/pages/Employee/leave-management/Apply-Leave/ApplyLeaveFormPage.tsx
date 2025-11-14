@@ -37,7 +37,6 @@ export default function ApplyLeaveFormPage() {
   };
 
   return (
-    <DashboardLayout>
       <div className="p-6 max-w-3xl">
         <h2 className="text-xl font-semibold">Leave Application Form</h2>
         <p className="text-gray-500 text-sm mb-6">Leave manager / Apply for leave</p>
@@ -150,6 +149,5 @@ export default function ApplyLeaveFormPage() {
           </button>
         </div>
       </div>
-    </DashboardLayout>
   );
 }

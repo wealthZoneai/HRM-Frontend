@@ -8,7 +8,6 @@ import ProjectStatus from "../ProjectStatus";
 
 export default function EmployeeDashboard() {
   return (
-    <DashboardLayout>
       <div className="space-y-6">
 
         {/* Time In/Out + Attendance Summary */}
@@ -34,6 +33,5 @@ export default function EmployeeDashboard() {
         </div>
 
       </div>
-    </DashboardLayout>
   );
 }

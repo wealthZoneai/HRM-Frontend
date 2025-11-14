@@ -6,7 +6,6 @@ import { payrollSummary, paymentHistory, breakdown } from "../payroll/payrollDat
 
 export default function Payroll() {
   return (
-    <DashboardLayout>
       <div className="p-6 space-y-6">
         <h2 className="text-xl font-semibold">My Pay Roll</h2>
         <p className="text-gray-500 text-sm mb-2">Dashboard / Pay Roll</p>
@@ -18,6 +17,5 @@ export default function Payroll() {
 
         <BreakdownDetails breakdown={breakdown} />
       </div>
-    </DashboardLayout>
   );
 }
