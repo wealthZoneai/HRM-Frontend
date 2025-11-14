@@ -70,7 +70,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       path: "/employee/leave-management",
     },
 
+    // {
+    //   name: "Calendar",
+    //   icon: <FiCalendar size={20} />,
+    //   path: "/employee/calendar",
+    // },
+
     { name: "Payroll", icon: <FiCreditCard size={20} />, path: "/employee/payroll" },
+    // {
+    //   name: "Policy",
+    //   icon: <FiCalendar size={20} />,
+    //   path: "/employee/policy",
+    // },
   ];
 
   const handleLogout = () => {

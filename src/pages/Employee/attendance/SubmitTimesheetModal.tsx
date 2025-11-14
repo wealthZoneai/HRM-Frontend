@@ -33,7 +33,7 @@ export default function SubmitTimesheetModal({
             className="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm w-full"
           >
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Timesheet Submitted!</h2>
+            <h2 className="text-2xl font-bold text-black mb-2">Timesheet Submitted!</h2>
             <p className="text-gray-600 mb-6">Your work hours have been successfully recorded.</p>
 
             <div className="text-sm text-gray-500 space-y-1 mb-6">

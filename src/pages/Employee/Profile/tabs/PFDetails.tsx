@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Pencil, X, Check } from "lucide-react";
 import { motion } from "framer-motion";
 
+// --- TYPE DEFINITION ---
+
 type PFDetailsType = {
   uanNumber: string;
   empId: string;
@@ -17,6 +19,8 @@ type PFDetailsType = {
   ownAddress: string;
   bankAccount: string;
 };
+
+// --- EDIT FIELD SUB-COMPONENT (Updated) ---
 
 const EditField = ({
   label,
@@ -38,10 +42,33 @@ const EditField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm"
+      className="
+        block w-full rounded-lg border-transparent 
+        bg-slate-100                 // Subtle background
+        transition duration-200       // Smooth
+        sm:text-sm
+        
+        focus:bg-white                // Pop to white on focus
+        focus:border-blue-600         // Add blue border on focus
+        focus:ring-blue-600           // Add blue ring on focus
+        
+           Helps style the date picker icon
+        dark:scheme-dark
+      "
     />
   </div>
 );
+
+// --- DISPLAY FIELD SUB-COMPONENT ---
+
+const Display = ({ label, value }: { label: string; value: string }) => (
+  <div>
+    <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{label}</p>
+    <p className="font-medium text-slate-800 mt-1">{value}</p>
+  </div>
+);
+
+// --- MAIN PF DETAILS COMPONENT ---
 
 const PFDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -76,6 +103,8 @@ const PFDetails = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Here you would typically send the 'details' object to your API
+    console.log("Saving changes:", details);
     setIsEditing(false);
     setOriginal(details);
   };
@@ -195,12 +224,5 @@ const PFDetails = () => {
     </motion.div>
   );
 };
-
-const Display = ({ label, value }: { label: string; value: string }) => (
-  <div>
-    <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{label}</p>
-    <p className="font-medium text-slate-800 mt-1">{value}</p>
-  </div>
-);
 
 export default PFDetails;

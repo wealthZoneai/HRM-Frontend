@@ -9,7 +9,7 @@ import EmployeeDashboard from "./pages/Employee/dashboard/Employee/EmployeeDashb
 import Profile from "./pages/Employee/Profile/Profile";
 import Performance from "./pages/Employee/performance/Performance";
 import ProjectStatus from "./pages/Employee/projectStatus/ProjectStatus";
-import Attendance from "./pages/Employee/projectStatus/ProjectStatus";
+import Attendance from "./pages/Employee/attendance/Attendance";
 import Notifications from "./pages/Employee/notifications/Notifications";
 import LeaveManagement from "./pages/Employee/leave-management/LeaveManagement";
 import ApplyLeaveFormPage from "./pages/Employee/leave-management/Apply-Leave/ApplyLeaveFormPage";
