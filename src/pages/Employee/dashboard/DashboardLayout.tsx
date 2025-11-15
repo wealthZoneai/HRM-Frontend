@@ -6,10 +6,12 @@ import {
   FiBriefcase,
   FiClock,
   FiCalendar,
-  FiCreditCard,
   FiLogOut,
   FiMenu,
-  FiX
+  FiX,
+  FiFileText,
+  FiBook,
+  FiDollarSign
 } from "react-icons/fi";
 import Topbar from "./Topbar";
 import Logo from "../../../assets/white_logo.png";
@@ -43,22 +45,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     {
       name: "Leave Management",
-      icon: <FiCalendar size={20} />,
+      icon: <FiFileText size={20} />,
       path: "/employee/leave-management",
     },
 
-    // {
-    //   name: "Calendar",
-    //   icon: <FiCalendar size={20} />,
-    //   path: "/employee/calendar",
-    // },
+    {
+      name: "Calendar",
+      icon: <FiCalendar size={20} />,
+      path: "/employee/calendar",
+    },
 
-    { name: "Payroll", icon: <FiCreditCard size={20} />, path: "/employee/payroll" },
-    // {
-    //   name: "Policy",
-    //   icon: <FiCalendar size={20} />,
-    //   path: "/employee/policy",
-    // },
+    { name: "Payroll", icon: <FiDollarSign size={20} />, path: "/employee/payroll" },
+    {
+      name: "Policy",
+      icon: <FiBook size={20} />,
+      path: "/employee/policy",
+    },
   ];
 
   const handleLogout = () => {
@@ -102,7 +104,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Logout */}
           <div
-            className="absolute bottom-0 left-0 w-full px-6 py-4 cursor-pointer flex items-center hover:bg-blue-700"
+            className={`absolute bottom-0 left-0 px-6 py-4 cursor-pointer flex items-center hover:bg-blue-700 ${isSidebarOpen ? "w-64" : "w-20"}`}
             onClick={handleLogout}
           >
             <FiLogOut className="mr-4" />

@@ -20,6 +20,9 @@ import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
 import HRLayout from "../pages/HR/HRLayout";
 import HRHomeDashboard from "../pages/HR/HrDashboard/HRHomeDashboard";
 import HolidayCard from "../pages/HR/HolidayCard/HolidayCard"
+import Calendar from "../pages/Employee/calendar/Calendar";
+import Policies from "../pages/Employee/policies/Policies";
+// import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
 
 function AppRouters() {
     return (
@@ -56,6 +59,35 @@ function AppRouters() {
                 <Route path="payroll" element={<Payroll />} />
                 <Route path="welcome" element={<WelcomePage />} />
             </Route>
+      {/* EMPLOYEE ROUTES */}
+      <Route
+        path="/employee/*"
+        element={
+          // Wrap with Protected Route to check role
+        //   <ProtectedRoute allowedRole="EMPLOYEE">
+            <DashboardLayout>
+              <Outlet />
+            </DashboardLayout>
+        //   </ProtectedRoute>
+        }
+      >
+        {/* ---------- Employee Pages ---------- */}
+        <Route path="dashboard" element={<EmployeeDashboard />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="performance" element={<Performance />} />
+        <Route path="project-status" element={<ProjectStatus />} />
+        <Route path="attendances" element={<Attendance />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="leave-management" element={<LeaveManagement />} />
+        <Route path="leave-management/apply" element={<ApplyLeaveFormPage />} />
+        <Route path="leave-management/success" element={<ApplyLeaveSuccess />} />
+        <Route path="payroll" element={<Payroll />} />
+        <Route path="welcome" element={<WelcomePage />} />
+        <Route path="calendar" element={<Calendar />} />
+        <Route path="policy" element={<Policies />} />
+        {/* <Route path="/upload/:type" element={<UploadPage />} /> */}
+
+      </Route>
 
             {/* HR ROUTES */}
 
