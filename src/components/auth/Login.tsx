@@ -8,7 +8,7 @@ import {
 } from "react-icons/hi";
 import Logo from "../../assets/WG_logo.png";
 // import Illustration from "../../assets/login_illustration.jpg";
-import LoginImg from "../../assets/Login.png";
+// import LoginImg from "../../assets/Login.png";
 import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
@@ -26,6 +26,7 @@ const Login: React.FC = () => {
       alert("Please fill all fields");
       return;
     }
+      navigate(`/hr/dashboard`);
 
     navigate(`/employee/dashboard`);
   };
