@@ -1,102 +1,83 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import Logo from "../../assets/WG_logo.png";
-import Illustration from "../../assets/login_illustration.jpg";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   HiOutlineMail,
   HiOutlineLockClosed,
   HiOutlineEye,
   HiOutlineEyeOff,
-} from 'react-icons/hi';
-// import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+} from "react-icons/hi";
+import Logo from "../../assets/WG_logo.png";
+// import Illustration from "../../assets/login_illustration.jpg";
+import LoginImg from "../../assets/Login.png";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [role, setRole] = useState<"employee" | "hr" | "admin">("employee");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const [role, setRole] = useState<'employee' | 'hr' | 'admin'>('employee');
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!username.trim() || !password.trim()) {
       alert("Please fill all fields");
       return;
     }
-      navigate(`/employee/dashboard`);
 
-    // try {
-    //   // 1️⃣ API REQUEST
-    //   const res = await axios.post("http://127.0.0.1:8000/api/login/", {
-    //     username,
-    //     password,
-    //     role,
-    //   });
-
-    //   // 2️⃣ Extract token + role from backend response
-    //   const token = res.data?.token;
-    //   const apiRole = res.data?.role?.toUpperCase(); // EMPLOYEE | HR | ADMIN
-
-    //   if (!token || !apiRole) {
-    //     alert("Invalid login response");
-    //     return;
-    //   }
-
-    //   // 3️⃣ Save to localStorage (for ProtectedRoute)
-    //   localStorage.setItem("authToken", token);
-    //   localStorage.setItem("role", apiRole);
-
-    //   // 4️⃣ Navigate dynamically
-    //   // navigate(`/${apiRole.toLowerCase()}/dashboard`);
-
-    // } catch (err: any) {
-    //   alert(err?.response?.data?.message || "Login failed");
-    // }
+    navigate(`/employee/dashboard`);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 py-10 px-6">
+    <div className="relative min-h-screen flex items-center justify-center bg-[#f6f7fb] px-6">
       <motion.div
-        className="flex w-full max-w-5xl overflow-hidden bg-white rounded-2xl shadow-2xl h-fit max-h-screen my-auto"
-        initial={{ opacity: 0, y: 20 }}
+        className="bg-white w-full max-w-5xl shadow-xl rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
+        initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-
-        {/* LEFT SIDE ILLUSTRATION */}
-        <div className="hidden md:flex flex-col items-center justify-center w-1/2 p-12 bg-white">
-          <img src={Illustration} className="w-full h-auto object-contain" />
-          <h1 className="text-3xl text-black font-bold">Welcome to WZG AI</h1>
-          <p className="mt-2 text-blue-500">Human Resource Management System</p>
+        {/* LEFT SECTION */}
+        <div className="hidden md:flex flex-col justify-center items-center p-10">
+          {/* <img
+            src={Illustration}
+            className="w-full h-auto object-cover rounded-md mb-8"
+            alt="illustration"
+          /> */}
+          <h2 className="text-3xl font-bold text-gray-700">
+            Human Resource Management
+          </h2>
+          <p className="text-blue-500 font-medium mt-2">
+            A Smarter Way to Manage Workforce
+          </p>
         </div>
 
-        {/* RIGHT: LOGIN FORM */}
-        <div className="w-full p-6 md:w-1/2 md:p-8 flex flex-col justify-center">
-
-          <div className="mb-6 flex justify-center">
-            <img src={Logo} className="h-32" />
+        {/* RIGHT SECTION */}
+        <div className="p-8 md:p-12 flex flex-col justify-center">
+          <div className="flex justify-center mb-8">
+            <img src={Logo} alt="logo" className="h-24" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
 
-            {/* ROLE SELECTION BUTTONS */}
+            {/* ROLE SELECTION */}
             <div>
-              <label className="block mb-3 text-sm font-medium text-gray-700">
+              <label className="block mb-2 text-sm text-gray-600 font-medium">
                 Login As
               </label>
-              <div className="grid grid-cols-3 gap-3">
-                {['admin', 'hr', 'employee'].map((r) => (
+              <div className="flex gap-3">
+                {["admin", "hr", "employee"].map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setRole(r as any)}
-                    className={`py-3 rounded-lg font-semibold transition-all 
-                        ${role === r ? 'bg-blue-600 text-white shadow-md scale-[1.03]' 
-                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold border transition 
+                      ${
+                        role === r
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                      }`}
                   >
                     {r.toUpperCase()}
                   </button>
@@ -106,51 +87,55 @@ const Login: React.FC = () => {
 
             {/* USERNAME */}
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Username
-              </label>
+              <label className="block text-sm text-gray-600 mb-2">Email</label>
               <div className="relative">
                 <HiOutlineMail className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="text"
+                  className="w-full bg-gray-100 p-3 pl-10 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Enter your email"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full p-3 pl-10 bg-gray-100 rounded-md focus:ring-blue-500"
-                  placeholder="Enter your username"
                 />
               </div>
             </div>
 
             {/* PASSWORD */}
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
-                Password
-              </label>
+              <label className="block text-sm text-gray-600 mb-2">Password</label>
               <div className="relative">
                 <HiOutlineLockClosed className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
+                  className="w-full bg-gray-100 p-3 pl-10 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 pl-10 bg-gray-100 rounded-md focus:ring-blue-500"
-                  placeholder="********"
                 />
-                <button type="button"
+                <button
+                  type="button"
+                  className="absolute right-3 top-3 text-gray-500"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-500">
+                >
                   {showPassword ? <HiOutlineEyeOff /> : <HiOutlineEye />}
                 </button>
               </div>
             </div>
 
-            {/* SUBMIT */}
+            {/* LOGIN BUTTON */}
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white rounded-md font-semibold shadow-md hover:scale-[1.02]"
+              className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition shadow-sm"
             >
               Login
             </button>
 
+            <p className="text-center text-sm text-gray-500">
+              Forgot your password?{" "}
+              <span className="text-blue-600 underline cursor-pointer">
+                Reset it
+              </span>
+            </p>
           </form>
         </div>
       </motion.div>
