@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import EmployeeLogin from "../components/auth/Login";
+import EmployeeLogin from "../pages/auth/Login";
 
 
 import EmployeeDashboard from "../pages/Employee/dashboard/Employee/EmployeeDashboard";
@@ -13,7 +13,7 @@ import LeaveManagement from "../pages/Employee/leave-management/LeaveManagement"
 import ApplyLeaveFormPage from "../pages/Employee/leave-management/Apply-Leave/ApplyLeaveFormPage";
 import ApplyLeaveSuccess from "../pages/Employee/leave-management/Apply-Leave/ApplyLeaveSuccess";
 import Payroll from "../pages/Employee/payroll/Payroll";
-import WelcomePage from "../components/auth/Welcome";
+import WelcomePage from "../pages/auth/Welcome";
 
 import { Outlet } from "react-router-dom";
 import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
