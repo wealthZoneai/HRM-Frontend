@@ -73,25 +73,25 @@ const ProfileDetails = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
 
       {/* CONTACT DETAILS */}
-      <div className="border rounded-xl p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Contact Details</h2>
+      <div className="border rounded-lg sm:rounded-xl p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
+          <h2 className="text-base sm:text-lg font-semibold">Contact Details</h2>
 
           {!isEditing && (
             <button
               type="button"
               onClick={handleEdit}
-              className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2"
+              className="px-3 sm:px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs sm:text-sm flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               Edit <Pencil size={16} />
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {isEditing ? (
             <>
               <EditLineField
@@ -133,10 +133,10 @@ const ProfileDetails = () => {
       </div>
 
       {/* PERSONAL INFO */}
-      <div className="border rounded-xl p-4">
-        <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
+      <div className="border rounded-lg sm:rounded-xl p-3 sm:p-4">
+        <h2 className="text-base sm:text-lg font-semibold mb-4">Personal Information</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {isEditing ? (
             <>
               <EditLineField
@@ -178,18 +178,18 @@ const ProfileDetails = () => {
 
       {/* GLOBAL SAVE/CANCEL FOR BOTH SECTIONS */}
       {isEditing && (
-        <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-4 sm:pt-6 border-t">
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 flex items-center gap-2"
+            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <X size={16} /> Cancel
           </button>
 
           <button
             type="submit"
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white flex items-center gap-2"
+            className="px-4 py-2 rounded-lg bg-blue-600 text-white flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <Check size={16} /> Save Changes
           </button>

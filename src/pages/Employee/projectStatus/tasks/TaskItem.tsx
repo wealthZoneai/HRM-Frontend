@@ -9,7 +9,12 @@ type TaskProps = {
   onStatusChange: (newStatus: "completed" | "inProgress" | "notStarted" | "none") => void;
 };
 
-export default function TaskItem({ title, due, status, onStatusChange }: TaskProps) {
+export default function TaskItem({
+  title,
+  due,
+  status,
+  onStatusChange,
+}: TaskProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const renderStatusIcon = () => {
@@ -33,24 +38,23 @@ export default function TaskItem({ title, due, status, onStatusChange }: TaskPro
   ];
 
   return (
-    <div className="relative flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-      {/* Left section */}
-      <div className="flex items-center gap-3">
+    <div className="relative flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+      {/* Left */}
+      <div className="flex items-center gap-3 mb-2 sm:mb-0">
         {renderStatusIcon()}
-        <span className="font-medium text-gray-900">{title}</span>
+        <span className="font-medium text-gray-900 text-sm sm:text-base">{title}</span>
       </div>
 
-      {/* Right section */}
-      <div className="flex items-center gap-2 relative">
+      {/* Right */}
+      <div className="flex items-center gap-2">
         <span
-          className={`text-sm font-medium ${
+          className={`text-xs sm:text-sm font-medium ${
             due === "Today" ? "text-blue-600" : "text-gray-700"
           }`}
         >
           {due}
         </span>
 
-        {/* Dropdown toggle */}
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className="p-1 hover:bg-gray-200 rounded-full"
@@ -58,9 +62,9 @@ export default function TaskItem({ title, due, status, onStatusChange }: TaskPro
           <ChevronDown size={16} />
         </button>
 
-        {/* Dropdown menu */}
+        {/* Dropdown */}
         {dropdownOpen && (
-          <div className="absolute right-0 top-8 w-40 bg-white border border-gray-200 shadow-lg rounded-lg z-50">
+          <div className="absolute right-0 top-full mt-1 w-40 bg-white border border-gray-200 shadow-lg rounded-lg z-50">
             {statusOptions.map((opt) => (
               <button
                 key={opt.value}

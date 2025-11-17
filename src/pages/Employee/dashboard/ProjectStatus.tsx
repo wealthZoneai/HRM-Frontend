@@ -1,11 +1,4 @@
-
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const data = [
   { name: "Completed", value: 65 },
@@ -16,7 +9,7 @@ const data = [
 // Classic + modern tones (green, orange, muted gray)
 const COLORS = ["#4CAF50", "#FF9800", "#8B5CF6"];
 
-export default function  ProjectStatus() {
+export default function ProjectStatus() {
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (

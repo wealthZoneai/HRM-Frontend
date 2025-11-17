@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { FiUsers, FiBriefcase, FiHome } from "react-icons/fi";
 import type { DeptDataItem } from "./DeptDonutChart";
@@ -30,7 +30,7 @@ const initialInterviews: InterviewItem[] = [
 ];
 
 export default function HRDashboardPage() {
-  const [deptData, setDeptData] = useState<DeptDataItem[]>(initialDeptData);
+  const [deptData] = useState<DeptDataItem[]>(initialDeptData);
   const [announcements] = useState<AnnouncementItem[]>(initialAnnouncements);
   const [interviews, setInterviews] = useState<InterviewItem[]>(initialInterviews);
 

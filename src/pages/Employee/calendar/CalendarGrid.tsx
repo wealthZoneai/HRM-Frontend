@@ -25,9 +25,15 @@ export default function CalendarGrid({ month, year, events }: Props) {
   return (
     <div>
       {/* Day of the Week Headers */}
-      <div className="grid grid-cols-7">
+      <div className="grid grid-cols-7 mb-1 md:mb-2">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <div key={d} className="text-sm font-medium text-gray-500 text-center mb-2">
+          <div key={d} className="hidden sm:block text-xs sm:text-sm font-medium text-gray-500 text-center mb-2">
+            {d}
+          </div>
+        ))}
+        {/* Mobile: Show abbreviated day names */}
+        {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
+          <div key={d} className="sm:hidden text-xs font-medium text-gray-500 text-center mb-2">
             {d}
           </div>
         ))}

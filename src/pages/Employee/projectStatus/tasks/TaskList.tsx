@@ -26,21 +26,20 @@ export default function TaskList() {
     setTaskList(updated);
   };
 
-  // Empty State Component
   const EmptyState = ({ message }: { message: string }) => (
     <div className="flex flex-col items-center justify-center py-12 text-center text-gray-500">
-      <Inbox size={42} className="mb-3 text-gray-400" />
+      <Inbox size={36} className="mb-3 text-gray-400" />
       <p className="text-sm font-medium">{message}</p>
     </div>
   );
 
   return (
-    <div className="p-6 border border-gray-200 rounded-2xl bg-white shadow-md hover:shadow-lg transition-all duration-300">
+    <div className="p-4 sm:p-6 border border-gray-200 rounded-2xl bg-white shadow-md hover:shadow-lg transition-all duration-300">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-900">My Open Tasks</h3>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900">My Open Tasks</h3>
 
-        <div className="flex gap-2 text-sm font-medium">
+        <div className="flex flex-wrap gap-2 text-sm font-medium">
           {filters.map((tab) => (
             <button
               key={tab}
@@ -48,7 +47,7 @@ export default function TaskList() {
                 if (tab === "Challenges") setShowChallenges(true);
                 else setActive(tab);
               }}
-              className={`px-4 py-1.5 rounded-lg transition-all duration-200 ${
+              className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-xs sm:text-sm ${
                 active === tab
                   ? "bg-blue-600 text-white shadow-sm"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -89,7 +88,7 @@ export default function TaskList() {
         )}
       </div>
 
-      {/* Challenges Popup */}
+      {/* Challenges Popup – responsive width */}
       <AnimatePresence>
         {showChallenges && (
           <>
@@ -102,7 +101,7 @@ export default function TaskList() {
             />
 
             <motion.div
-              className="fixed top-1/2 left-1/2 z-50 w-[90%] max-w-lg bg-white rounded-2xl shadow-2xl p-6 transform -translate-x-1/2 -translate-y-1/2"
+              className="fixed top-1/2 left-1/2 z-50 w-[95%] max-w-lg bg-white rounded-2xl shadow-2xl p-5 sm:p-6 transform -translate-x-1/2 -translate-y-1/2"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
@@ -130,7 +129,7 @@ export default function TaskList() {
                 <select
                   value={selectedTask}
                   onChange={(e) => setSelectedTask(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">-- Choose a Task --</option>
                   {taskList.map((task, i) => (
@@ -148,16 +147,16 @@ export default function TaskList() {
                 <textarea
                   value={challengeInput}
                   onChange={(e) => setChallengeInput(e.target.value)}
-                  placeholder="e.g., Faced API response delays due to authentication issues..."
+                  placeholder="e.g., Faced API response delays..."
                   rows={4}
-                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setShowChallenges(false)}
-                  className="px-4 py-2 bg-gray-100 rounded-lg text-gray-700 hover:bg-gray-200"
+                  className="px-4 py-2 bg-gray-100 rounded-lg text-gray-700 hover:bg-gray-200 text-sm"
                 >
                   Cancel
                 </button>
@@ -167,7 +166,7 @@ export default function TaskList() {
                     setSelectedTask("");
                     setShowChallenges(false);
                   }}
-                  className={`px-4 py-2 rounded-lg text-white ${
+                  className={`px-4 py-2 rounded-lg text-white text-sm ${
                     !selectedTask || !challengeInput.trim()
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700"

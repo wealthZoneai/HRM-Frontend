@@ -1,6 +1,6 @@
-import DashboardLayout from "../../dashboard/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+// import DashboardLayout from "../../dashboard/DashboardLayout"; // Already imported above
 
 export default function ApplyLeaveFormPage() {
   const navigate = useNavigate();
@@ -16,7 +16,9 @@ export default function ApplyLeaveFormPage() {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -26,127 +28,203 @@ export default function ApplyLeaveFormPage() {
     const start = new Date(form.from);
     const end = new Date(form.to);
 
+    // Basic validation to prevent negative days
+    if (end < start) return "Invalid date range";
+
     const diff = end.getTime() - start.getTime();
-    const days = diff / (1000 * 3600 * 24) + 1;
-    return days > 0 ? `${days} Days` : "";
+    const days = Math.round(diff / (1000 * 3600 * 24)) + 1;
+    return days > 0 ? `${days} Day(s)` : "";
   };
 
   const handleSubmit = () => {
     // Later this will POST to backend
-    navigate("/leave-management/success");
+    console.log(form);
+    navigate("/employee/leave-management/success");
   };
 
   return (
-      <div className="p-6 max-w-3xl">
-        <h2 className="text-xl font-semibold">Leave Application Form</h2>
-        <p className="text-gray-500 text-sm mb-6">Leave manager / Apply for leave</p>
+      <div className="p-3 sm:p-6 md:p-8 max-w-4xl mx-auto">
+        {/* === Page Header === */}
+        <div className="mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
+            Leave Application Form
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Leave manager / Apply for leave
+          </p>
+        </div>
 
-        <div className="flex flex-col gap-6">
-
-          {/* Name */}
-          <div>
-            <label className="text-sm text-gray-600">Name</label>
-            <input
-              name="name"
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg border border-gray-300
-              focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none mt-1"
-            />
-          </div>
-
-          {/* Leave Type */}
-          <div>
-            <label className="text-sm text-gray-600">Leave Type</label>
-            <select
-              name="type"
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg border border-gray-300
-              focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none mt-1"
-            >
-              <option value="">Select Leave Type</option>
-              <option value="Annual Leave">Annual Leave</option>
-              <option value="Sick Leave">Sick Leave</option>
-              <option value="Unpaid Leave">Unpaid Leave</option>
-            </select>
-          </div>
-
-          {/* Date Range */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-600">From Date</label>
+        {/* === Form Card === */}
+        <div className="bg-white p-4 sm:p-6 md:p-8 border border-slate-200 rounded-lg sm:rounded-xl shadow-sm">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-x-6 md:gap-y-6"
+          >
+            {/* --- Name --- */}
+            <div className="md:col-span-1">
+              <label
+                htmlFor="name"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                Name
+              </label>
               <input
+                id="name"
+                name="name"
+                onChange={handleChange}
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
+                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
+                         transition-colors"
+              />
+            </div>
+
+            {/* --- Leave Type --- */}
+            <div className="md:col-span-1">
+              <label
+                htmlFor="type"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                Leave Type
+              </label>
+              <select
+                id="type"
+                name="type"
+                onChange={handleChange}
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
+                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
+                         transition-colors"
+              >
+                <option value="">Select Leave Type</option>
+                <option value="Annual Leave">Annual Leave</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Unpaid Leave">Unpaid Leave</option>
+              </select>
+            </div>
+
+            {/* --- From Date --- */}
+            <div className="md:col-span-1">
+              <label
+                htmlFor="from"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                From Date
+              </label>
+              <input
+                id="from"
                 type="date"
                 name="from"
                 onChange={handleChange}
-                className="p-3 w-full rounded-lg border border-gray-300
-                focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none mt-1"
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
+                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
+                         transition-colors"
               />
             </div>
 
-            <div>
-              <label className="text-sm text-gray-600">To Date</label>
+            {/* --- To Date --- */}
+            <div className="md:col-span-1">
+              <label
+                htmlFor="to"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                To Date
+              </label>
               <input
+                id="to"
                 type="date"
                 name="to"
                 onChange={handleChange}
-                className="p-3 w-full rounded-lg border border-gray-300
-                focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none mt-1"
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
+                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
+                         transition-colors"
               />
             </div>
-          </div>
 
-          {/* Auto Duration */}
-          <div>
-            <label className="text-sm text-gray-600">Duration</label>
-            <input
-              value={calculateDuration()}
-              disabled
-              className="p-3 w-full rounded-lg border border-gray-200
-              bg-gray-100 text-gray-600 mt-1 cursor-not-allowed"
-            />
-          </div>
-
-          {/* ID + Role */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-600">ID</label>
+            {/* --- Auto Duration --- */}
+            <div className="md:col-span-2">
+              <label
+                htmlFor="duration"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                Duration
+              </label>
               <input
+                id="duration"
+                value={calculateDuration()}
+                disabled
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-200 text-sm
+                         bg-slate-50 text-slate-600 cursor-not-allowed"
+              />
+            </div>
+
+            {/* --- ID --- */}
+            <div className="md:col-span-1">
+              <label
+                htmlFor="id"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                Employee ID
+              </label>
+              <input
+                id="id"
                 name="id"
                 onChange={handleChange}
-                className="p-3 w-full rounded-lg border border-gray-300
-                focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none mt-1"
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
+                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
+                         transition-colors"
               />
             </div>
-            <div>
-              <label className="text-sm text-gray-600">Role</label>
+
+            {/* --- Role --- */}
+            <div className="md:col-span-1">
+              <label
+                htmlFor="role"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                Role
+              </label>
               <input
+                id="role"
                 name="role"
                 onChange={handleChange}
-                className="p-3 w-full rounded-lg border border-gray-300
-                focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none mt-1"
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
+                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
+                         transition-colors"
               />
             </div>
-          </div>
 
-          {/* Reason */}
-          <div>
-            <label className="text-sm text-gray-600">Reason</label>
-            <textarea
-              name="reason"
-              rows={4}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg border border-gray-300
-              focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none mt-1"
-            />
-          </div>
+            {/* --- Reason --- */}
+            <div className="md:col-span-2">
+              <label
+                htmlFor="reason"
+                className="block text-xs sm:text-sm font-medium text-slate-700 mb-1 sm:mb-1.5"
+              >
+                Reason
+              </label>
+              <textarea
+                id="reason"
+                name="reason"
+                rows={4}
+                onChange={handleChange}
+                className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
+                         focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
+                         transition-colors"
+              />
+            </div>
 
-          {/* Submit */}
-          <button
-            onClick={handleSubmit}
-            className="mt-2 w-fit bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-          >
-            Submit For Leave
-          </button>
+            {/* --- Submit --- */}
+            <div className="md:col-span-2 flex justify-end mt-3 sm:mt-4">
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base
+                           font-medium shadow-sm hover:bg-blue-700 transition-colors w-full sm:w-auto"
+              >
+                Submit For Leave
+              </button>
+            </div>
+          </form>
         </div>
       </div>
   );

@@ -22,13 +22,13 @@ const ProfileTabs = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm">
-      <div className="border-b flex gap-6 p-4">
+    <div className="bg-white rounded-lg sm:rounded-xl shadow-sm">
+      <div className="border-b flex gap-2 sm:gap-6 p-3 sm:p-4 overflow-x-auto">
         {tabs.map((tab, idx) => (
           <button
             key={idx}
             onClick={() => setActive(idx)}
-            className={`pb-2 text-sm font-medium ${
+            className={`pb-2 text-xs sm:text-sm font-medium whitespace-nowrap ${
               active === idx ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"
             }`}
           >
@@ -37,7 +37,7 @@ const ProfileTabs = () => {
         ))}
       </div>
 
-      <div className="p-6">{renderTab()}</div>
+      <div className="p-3 sm:p-6">{renderTab()}</div>
     </div>
   );
 };

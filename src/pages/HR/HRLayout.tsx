@@ -66,7 +66,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
         className={`
           fixed md:relative top-0 left-0 h-full
           z-50 shadow-lg flex flex-col items-center
-          bg-gradient-to-b from-[#0E4DB5] to-[#1557C8]
+          bg-linear-to-b from-[#0E4DB5] to-[#1557C8]
           transition-all duration-300
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
           w-56 md:w-40

@@ -155,15 +155,15 @@ roles that help you learn, grow, and make an impact.`,
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200"
+      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200"
     >
       {/* --- Component Header --- */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-slate-800">Job Information</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
+        <h2 className="text-base sm:text-xl font-semibold text-slate-800">Job Information</h2>
         {!isEditing && (
           <button
             onClick={handleEdit}
-            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50"
+            className="inline-flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 w-full sm:w-auto justify-center"
           >
             <Pencil size={16} />
             Edit Job Information
@@ -173,7 +173,7 @@ roles that help you learn, grow, and make an impact.`,
 
       {/* --- Form --- */}
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-sm">
           {isEditing ? (
             <>
               <EditField
@@ -283,7 +283,7 @@ roles that help you learn, grow, and make an impact.`,
               <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Job Description
               </label>
-              <p className="mt-1 text-md text-slate-700 whitespace-pre-line">
+              <p className="mt-1 text-sm sm:text-base text-slate-700 whitespace-pre-line">
                 {formData.jobDescription}
               </p>
             </div>
@@ -292,18 +292,18 @@ roles that help you learn, grow, and make an impact.`,
 
         {/* --- Form Actions --- */}
         {isEditing && (
-          <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-8 pt-6 border-t">
             <button
               type="button"
               onClick={handleCancel}
-              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
+              className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
             >
               <X size={16} />
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
             >
               <Check size={16} />
               Save Changes

@@ -7,8 +7,11 @@ export default function PaymentHistory({ history }: any) {
   const [activeYear, setActiveYear] = useState(years[0]);
 
   return (
-    <div className="w-full lg:w-80 bg-white shadow-md rounded-xl p-6">
-      <h3 className="font-semibold mb-4">Payment History</h3>
+    // Wider, more padding, and softer shadow/border
+    <div className="w-full lg:max-w-md bg-white shadow-xl rounded-2xl p-8">
+      <h3 className="text-xl font-semibold text-gray-900 mb-6">
+        Payment History
+      </h3>
 
       <PaymentHistoryYearTabs
         years={years}
@@ -16,13 +19,15 @@ export default function PaymentHistory({ history }: any) {
         onChange={setActiveYear}
       />
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-6 space-y-4">
         {history[activeYear].length ? (
           history[activeYear].map((item: any, i: number) => (
             <PaymentHistoryItem key={i} item={item} />
           ))
         ) : (
-          <p className="text-gray-400 text-sm">No records for this year.</p>
+          <p className="text-gray-400 text-sm text-center py-4">
+            No records for this year.
+          </p>
         )}
       </div>
     </div>

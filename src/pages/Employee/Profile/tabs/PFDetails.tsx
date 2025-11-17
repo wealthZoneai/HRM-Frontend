@@ -123,16 +123,16 @@ const PFDetails = () => {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200"
+      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200"
     >
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-slate-800">PF Details</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
+        <h2 className="text-base sm:text-xl font-semibold text-slate-800">PF Details</h2>
 
         {!isEditing && (
           <button
             onClick={handleEdit}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition w-full sm:w-auto justify-center"
           >
             <Pencil size={16} />
             Edit Details
@@ -146,8 +146,8 @@ const PFDetails = () => {
 
           {/* EDIT MODE */}
           {isEditing ? (
-            <div className="p-6 rounded-xl border bg-slate-50/50 border-slate-300">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-4 sm:p-6 rounded-lg sm:rounded-xl border bg-slate-50/50 border-slate-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
                 <EditField label="UAN Number" name="uanNumber" value={details.uanNumber} onChange={handleChange} />
                 <EditField label="EMP ID" name="empId" value={details.empId} onChange={handleChange} />
@@ -172,8 +172,8 @@ const PFDetails = () => {
             </div>
           ) : (
             /* DISPLAY MODE */
-            <div className="p-6 rounded-xl border border-slate-200">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-10 text-sm">
+            <div className="p-4 sm:p-6 rounded-lg sm:rounded-xl border border-slate-200">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 sm:gap-y-6 gap-x-6 sm:gap-x-10 text-xs sm:text-sm">
 
                 <Display label="UAN Number" value={details.uanNumber} />
                 <Display label="EMP ID" value={details.empId} />
@@ -202,18 +202,18 @@ const PFDetails = () => {
 
         {/* ACTION BUTTONS */}
         {isEditing && (
-          <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-8 pt-6 border-t">
             <button
               type="button"
               onClick={handleCancel}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100"
             >
               <X size={16} />
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 shadow"
+              className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold hover:bg-blue-700 shadow"
             >
               <Check size={16} />
               Save Changes

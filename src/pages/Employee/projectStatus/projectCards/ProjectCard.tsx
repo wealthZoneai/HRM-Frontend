@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 
-type ProjectStatus = "Completed" | "Delayed" | "In Progress";
+type ProjectStatus = "Completed" | "Delayed" | "On Track";
 
 type ProjectCardProps = {
   name: string;
@@ -49,14 +49,14 @@ export default function ProjectCard({
     <motion.div
       whileHover={{ y: -3, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="border border-gray-200 rounded-2xl p-5 shadow-sm bg-white hover:shadow-lg hover:border-blue-200 transition-all duration-300 relative"
+      className="border border-gray-200 rounded-2xl p-4 sm:p-5 shadow-sm bg-white hover:shadow-lg hover:border-blue-200 transition-all duration-300 relative touch-none"
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
-        <h4 className="font-semibold text-gray-900 truncate">{name}</h4>
+        <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{name}</h4>
       </div>
 
-      <div className="flex justify-between items-center p-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
         <p className="text-xs text-gray-500">{subtitle}</p>
         {getStatusBadge()}
       </div>
@@ -83,7 +83,7 @@ export default function ProjectCard({
           />
         </div>
 
-        <div className="flex justify-between text-xs text-gray-600">
+        <div className="flex flex-col sm:flex-row justify-between text-xs text-gray-600 gap-1">
           <span>Tasks: {tasks}</span>
           <span>Due: {due}</span>
         </div>

@@ -2,16 +2,14 @@ import React, { useState, type ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   FiHome,
-  FiUser,
   FiBriefcase,
   FiClock,
   FiCalendar,
-  FiLogOut,
   FiMenu,
-  FiX,
   FiFileText,
   FiBook,
-  FiDollarSign
+  FiDollarSign,
+  FiChevronLeft
 } from "react-icons/fi";
 import Topbar from "./Topbar";
 import Logo from "../../../assets/white_logo.png";
@@ -33,7 +31,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const navItems: NavItem[] = [
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/employee/dashboard" },
-    { name: "Profile", icon: <FiUser size={20} />, path: "/employee/profile" },
+    // { name: "Profile", icon: <FiUser size={20} />, path: "/employee/profile" },
     { name: "Project Status", icon: <FiBriefcase size={20} />, path: "/employee/project-status" },
     { name: "Attendances", icon: <FiClock size={20} />, path: "/employee/attendances" },
 
@@ -43,11 +41,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     //   path: "/employee/notifications",
     // },
 
-    {
-      name: "Leave Management",
-      icon: <FiFileText size={20} />,
-      path: "/employee/leave-management",
-    },
+ 
 
     {
       name: "Calendar",
@@ -56,6 +50,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
 
     { name: "Payroll", icon: <FiDollarSign size={20} />, path: "/employee/payroll" },
+       {
+      name: "Leaves",
+      icon: <FiFileText size={20} />,
+      path: "/employee/leave-management",
+    },
     {
       name: "Policy",
       icon: <FiBook size={20} />,
@@ -63,11 +62,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("role");
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("authToken");
+  //   localStorage.removeItem("role");
+  //   navigate("/login");
+  // };
 
   const currentUser = {
     name: "Raviteja",
@@ -75,49 +74,113 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen overflow-hidden"> 
 
-      {/* Sidebar */}
-      <div
-        className={`${isSidebarOpen ? "w-64" : "w-20"}
-          bg-blue-800 text-white transition-all duration-300`}
+      {/* MOBILE MENU BUTTON */}
+      <button
+        onClick={() => setIsSidebarOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-md shadow"
       >
-        <div className="p-4 flex items-center justify-between">
-          {isSidebarOpen && <img src={Logo} className="h-16" />}
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-lg">
-            {isSidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+        <FiMenu size={24} />
+      </button>
+
+      {/* BACKDROP */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+        />
+      )}
+
+      {/* SIDEBAR */}
+      <div
+        className={`
+          fixed md:relative top-0 left-0 h-full
+          z-50 shadow-lg flex flex-col items-center
+          bg-linear-to-b from-[#0E4DB5] to-[#1557C8]
+          transition-all duration-300
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          w-56 md:w-40
+        `}
+      >
+        {/* Logo */}
+        <div className="w-full flex items-center justify-center py-6 border-b border-white/10 relative">
+          <img src={Logo} className="h-12 brightness-0 invert" />
+
+          {/* <button
+            onClick={() => setIsSidebarOpen((o) => !o)}
+            className="hidden md:flex absolute right-[-12px] bg-white text-blue-700 rounded-full p-1 shadow border"
+          >
+            <FiChevronLeft size={18} />
+          </button> */}
+
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden absolute right-4 text-white"
+          >
+            <FiChevronLeft size={22} />
           </button>
         </div>
 
-        <nav className="mt-8">
-          {navItems.map((item) => (
-            <div
-              key={item.name}
-              onClick={() => navigate(item.path)}
-              className={`flex items-center px-6 py-3 cursor-pointer transition 
-              ${location.pathname === item.path ? "bg-blue-700" : "hover:bg-blue-700"}`}
-            >
-              <span className="mr-4">{item.icon}</span>
-              {isSidebarOpen && <span>{item.name}</span>}
-            </div>
-          ))}
+        {/* Menu Items */}
+        <div className="flex-1 w-full overflow-y-auto no-scrollbar mt-6">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
 
-          {/* Logout */}
-          <div
-            className={`absolute bottom-0 left-0 px-6 py-4 cursor-pointer flex items-center hover:bg-blue-700 ${isSidebarOpen ? "w-64" : "w-20"}`}
-            onClick={handleLogout}
-          >
-            <FiLogOut className="mr-4" />
-            {isSidebarOpen && <span>Logout</span>}
-          </div>
-        </nav>
+            return (
+              <div
+                key={item.name}
+                onClick={() => {
+                  navigate(item.path);
+                  setIsSidebarOpen(false);
+                }}
+                className={`
+                  w-full flex flex-col items-center py-4 cursor-pointer
+                  transition-all duration-200
+                  ${
+                    isActive
+                      ? "bg-white text-[#0E4DB5]"
+                      : "text-white/80 hover:bg-white/20 hover:text-white"
+                  }
+                `}
+              >
+                <div className={`mb-1 ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
+                  {item.icon}
+                </div>
+
+                <span className={`text-sm ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
+                  {item.name}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Divider */}
+        {/* <div className="w-full border-t border-white/20 mb-2"></div> */}
+
+        {/* Logout */}
+        {/* <div
+          onClick={() => {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("role");
+            navigate("/login");
+            setIsSidebarOpen(false);
+          }}
+          className="w-full py-5 flex flex-col items-center cursor-pointer text-white/90 hover:bg-white/20 transition"
+        >
+          <FiLogOut size={22} />
+          <span className="text-sm">Logout</span>
+        </div> */}
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* MAIN AREA */}
+      <div className="flex-1 flex flex-col">
+
         <Topbar name={currentUser.name} id={currentUser.id} />
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        {/* ONLY CONTENT SCROLLS */}
+        <main className="flex-1 overflow-y-auto px-8 py-6">
           {children}
         </main>
       </div>

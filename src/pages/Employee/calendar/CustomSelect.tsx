@@ -51,11 +51,11 @@ export default function CustomSelect({ value, onChange, options }: Props) {
     <Listbox value={value} onChange={onChange}>
       <div className="relative">
         {/* The "button" that shows the current value */}
-        <Listbox.Button className="relative flex items-center gap-2 text-2xl font-bold text-gray-800 cursor-pointer pr-8 hover:text-gray-600 transition-colors">
+        <Listbox.Button className="relative flex items-center gap-2 text-lg sm:text-2xl font-bold text-gray-800 cursor-pointer pr-7 sm:pr-8 hover:text-gray-600 transition-colors">
           <span className="truncate">{selectedOption?.label}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center">
             <ChevronUpDownIcon
-              className="h-5 w-5 text-gray-500"
+              className="h-4 sm:h-5 w-4 sm:w-5 text-gray-500"
               aria-hidden="true"
             />
           </span>
@@ -68,13 +68,13 @@ export default function CustomSelect({ value, onChange, options }: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className="absolute z-10 mt-2 max-h-60 w-auto min-w-full overflow-auto rounded-lg bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <Listbox.Options className="absolute z-10 mt-2 max-h-48 sm:max-h-60 w-auto min-w-full overflow-auto rounded-lg bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none text-xs sm:text-sm">
             {options.map((option) => (
               <Listbox.Option
                 key={option.value}
                 value={option.value}
                 className={({ active }) =>
-                  `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                  `relative cursor-pointer select-none py-1.5 sm:py-2 pl-8 sm:pl-10 pr-3 sm:pr-4 text-xs sm:text-sm ${
                     active ? "bg-blue-50 text-blue-800" : "text-gray-800"
                   }`
                 }

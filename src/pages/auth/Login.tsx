@@ -6,9 +6,8 @@ import {
   HiOutlineEye,
   HiOutlineEyeOff,
 } from "react-icons/hi";
-import Logo from "../../assets/WG_logo.png";
-// import Illustration from "../../assets/login_illustration.jpg";
-// import LoginImg from "../../assets/Login.png";
+import Logo from "../../assets/logo_svg.svg";
+import LoginImg from "../../assets/Login.png";
 import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
@@ -19,6 +18,10 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleForgotPassword = () => {
+    navigate('/forgotpassword')
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -26,58 +29,83 @@ const Login: React.FC = () => {
       alert("Please fill all fields");
       return;
     }
-      navigate(`/hr/dashboard`);
 
-    navigate(`/employee/dashboard`);
+    navigate(`/${role}/dashboard`);
   };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-[#f6f7fb] px-6">
       <motion.div
-        className="bg-white w-full max-w-5xl shadow-xl rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
+        className="
+          w-full max-w-5xl shadow-2xl rounded-2xl overflow-hidden
+          grid grid-cols-1 md:grid-cols-2 relative
+        "
+        style={{
+          backgroundImage: `url(${LoginImg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         {/* LEFT SECTION */}
-        <div className="hidden md:flex flex-col justify-center items-center p-10">
-          {/* <img
-            src={Illustration}
-            className="w-full h-auto object-cover rounded-md mb-8"
-            alt="illustration"
-          /> */}
-          <h2 className="text-3xl font-bold text-gray-700">
-            Human Resource Management
-          </h2>
-          <p className="text-blue-500 font-medium mt-2">
-            A Smarter Way to Manage Workforce
-          </p>
+        <div className="relative text-center z-10 hidden md:flex flex-col mt-[20vh] items-center p-10 space-y-6">
+          <div></div>
+          <div>
+            <h2
+              className="text-3xl font-semibold tracking-tight text-blue-700 text-center -mb-4"
+              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+            >
+              Human Resource
+              <br /> Management System
+            </h2>
+
+            <div className="flex justify-center">
+              <img
+                src={Logo}
+                className="w-[90%] max-w-md h-auto object-contain"
+                alt="logo"
+              />
+            </div>
+
+            <h2
+              className="text-3xl tracking-wide font-bold text-blue-700"
+              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+            >
+              WEALTH ZONE GROUP AI
+            </h2>
+
+            <p
+              className="text-blue-700 font-medium text-lg tracking-wider"
+              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+            >
+              INTERNATIONAL PRIVATE LIMITED
+            </p>
+          </div>
         </div>
 
         {/* RIGHT SECTION */}
-        <div className="p-8 md:p-12 flex flex-col justify-center">
-          <div className="flex justify-center mb-8">
-            <img src={Logo} alt="logo" className="h-24" />
-          </div>
-
+        <div className="relative z-10 p-8 md:p-12 flex flex-col justify-center">
           <form onSubmit={handleSubmit} className="space-y-6">
-
             {/* ROLE SELECTION */}
             <div>
-              <label className="block mb-2 text-sm text-gray-600 font-medium">
+              <label className="block mb-2 text-sm text-white font-medium">
                 Login As
               </label>
-              <div className="flex gap-3">
+
+              <div className="grid grid-cols-3 gap-3">
                 {["admin", "hr", "employee"].map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setRole(r as any)}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold border transition 
+                    className={`w-full py-2 rounded-md text-sm font-semibold border transition-all duration-200
                       ${
                         role === r
                           ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                          : "bg-transparent text-white border-white hover:bg-blue-600 hover:text-white"
                       }`}
                   >
                     {r.toUpperCase()}
@@ -88,9 +116,9 @@ const Login: React.FC = () => {
 
             {/* USERNAME */}
             <div>
-              <label className="block text-sm text-gray-600 mb-2">Email</label>
+              <label className="block text-sm text-white mb-2">Email</label>
               <div className="relative">
-                <HiOutlineMail className="absolute left-3 top-3 text-gray-400" />
+                <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   className="w-full bg-gray-100 p-3 pl-10 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
@@ -103,9 +131,9 @@ const Login: React.FC = () => {
 
             {/* PASSWORD */}
             <div>
-              <label className="block text-sm text-gray-600 mb-2">Password</label>
+              <label className="block text-sm text-white mb-2">Password</label>
               <div className="relative">
-                <HiOutlineLockClosed className="absolute left-3 top-3 text-gray-400" />
+                <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   className="w-full bg-gray-100 p-3 pl-10 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
@@ -115,7 +143,7 @@ const Login: React.FC = () => {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-3 text-gray-500"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <HiOutlineEyeOff /> : <HiOutlineEye />}
@@ -131,10 +159,10 @@ const Login: React.FC = () => {
               Login
             </button>
 
-            <p className="text-center text-sm text-gray-500">
-              Forgot your password?{" "}
-              <span className="text-blue-600 underline cursor-pointer">
-                Reset it
+            <p className="text-center text-sm text-white">
+              Don't remember your password?{" "}
+              <span className="text-white underline cursor-pointer" onClick={handleForgotPassword}>
+                Forgot Password
               </span>
             </p>
           </form>
@@ -145,3 +173,239 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+
+
+
+
+
+// import React, { useState } from "react";
+// import { motion } from "framer-motion";
+// // Switched from 'react-icons/hi' to 'lucide-react' to resolve the import error.
+// import {
+//   Mail,
+//   Lock,
+//   Eye,
+//   EyeOff,
+//   AlertCircle,
+// } from "lucide-react";
+// // IMPORTANT: You will need to re-import your local images.
+// // I've used placeholders as I cannot access your local files.
+// // import Logo from "../../assets/logo_svg.svg";
+// // import LoginImg from "../../assets/Login.png";
+// import { useNavigate } from "react-router-dom";
+
+// // Placeholder URLs - SWAP THESE BACK
+// const Logo = "https://placehold.co/150x50/007bff/white?text=Your+Logo";
+// const LoginImg = "https://placehold.co/1000x1200/6366f1/f1f5f9?text=Login+Image";
+
+// const Login: React.FC = () => {
+//   const navigate = useNavigate();
+
+//   const [role, setRole] = useState<"employee" | "hr" | "admin">("employee");
+//   const [username, setUsername] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [error, setError] = useState(""); // For inline error messages
+
+//   const handleSubmit = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError(""); // Clear previous errors
+
+//     if (!username.trim() || !password.trim()) {
+//       setError("Please fill in both email and password.");
+//       return;
+//     }
+
+//     // On successful login
+//     console.log("Logging in as:", role, "with user:", username);
+//     navigate(`/${role}/dashboard`);
+//   };
+
+//   // Animation variants for staggering children
+//   const containerVariants = {
+//     hidden: { opacity: 0 },
+//     visible: {
+//       opacity: 1,
+//       transition: {
+//         staggerChildren: 0.1,
+//       },
+//     },
+//   };
+
+//   const itemVariants = {
+//     hidden: { opacity: 0, y: 20 },
+//     visible: {
+//       opacity: 1,
+//       y: 0,
+//       transition: {
+//         type: "spring",
+//         stiffness: 100,
+//       },
+//     },
+//   };
+
+//   return (
+//     <div className="relative min-h-screen flex items-center justify-center bg-gray-100 p-4 md:p-6">
+//       <motion.div
+//         className="
+//           w-full max-w-6xl shadow-2xl rounded-3xl overflow-hidden
+//           flex flex-col md:flex-row
+//         "
+//         initial={{ opacity: 0, y: 25 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.5, ease: "easeInOut" }}
+//       >
+//         {/* LEFT SECTION (IMAGE) */}
+//         <div
+//           className="relative hidden md:flex md:w-1/2"
+//           style={{
+//             backgroundImage: `url(${LoginImg})`, // Use placeholder or your LoginImg
+//             backgroundSize: "cover",
+//             backgroundPosition: "center",
+//           }}
+//         >
+//           {/* You can add an overlay or text here if needed, but clean is good */}
+//           <div className="absolute inset-0 bg-blue-700/30"></div>
+//         </div>
+
+//         {/* RIGHT SECTION (FORM) */}
+//         <motion.div
+//           className="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center"
+//           variants={containerVariants}
+//           initial="hidden"
+//           animate="visible"
+//         >
+//           {/* Logo */}
+//           <motion.div variants={itemVariants} className="flex justify-center mb-6">
+//             <img
+//               src={Logo} // Use placeholder or your Logo
+//               className="h-10" // Adjust size as needed
+//               alt="Wealth Zone Group AI"
+//             />
+//           </motion.div>
+
+//           <motion.h2
+//             variants={itemVariants}
+//             className="text-3xl font-bold text-gray-900 text-center mb-2"
+//           >
+//             Welcome Back
+//           </motion.h2>
+//           <motion.p
+//             variants={itemVariants}
+//             className="text-gray-600 text-center mb-8"
+//           >
+//             Login to access your account.
+//           </motion.p>
+
+//           <form onSubmit={handleSubmit} className="space-y-6">
+//             {/* ROLE SELECTION */}
+//             <motion.div variants={itemVariants}>
+//               <label className="block mb-2 text-sm font-medium text-gray-700">
+//                 Login As
+//               </label>
+//               <div className="flex bg-gray-100 rounded-lg p-1">
+//                 {["admin", "hr", "employee"].map((r) => (
+//                   <button
+//                     key={r}
+//                     type="button"
+//                     onClick={() => setRole(r as any)}
+//                     className={`w-full py-2.5 rounded-md text-sm font-semibold transition-all duration-300
+//                       ${
+//                         role === r
+//                           ? "bg-white text-blue-600 shadow-sm"
+//                           : "text-gray-500 hover:text-gray-900"
+//                       }`}
+//                   >
+//                     {r.charAt(0).toUpperCase() + r.slice(1)}
+//                   </button>
+//                 ))}
+//               </div>
+//             </motion.div>
+
+//             {/* USERNAME */}
+//             <motion.div variants={itemVariants}>
+//               <label className="block text-sm font-medium text-gray-700 mb-2">
+//                 Email Address
+//               </label>
+//               <div className="relative">
+//                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+//                 <input
+//                   type="email"
+//                   className="w-full bg-gray-50 border border-gray-300 p-3 pl-10 rounded-lg text-gray-900
+//                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+//                   placeholder="you@company.com"
+//                   value={username}
+//                   onChange={(e) => setUsername(e.target.value)}
+//                 />
+//               </div>
+//             </motion.div>
+
+//             {/* PASSWORD */}
+//             <motion.div variants={itemVariants}>
+//               <div className="flex justify-between items-center mb-2">
+//                 <label className="block text-sm font-medium text-gray-700">
+//                   Password
+//                 </label>
+//                 <a
+//                   href="#"
+//                   className="text-sm text-blue-600 hover:underline font-medium"
+//                 >
+//                   Forgot Password?
+//                 </a>
+//               </div>
+//               <div className="relative">
+//                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+//                 <input
+//                   type={showPassword ? "text" : "password"}
+//                   className="w-full bg-gray-50 border border-gray-300 p-3 pl-10 rounded-lg text-gray-900
+//                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+//                   placeholder="••••••••"
+//                   value={password}
+//                   onChange={(e) => setPassword(e.target.value)}
+//                 />
+//                 <button
+//                   type="button"
+//                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800"
+//                   onClick={() => setShowPassword(!showPassword)}
+//                 >
+//                   {showPassword ? (
+//                     <EyeOff className="h-5 w-5" />
+//                   ) : (
+//                     <Eye className="h-5 w-5" />
+//                   )}
+//                 </button>
+//               </div>
+//             </motion.div>
+
+//             {/* ERROR MESSAGE */}
+//             {error && (
+//               <motion.div
+//                 className="flex items-center p-3 rounded-lg bg-red-50 text-red-700"
+//                 initial={{ opacity: 0, y: -10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//               >
+//                 <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+//                 <p className="text-sm font-medium">{error}</p>
+//               </motion.div>
+//             )}
+
+//             {/* LOGIN BUTTON */}
+//             <motion.div variants={itemVariants}>
+//               <button
+//                 type="submit"
+//                 className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg
+//                            hover:bg-blue-700 transition-colors duration-300
+//                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+//                            shadow-lg shadow-blue-500/30"
+//               >
+//                 Login
+//               </button>
+//             </motion.div>
+//           </form>
+//         </motion.div>
+//       </motion.div>
+//     </div>
+//   );
+// };
+
+// export default Login;

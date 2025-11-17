@@ -10,4 +10,7 @@ export const attendanceRecords = [
   { date: "02 March,2025", login: "9:00 AM", logout: "5:00 PM", hours: "8:00 hrs", status: "Present" },
   { date: "03 March,2025", login: "9:00 AM", logout: "5:00 PM", hours: "8:00 hrs", status: "Present" },
   { date: "04 March,2025", login: "9:00 AM", logout: "5:00 PM", hours: "8:00 hrs", status: "Present" },
+  { date: "04 March,2025", login: "9:00 AM", logout: "5:00 PM", hours: "8:00 hrs", status: "Present" },
+  { date: "04 March,2025", login: "9:00 AM", logout: "5:00 PM", hours: "8:00 hrs", status: "Present" },
+  { date: "04 March,2025", login: "9:00 AM", logout: "5:00 PM", hours: "8:00 hrs", status: "Present" },
 ];

@@ -59,7 +59,7 @@ export default function Calendar() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white rounded-xl shadow-md border border-gray-100">
+    <div className="max-w-5xl mx-auto p-3 sm:p-4 md:p-6 bg-white rounded-lg sm:rounded-xl shadow-md border border-gray-100">
       <CalendarHeader
         month={month}
         year={year}

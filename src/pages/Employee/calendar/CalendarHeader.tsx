@@ -51,9 +51,9 @@ export default function CalendarHeader({
   // ----------------------------------------------------
 
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-3 sm:gap-0">
       {/* --- UPDATED: Replaced <select> with <CustomSelect> --- */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
         <CustomSelect
           value={month}
           onChange={(value) => onMonthChange(Number(value))}
@@ -68,10 +68,10 @@ export default function CalendarHeader({
       {/* -------------------------------------------------- */}
 
       {/* Navigation */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
         <button
           onClick={onSetToday}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50"
+          className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 flex-1 sm:flex-none"
         >
           Today
         </button>

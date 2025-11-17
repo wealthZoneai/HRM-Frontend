@@ -76,7 +76,7 @@ const DeptDonutChart: React.FC<Props> = ({ data }) => {
                 dataKey="value"
                 cornerRadius={8}  // Rounded donut edges
               >
-                {data.map((entry, index) => (
+                {data.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
