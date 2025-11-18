@@ -13,9 +13,9 @@ import ApplyLeaveSuccess from "../pages/Employee/leave-management/Apply-Leave/Ap
 import Payroll from "../pages/Employee/payroll/Payroll";
 import { Outlet } from "react-router-dom";
 import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
-import HRLayout from "../pages/HR/HRLayout";
-import HRHomeDashboard from "../pages/HR/HrDashboard/HRHomeDashboard";
-import HolidayCard from "../pages/HR/HolidayCard/HolidayCard";
+// import HRLayout from "../pages/HR/HRLayout";
+// import HRHomeDashboard from "../pages/HR/HrDashboard/HRHomeDashboard";
+// import HolidayCard from "../pages/HR/HolidayCard/HolidayCard";
 import Calendar from "../pages/Employee/calendar/Calendar";
 import Policies from "../pages/Employee/policies/Policies";
 import ForgotPassword from "../pages/auth/ForgotPassword";
@@ -96,7 +96,7 @@ function AppRouters() {
 
       {/* HR ROUTES */}
 
-      <Route
+      {/* <Route
         path="/hr/*"
         element={
           // <ProtectedRoute allowedRole="HR">
@@ -108,7 +108,7 @@ function AppRouters() {
       >
         <Route path="dashboard" element={<HRHomeDashboard />} />
         <Route path="Holidays" element={<HolidayCard />} />
-      </Route>
+      </Route> */}
 
       {/* ADMIN ROUTES */}
       <Route

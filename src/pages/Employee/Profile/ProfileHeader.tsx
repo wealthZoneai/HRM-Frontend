@@ -19,11 +19,11 @@ const ProfileHeader = () => {
         <img
           src={Pic}
           alt="Profile"
-          // Responsive image size
-          className="h-20 w-20 sm:h-24 sm:w-24 rounded-full border-4 border-slate-50 object-cover"
+          // Responsive image size - reduced on mobile
+          className="h-16 w-16 sm:h-24 sm:w-24 rounded-full border-4 border-slate-50 object-cover"
         />
         {/* Status Dot - responsive size and position */}
-        <span className="absolute bottom-0 right-1 sm:bottom-1 sm:right-1 h-4 w-4 sm:h-5 sm:w-5 rounded-full border-2 border-white bg-green-500" />
+        <span className="absolute bottom-0 right-0 sm:bottom-1 sm:right-1 h-3 w-3 sm:h-5 sm:w-5 rounded-full border-2 border-white bg-green-500" />
       </div>
 
       {/* Profile Info - 'grow' works in flex-row. Added w-full for flex-col */}
