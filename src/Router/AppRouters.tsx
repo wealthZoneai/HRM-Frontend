@@ -14,8 +14,8 @@ import Payroll from "../pages/Employee/payroll/Payroll";
 import { Outlet } from "react-router-dom";
 import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
 // import HRLayout from "../pages/HR/HRLayout";
-// import HRHomeDashboard from "../pages/HR/HrDashboard/HRHomeDashboard";
-// import HolidayCard from "../pages/HR/HolidayCard/HolidayCard";
+import HRHomeDashboard from "../pages/HR/HrDashboard/HRHomeDashboard";
+import HolidayCard from "../pages/HR/HolidayCard/HolidayCard";
 import Calendar from "../pages/Employee/calendar/Calendar";
 import Policies from "../pages/Employee/policies/Policies";
 import EmployeeScreen from "../pages/HR/AllEmployees/EmployeeScreen";
@@ -27,6 +27,7 @@ import AddEmployeeWizard from "../pages/HR/AllEmployees/AddEmployee/AddEmployeeW
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import OTPVerification from "../pages/auth/OTPVerification";
 import ResetPassword from "../pages/auth/RestPassword";
+import HRLayout from "../pages/HR/HRLayout";
 // import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
 
 function AppRouters() {
