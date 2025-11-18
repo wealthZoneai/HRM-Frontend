@@ -12,13 +12,13 @@ const AddEmployeeModal: React.FC<Props> = ({ open, onClose, editData }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center">
 
       {/* Overlay (UNIC Blur Effect) */}
       <div
         className="
           absolute inset-0 bg-black/50
-          backdrop-blur-[4px]
+          backdrop-blur-xs
           transition-opacity
         "
         onClick={onClose}
@@ -29,7 +29,7 @@ const AddEmployeeModal: React.FC<Props> = ({ open, onClose, editData }) => {
         className="
           relative w-full max-w-5xl mx-auto 
           rounded-2xl overflow-hidden shadow-2xl
-          bg-gradient-to-br from-white via-white/90 to-gray-100
+          bg-linear-to-br from-white via-white/90 to-gray-100
           border border-gray-200
           transform transition-all
           animate-[fadeIn_0.25s_ease-out]

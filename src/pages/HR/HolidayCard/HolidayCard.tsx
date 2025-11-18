@@ -56,7 +56,7 @@ const HolidayCard: React.FC<{ holiday: Holiday }> = ({ holiday }) => {
       {/* Top Badge & Type */}
       <div className="flex justify-between items-start">
         {/* Date Badge */}
-        <div className="text-center bg-gradient-to-b from-blue-600 to-blue-400 text-white w-14 rounded-xl py-2 shadow">
+        <div className="text-center bg-linear-to-b from-blue-600 to-blue-400 text-white w-14 rounded-xl py-2 shadow">
           <div className="text-xs">{month}</div>
           <div className="text-xl font-bold leading-tight">{day}</div>
         </div>
