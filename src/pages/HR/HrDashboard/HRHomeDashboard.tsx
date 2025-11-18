@@ -10,22 +10,48 @@ import Announcements from "./Announcements";
 import InterviewTable from "./InterviewTable";
 
 const initialDeptData: DeptDataItem[] = [
-  { name: "UI/UX", value: 28, color: "#2B6EF6" },
-  { name: "Python", value: 18, color: "#3ABAB4" },
-  { name: "Java", value: 25, color: "#FFD166" },
-  { name: "Testing", value: 12, color: "#FF8A65" },
-  { name: "React", value: 30, color: "#9B72F1" },
+  { name: "React Department", value: 30, color: "#81f172ff" },
+  { name: "Java Department", value: 25, color: "#FFD166" },
+  { name: "Digital Marketing", value: 30, color: "#9B72F1" },
+  { name: "UI/UX Department", value: 28, color: "#2B6EF6" },
+  { name: "Python Department", value: 18, color: "#3ABAB4" },
+  { name: "Testing Department", value: 12, color: "#FF8A65" },
+  { name: "HR Department", value: 30, color: "#9B72F1" },
+  { name: "Cyber Security", value: 30, color: "#9B72F1" },
+  { name: "BDMS", value: 30, color: "#9B72F1" },
+  { name: "SPA", value: 30, color: "#9B72F1" },
 ];
 
 const initialAnnouncements: AnnouncementItem[] = [
   { id: "a1", title: "Company-Wide Meeting", date: "Mar 25", summary: "All hands meeting to discuss Q1 results", color: "bg-red-100 text-red-700" },
   { id: "a2", title: "New WFH Policy", date: "Mar 20", summary: "Updated policy for remote working", color: "bg-green-100 text-green-700" },
   { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
 ];
 
 const initialInterviews: InterviewItem[] = [
   { id: "i1", candidate: "Rahul", interviewers: "Vivien", schedule: "2025-11-20", status: "Scheduled" },
   { id: "i2", candidate: "Maya", interviewers: "Arjun", schedule: "2025-11-22", status: "Scheduled" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
   { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
 ];
 
@@ -53,8 +79,8 @@ export default function HRDashboardPage() {
       </div>
 
       {/* middle section: chart + announcements */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div >
           <DeptDonutChart data={deptData} />
         </div>
 
