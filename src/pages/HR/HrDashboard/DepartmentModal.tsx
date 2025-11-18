@@ -1,5 +1,4 @@
 // DepartmentModal.tsx
-import React from "react";
 import {
   ResponsiveContainer,
   BarChart,

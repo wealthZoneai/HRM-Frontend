@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FiSearch, FiPlus } from 'react-icons/fi'; // Importing icons
-import { useNavigate } from 'react-router-dom';
 import AddEmployeeModal from './AddEmployeeModal';
 
 // Sample Employee data

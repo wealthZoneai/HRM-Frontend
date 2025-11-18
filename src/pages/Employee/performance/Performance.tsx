@@ -1,4 +1,4 @@
-import DashboardLayout from "../dashboard/DashboardLayout";
+
 import { performanceData } from "../../../data/performanceData";
 import PerformanceChart from "../performance/PerformanceChart";
 import MetricsCard from "../performance/MetricsCard";
