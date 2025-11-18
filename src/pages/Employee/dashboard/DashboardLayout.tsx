@@ -9,10 +9,12 @@ import {
   FiFileText,
   FiBook,
   FiDollarSign,
-  FiChevronLeft
+  FiChevronLeft,
+  FiLogOut
 } from "react-icons/fi";
 import Topbar from "./Topbar";
 import Logo from "../../../assets/white_logo.png";
+import SidebarImage from "../../../assets/Sidebar.png";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -104,8 +106,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         `}
       >
         {/* Logo */}
-        <div className="w-full flex items-center justify-center py-6 border-b border-white/10 relative">
-          <img src={Logo} className="h-12 brightness-0 invert" />
+        <div className="w-full flex items-center justify-center py-6 border-b border-white/10 relative z-20">
+          <img src={Logo} className="h-18 brightness-0 invert" />
 
           {/* <button
             onClick={() => setIsSidebarOpen((o) => !o)}
@@ -123,7 +125,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
 
         {/* Menu Items */}
-        <div className="flex-1 w-full overflow-y-auto no-scrollbar mt-6">
+        <div className="flex-1 w-full overflow-y-auto no-scrollbar mt-6 relative z-20">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
 
@@ -156,22 +158,31 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           })}
         </div>
 
+        {/* Sidebar Image Background (covers full sidebar) */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <img
+            src={SidebarImage}
+            alt="Sidebar background"
+            className="w-full h-screen object-cover opacity-95"
+          />
+        </div>
+
         {/* Divider */}
-        {/* <div className="w-full border-t border-white/20 mb-2"></div> */}
+        <div className="w-full border-t border-white/20 mb-2 z-20"></div>
 
         {/* Logout */}
-        {/* <div
+        <div
           onClick={() => {
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("role");
+            // localStorage.removeItem("authToken");
+            // localStorage.removeItem("role");
             navigate("/login");
-            setIsSidebarOpen(false);
+            // setIsSidebarOpen(false);
           }}
-          className="w-full py-5 flex flex-col items-center cursor-pointer text-white/90 hover:bg-white/20 transition"
+          className="w-full py-2 flex flex-col items-center cursor-pointer text-white/90 hover:bg-white/20 transition z-20"
         >
           <FiLogOut size={22} />
           <span className="text-sm">Logout</span>
-        </div> */}
+        </div>
       </div>
 
       {/* MAIN AREA */}

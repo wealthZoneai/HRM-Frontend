@@ -1,6 +1,6 @@
-import { Bell, User, LogOut } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import {  useRef, useEffect } from "react";
 
 interface TopbarProps {
   name: string;
@@ -34,18 +34,18 @@ const getGreeting = (): string => {
 
 export default function Topbar({ name, id }: TopbarProps) {
   const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleNotification = () => navigate("/employee/notifications");
   const handleProfileNavigate = () => {
     navigate("/employee/profile");
-    setIsDropdownOpen(false);
+    // setIsDropdownOpen(false);
   };
-  const handleLogout = () => {
-    console.log("Logout...");
-    setIsDropdownOpen(false);
-  };
+  // const handleLogout = () => {
+  //   console.log("Logout...");
+  //   // setIsDropdownOpen(false);
+  // };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -53,7 +53,7 @@ export default function Topbar({ name, id }: TopbarProps) {
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setIsDropdownOpen(false);
+        // setIsDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -95,34 +95,19 @@ export default function Topbar({ name, id }: TopbarProps) {
         {/* Profile Avatar + Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <div
-            onClick={() => setIsDropdownOpen((prev) => !prev)}
+            onClick={handleProfileNavigate}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") handleProfileNavigate();
+            }}
+            role="button"
+            tabIndex={0}
+            title="View profile"
             className="flex items-center gap-3 cursor-pointer select-none"
           >
             <div className="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold shadow-md">
               {userInitials}
             </div>
           </div>
-
-          {/* Dropdown */}
-          {isDropdownOpen && (
-            <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden animate-fadeIn">
-              <button
-                onClick={handleProfileNavigate}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-all"
-              >
-                <User className="w-5 h-5 text-gray-500" />
-                <span>View Profile</span>
-              </button>
-
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100 transition-all"
-              >
-                <LogOut className="w-5 h-5" />
-                <span>Logout</span>
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
