@@ -9,18 +9,18 @@ import DeptDonutChart from "./DeptDonutChart";
 import Announcements from "./Announcements";
 import InterviewTable from "./InterviewTable";
 
-const initialDeptData: DeptDataItem[] = [
-  { name: "React Department", value: 30, color: "#81f172ff" },
-  { name: "Java Department", value: 25, color: "#FFD166" },
-  { name: "Digital Marketing", value: 30, color: "#9B72F1" },
-  { name: "UI/UX Department", value: 28, color: "#2B6EF6" },
-  { name: "Python Department", value: 18, color: "#3ABAB4" },
-  { name: "Testing Department", value: 12, color: "#FF8A65" },
-  { name: "HR Department", value: 30, color: "#9B72F1" },
-  { name: "Cyber Security", value: 30, color: "#9B72F1" },
-  { name: "BDMS", value: 30, color: "#9B72F1" },
-  { name: "SPA", value: 30, color: "#9B72F1" },
-];
+// const initialDeptData: DeptDataItem[] = [
+//   { name: "React Department", value: 30, color: "#81f172ff" },
+//   { name: "Java Department", value: 25, color: "#FFD166" },
+//   { name: "Digital Marketing", value: 30, color: "#9B72F1" },
+//   { name: "UI/UX Department", value: 28, color: "#2B6EF6" },
+//   { name: "Python Department", value: 18, color: "#3ABAB4" },
+//   { name: "Testing Department", value: 12, color: "#FF8A65" },
+//   { name: "HR Department", value: 30, color: "#9B72F1" },
+//   { name: "Cyber Security", value: 30, color: "#9B72F1" },
+//   { name: "BDMS", value: 30, color: "#9B72F1" },
+//   { name: "SPA", value: 30, color: "#9B72F1" },
+// ];
 
 const initialAnnouncements: AnnouncementItem[] = [
   { id: "a1", title: "Company-Wide Meeting", date: "Mar 25", summary: "All hands meeting to discuss Q1 results", color: "bg-red-100 text-red-700" },
@@ -53,6 +53,244 @@ const initialInterviews: InterviewItem[] = [
   { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
   { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
   { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+];
+const initialDeptData: DeptDataItem[] = [
+  {
+    name: "React Department",
+    value: 30,
+    interns: 4,
+    juniors: 10,
+    seniors: 12,
+    leads: 4,
+
+    productivityData: [
+      { month: "Jan", score: 70 },
+      { month: "Feb", score: 82 },
+      { month: "Mar", score: 78 },
+      { month: "Apr", score: 85 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 25 },
+      { day: "Tue", present: 27 },
+      { day: "Wed", present: 26 },
+      { day: "Thu", present: 28 },
+      { day: "Fri", present: 24 },
+    ],
+  },
+
+  {
+    name: "Java Department",
+    value: 25,
+    interns: 3,
+    juniors: 8,
+    seniors: 10,
+    leads: 4,
+
+    productivityData: [
+      { month: "Jan", score: 60 },
+      { month: "Feb", score: 73 },
+      { month: "Mar", score: 69 },
+      { month: "Apr", score: 75 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 21 },
+      { day: "Tue", present: 20 },
+      { day: "Wed", present: 23 },
+      { day: "Thu", present: 22 },
+      { day: "Fri", present: 19 },
+    ],
+  },
+
+  {
+    name: "Digital Marketing",
+    value: 30,
+    interns: 6,
+    juniors: 12,
+    seniors: 8,
+    leads: 4,
+
+    productivityData: [
+      { month: "Jan", score: 75 },
+      { month: "Feb", score: 80 },
+      { month: "Mar", score: 85 },
+      { month: "Apr", score: 90 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 28 },
+      { day: "Tue", present: 27 },
+      { day: "Wed", present: 29 },
+      { day: "Thu", present: 28 },
+      { day: "Fri", present: 26 },
+    ],
+  },
+
+  {
+    name: "UI/UX Department",
+    value: 28,
+    interns: 5,
+    juniors: 10,
+    seniors: 9,
+    leads: 4,
+
+    productivityData: [
+      { month: "Jan", score: 65 },
+      { month: "Feb", score: 70 },
+      { month: "Mar", score: 72 },
+      { month: "Apr", score: 80 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 22 },
+      { day: "Tue", present: 24 },
+      { day: "Wed", present: 25 },
+      { day: "Thu", present: 23 },
+      { day: "Fri", present: 21 },
+    ],
+  },
+
+  {
+    name: "Python Department",
+    value: 18,
+    interns: 2,
+    juniors: 6,
+    seniors: 7,
+    leads: 3,
+
+    productivityData: [
+      { month: "Jan", score: 62 },
+      { month: "Feb", score: 70 },
+      { month: "Mar", score: 68 },
+      { month: "Apr", score: 75 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 14 },
+      { day: "Tue", present: 15 },
+      { day: "Wed", present: 13 },
+      { day: "Thu", present: 14 },
+      { day: "Fri", present: 12 },
+    ],
+  },
+
+  {
+    name: "Testing Department",
+    value: 12,
+    interns: 1,
+    juniors: 4,
+    seniors: 6,
+    leads: 1,
+
+    productivityData: [
+      { month: "Jan", score: 55 },
+      { month: "Feb", score: 60 },
+      { month: "Mar", score: 57 },
+      { month: "Apr", score: 62 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 9 },
+      { day: "Tue", present: 10 },
+      { day: "Wed", present: 11 },
+      { day: "Thu", present: 9 },
+      { day: "Fri", present: 8 },
+    ],
+  },
+
+  {
+    name: "HR Department",
+    value: 20,
+    interns: 1,
+    juniors: 6,
+    seniors: 10,
+    leads: 3,
+
+    productivityData: [
+      { month: "Jan", score: 72 },
+      { month: "Feb", score: 78 },
+      { month: "Mar", score: 80 },
+      { month: "Apr", score: 88 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 18 },
+      { day: "Tue", present: 17 },
+      { day: "Wed", present: 19 },
+      { day: "Thu", present: 18 },
+      { day: "Fri", present: 16 },
+    ],
+  },
+  {
+    name: "Cyber Security",
+    value: 20,
+    interns: 1,
+    juniors: 6,
+    seniors: 10,
+    leads: 3,
+
+    productivityData: [
+      { month: "Jan", score: 72 },
+      { month: "Feb", score: 78 },
+      { month: "Mar", score: 80 },
+      { month: "Apr", score: 88 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 18 },
+      { day: "Tue", present: 17 },
+      { day: "Wed", present: 19 },
+      { day: "Thu", present: 18 },
+      { day: "Fri", present: 16 },
+    ],
+  },
+  {
+    name: "BDMS",
+    value: 20,
+    interns: 1,
+    juniors: 6,
+    seniors: 10,
+    leads: 3,
+
+    productivityData: [
+      { month: "Jan", score: 72 },
+      { month: "Feb", score: 78 },
+      { month: "Mar", score: 80 },
+      { month: "Apr", score: 88 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 18 },
+      { day: "Tue", present: 17 },
+      { day: "Wed", present: 19 },
+      { day: "Thu", present: 18 },
+      { day: "Fri", present: 16 },
+    ],
+  },
+  {
+    name: "SPA",
+    value: 20,
+    interns: 1,
+    juniors: 6,
+    seniors: 10,
+    leads: 3,
+
+    productivityData: [
+      { month: "Jan", score: 72 },
+      { month: "Feb", score: 78 },
+      { month: "Mar", score: 80 },
+      { month: "Apr", score: 88 },
+    ],
+
+    attendanceData: [
+      { day: "Mon", present: 18 },
+      { day: "Tue", present: 17 },
+      { day: "Wed", present: 19 },
+      { day: "Thu", present: 18 },
+      { day: "Fri", present: 16 },
+    ],
+  },
 ];
 
 export default function HRDashboardPage() {
