@@ -33,7 +33,7 @@ const InterviewTable: React.FC<Props> = ({ items, onToggleComplete }) => {
         Interview Schedule
       </h3>
 
-      <div className="space-y-4">
+      <div className="space-y-3 max-h-90 overflow-y-auto no-scrollbar">
         {items.map((it) => (
           <div
             key={it.id}

@@ -24,13 +24,17 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log("Logging in as:", role,);
     if (!username.trim() || !password.trim()) {
       alert("Please fill all fields");
       return;
     }
 
-    navigate(`/${role}/dashboard`);
+    if (role === "employee") {
+      navigate(`/employee/dashboard`);
+    } else if (role === "hr") {
+      navigate(`/hr/dashboard`);
+    }
   };
 
   return (

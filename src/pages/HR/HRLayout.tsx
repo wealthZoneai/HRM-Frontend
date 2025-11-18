@@ -11,7 +11,6 @@ import {
   FiGift,
   FiLogOut,
   FiMenu,
-  FiChevronLeft
 } from "react-icons/fi";
 
 import Logo from "../../assets/white_logo.png";
@@ -35,9 +34,9 @@ export default function HRLayout({ children }: HRLayoutProps) {
   const navItems = [
     { name: "Dashboard", icon: <FiHome size={22} />, path: "/hr/dashboard" },
     { name: "Employees", icon: <FiUsers size={22} />, path: "/hr/employees" },
-    { name: "Leave management", icon: <FiCalendar size={22} />, path: "/hr/leave-management" },
+    { name: "Leave", icon: <FiCalendar size={22} />, path: "/hr/leave-management" },
     { name: "Attendence", icon: <FiClock size={22} />, path: "/hr/attendance" },
-    { name: "Salary management", icon: <FiDollarSign size={22} />, path: "/hr/salary" },
+    { name: "Salary", icon: <FiDollarSign size={22} />, path: "/hr/salary" },
     { name: "Announcements", icon: <FiBell size={22} />, path: "/hr/announcements" },
     { name: "Holidays", icon: <FiGift size={22} />, path: "/hr/holidays" },
   ];
@@ -73,8 +72,8 @@ export default function HRLayout({ children }: HRLayoutProps) {
         `}
       >
         {/* Logo */}
-        <div className="w-full flex items-center justify-center py-6 border-b border-white/10 relative">
-          <img src={Logo} className="h-12 brightness-0 invert" />
+        <div className="w-full flex items-center justify-center  border-b border-white/10 relative">
+          <img src={Logo} className="h-25 w-30 brightness-0 invert" />
 
           {/* <button
             onClick={() => setIsSidebarOpen((o) => !o)}
@@ -87,7 +86,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
             onClick={() => setIsSidebarOpen(false)}
             className="md:hidden absolute right-4 text-white"
           >
-            <FiChevronLeft size={22} />
+            {/* <FiChevronLeft size={22} /> */}
           </button>
         </div>
 

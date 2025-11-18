@@ -18,9 +18,16 @@ import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
 // import HolidayCard from "../pages/HR/HolidayCard/HolidayCard";
 import Calendar from "../pages/Employee/calendar/Calendar";
 import Policies from "../pages/Employee/policies/Policies";
+import EmployeeScreen from "../pages/HR/AllEmployees/EmployeeScreen";
+import AnnouncementsScreen from "../pages/HR/Announcement/AnnouncementsScreen";
+import SalaryManagement from "../pages/HR/SalaryManagement/SalaryManagement";
+import AttendanceScreen from "../pages/HR/Attendance/AttendanceScreen";
+import HrLeaveManagement from "../pages/HR/Leave/LeaveManagement";
+import AddEmployeeWizard from "../pages/HR/AllEmployees/AddEmployee/AddEmployeeWizard";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import OTPVerification from "../pages/auth/OTPVerification";
 import ResetPassword from "../pages/auth/RestPassword";
+// import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
 
 function AppRouters() {
   return (
@@ -109,6 +116,25 @@ function AppRouters() {
         <Route path="dashboard" element={<HRHomeDashboard />} />
         <Route path="Holidays" element={<HolidayCard />} />
       </Route> */}
+            <Route
+                path="/hr/*"
+                element={
+                    // <ProtectedRoute allowedRole="HR">
+                    <HRLayout>
+                        <Outlet />
+                    </HRLayout>
+                    // </ProtectedRoute>
+                }
+            >
+                <Route path="dashboard" element={<HRHomeDashboard />} />
+                <Route path="Holidays" element={<HolidayCard />} />
+                <Route path="Employees" element={<EmployeeScreen />} />
+                <Route path="Announcements" element={<AnnouncementsScreen />} />
+                <Route path="salary" element={<SalaryManagement />} />
+                <Route path="attendance" element={<AttendanceScreen />} />
+                <Route path="leave-management" element={<HrLeaveManagement />} />
+                <Route path="addEmployeeWizard" element={<AddEmployeeWizard />} />
+            </Route>
 
       {/* ADMIN ROUTES */}
       <Route
