@@ -54,7 +54,7 @@ export default function DeptDonutChart({ data }: Props) {
         <h3 className="text-xl font-semibold mb-6 text-gray-800">Employee By Department</h3>
 
         <div className="flex flex-col lg:flex-row items-center gap-8">
-          <div className="w-full max-w-[260px] flex-shrink-0">
+          <div className="w-full max-w-[260px] shrink-0">
             <ResponsiveContainer width="100%" height={260}>
               <PieChart>
                 <Pie

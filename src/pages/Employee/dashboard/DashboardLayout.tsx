@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/employee/dashboard" },
     // { name: "Profile", icon: <FiUser size={20} />, path: "/employee/profile" },
     { name: "Project Status", icon: <FiBriefcase size={20} />, path: "/employee/project-status" },
-    { name: "Attendances", icon: <FiClock size={20} />, path: "/employee/attendances" },
+    { name: "Attendance", icon: <FiClock size={20} />, path: "/employee/attendances" },
 
     // {
     //   name: "Notifications",
@@ -106,8 +106,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         `}
       >
         {/* Logo */}
-        <div className="w-full flex items-center justify-center py-6 border-b border-white/10 relative z-20">
-          <img src={Logo} className="h-18 brightness-0 invert" />
+        <div className="w-full flex items-center justify-center py-3.5 border-b border-white/10 relative z-20">
+          <img src={Logo} className="h-12  brightness-0 invert" />
 
           {/* <button
             onClick={() => setIsSidebarOpen((o) => !o)}
@@ -125,7 +125,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
 
         {/* Menu Items */}
-        <div className="flex-1 w-full overflow-y-auto no-scrollbar mt-6 relative z-20">
+        <div className="flex-1 w-full overflow-y-auto no-scrollbar  relative z-20">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
 

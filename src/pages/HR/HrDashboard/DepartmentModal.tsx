@@ -56,7 +56,7 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
 
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-4">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-999 px-4">
       {/* Modal Container: Max height, scrollable content */}
       <div 
         className="bg-white w-full max-w-5xl rounded-2xl shadow-2xl relative 

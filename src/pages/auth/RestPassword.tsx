@@ -6,13 +6,21 @@ import {
   HiOutlineEyeOff,
 } from "react-icons/hi";
 import LoginImg from "../../assets/Login.png";
+import LoginMobile from "../../assets/Login Mobile.png";
 import Logo from "../../assets/logo_svg.svg";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword: React.FC = () => {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
+
+  const handleUpdate = () => {
+    navigate('/login')
+    alert('Password has been changed successfully')
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,27 +45,40 @@ const ResetPassword: React.FC = () => {
           w-full max-w-5xl shadow-2xl rounded-2xl overflow-hidden
           grid grid-cols-1 md:grid-cols-2 relative
         "
-        style={{
-          backgroundImage: `url(${LoginImg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        <div
+          className="hidden md:block absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: `url(${LoginImg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+        <div
+          className="md:hidden absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: `url(${LoginMobile})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
 
         {/* LEFT SECTION */}
         <div className="relative text-center z-10 hidden md:flex flex-col mt-[20vh] items-center p-10 space-y-6">
           <div></div>
-
           <div>
             <h2
-              className="text-3xl font-semibold tracking-tight text-blue-700 text-center -mb-4"
-              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+              className="text-3xl font-semibold tracking-tight text-[#0047AB] text-center -mb-4"
+              style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+
             >
-              Create New Password
+              Human Resource
+              <br /> Management System
             </h2>
 
             <div className="flex justify-center">
@@ -68,11 +89,20 @@ const ResetPassword: React.FC = () => {
               />
             </div>
 
-            <p
-              className="text-blue-700 font-medium text-lg tracking-wider"
-              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+            <h2
+              className="text-3xl tracking-wide font-bold text-[#0047AB]"
+              style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+
             >
-              Choose a strong and secure password
+              WEALTH ZONE GROUP AI
+            </h2>
+
+            <p
+              className="text-[#0047AB] font-medium text-2xl tracking-tight"
+              style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+
+            >
+              INTERNATIONAL PRIVATE LIMITED
             </p>
           </div>
         </div>
@@ -83,9 +113,7 @@ const ResetPassword: React.FC = () => {
             <h2 className="text-2xl font-bold text-white text-center mb-3">
               Reset Your Password
             </h2>
-            <p className="text-white text-center text-sm opacity-80 mb-6">
-              Enter and confirm your new password.
-            </p>
+
 
             {/* NEW PASSWORD */}
             <div>
@@ -137,6 +165,7 @@ const ResetPassword: React.FC = () => {
 
             {/* BUTTON */}
             <button
+            onClick={handleUpdate}
               type="submit"
               className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition shadow-sm"
             >

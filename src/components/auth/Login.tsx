@@ -46,7 +46,7 @@ const Login: React.FC = () => {
             className="w-full h-auto object-cover rounded-md mb-8"
             alt="illustration"
           /> */}
-          <h2 className="text-3xl font-bold text-gray-700">
+          <h2 className="text-3xl font-bold text-[#0047AB]">
             Human Resource Management
           </h2>
           <p className="text-blue-500 font-medium mt-2">

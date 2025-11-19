@@ -8,6 +8,7 @@ import {
 } from "react-icons/hi";
 import Logo from "../../assets/logo_svg.svg";
 import LoginImg from "../../assets/Login.png";
+import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
@@ -44,23 +45,37 @@ const Login: React.FC = () => {
           w-full max-w-5xl shadow-2xl rounded-2xl overflow-hidden
           grid grid-cols-1 md:grid-cols-2 relative
         "
-        style={{
-          backgroundImage: `url(${LoginImg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        {/* Backgrounds: desktop and mobile variants */}
+        <div
+          className="hidden md:block absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: `url(${LoginImg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+        <div
+          className="md:hidden absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: `url(${LoginMobile})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
         {/* LEFT SECTION */}
         <div className="relative text-center z-10 hidden md:flex flex-col mt-[20vh] items-center p-10 space-y-6">
           <div></div>
           <div>
             <h2
-              className="text-3xl font-semibold tracking-tight text-blue-700 text-center -mb-4"
-              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+              className="text-3xl font-semibold tracking-tight text-[#0047AB] text-center -mb-4"
+              style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+
             >
               Human Resource
               <br /> Management System
@@ -75,15 +90,17 @@ const Login: React.FC = () => {
             </div>
 
             <h2
-              className="text-3xl tracking-wide font-bold text-blue-700"
-              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+              className="text-3xl tracking-wide font-bold text-[#0047AB]"
+              style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+
             >
               WEALTH ZONE GROUP AI
             </h2>
 
             <p
-              className="text-blue-700 font-medium text-lg tracking-wider"
-              style={{ textShadow: "2px 2px 6px rgba(0,0,0,0.5)" }}
+              className="text-[#0047AB] font-medium text-2xl tracking-tight"
+              style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+
             >
               INTERNATIONAL PRIVATE LIMITED
             </p>
@@ -94,7 +111,7 @@ const Login: React.FC = () => {
         <div className="relative z-10 p-8 md:p-12 flex flex-col justify-center">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* ROLE SELECTION */}
-            <div>
+            {/* <div>
               <label className="block mb-2 text-sm text-white font-medium">
                 Login As
               </label>
@@ -116,7 +133,7 @@ const Login: React.FC = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* USERNAME */}
             <div>
@@ -166,7 +183,7 @@ const Login: React.FC = () => {
             <p className="text-center text-sm text-white">
               Don't remember your password?{" "}
               <span className="text-white underline cursor-pointer" onClick={handleForgotPassword}>
-                Forgot Password
+                Click here
               </span>
             </p>
           </form>

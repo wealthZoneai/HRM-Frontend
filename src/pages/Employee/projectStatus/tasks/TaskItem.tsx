@@ -24,17 +24,18 @@ export default function TaskItem({
       case "inProgress":
         return <Hourglass className="text-yellow-500" size={20} />;
       case "notStarted":
+      case "none":
         return <Circle className="text-red-500" size={20} />;
       default:
-        return <Circle className="text-gray-400" size={20} />;
+        return <Circle className="text-red-400" size={20} />;
     }
   };
 
   const statusOptions = [
     { label: "Completed", value: "completed", icon: <CheckCircle2 className="text-green-500" size={16} /> },
-    { label: "Pending", value: "inProgress", icon: <Hourglass className="text-yellow-500" size={16} /> },
+    { label: "In Progress", value: "inProgress", icon: <Hourglass className="text-yellow-500" size={16} /> },
     { label: "Not Started", value: "notStarted", icon: <Circle className="text-red-500" size={16} /> },
-    { label: "Clear Status", value: "none", icon: <Circle className="text-gray-400" size={16} /> },
+    // { label: "Clear Status", value: "none", icon: <Circle className="text-gray-400" size={16} /> },
   ];
 
   return (

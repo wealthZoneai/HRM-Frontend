@@ -1,4 +1,4 @@
-import { Bell } from "lucide-react";
+import { Bell} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {  useRef, useEffect } from "react";
 
@@ -77,7 +77,7 @@ export default function Topbar({ name, id }: TopbarProps) {
       {/* MIDDLE SECTION - Hidden on mobile */}
       <div className="hidden lg:block text-center flex-1 order-2">
         <p className="text-[15px] font-semibold text-gray-700">
-          {greeting}, let's get this workday rolling.
+          {greeting}, let's get this workday rolling!
         </p>
       </div>
 

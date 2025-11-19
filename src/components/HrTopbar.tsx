@@ -61,7 +61,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
         <p className="text-xs text-gray-500 mt-1">{time}</p>
       </div>
       {!read && (
-        <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1" title="Unread"></span>
+        <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1" title="Unread"></span>
       )}
     </div>
   );
@@ -114,7 +114,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
 
             {/* Badge (shows unread count) */}
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-[5px] py-[1px] rounded-full">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-[5px] py-px rounded-full">
                 {unreadCount}
               </span>
             )}
