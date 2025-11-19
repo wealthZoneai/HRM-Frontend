@@ -24,7 +24,7 @@ export default function ProjectStatus() {
         <div className="flex justify-between items-start mb-6">
           <div>
             {/* <h2 className="text-xs font-bold tracking-widest uppercase text-blue-900/60 mb-1">Overview</h2> */}
-            <h1 className="text-2xl font-bold text-stone-900 tracking-tight">Project Status</h1>
+            <h1 className="text-3xl md:text-2xl font-bold text-stone-900 tracking-tight">Project Status</h1>
           </div>
           <button className="p-2 rounded-full hover:bg-stone-50 text-stone-400 hover:text-blue-900 transition-colors">
             <MoreHorizontal size={20} />
