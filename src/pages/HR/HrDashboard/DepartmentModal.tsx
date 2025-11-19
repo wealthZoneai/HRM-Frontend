@@ -134,7 +134,9 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
                       paddingAngle={5}
                     >
                       {HEADCOUNT_DATA.map((entry, index) => (
-                        <Cell key={index} fill={entry.color} />
+                        <Cell key={index} fill={entry.color}
+                        className="outline-none focus:outline-none"
+                        />
                       ))}
                     </Pie>
 

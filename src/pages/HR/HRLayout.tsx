@@ -124,7 +124,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
         {/* Logout */}
         <div
           onClick={() => setOpenLogout(true)}
-          className="w-full py-5 flex flex-col items-center cursor-pointer text-white/90 hover:bg-white/20 transition"
+          className="w-full py-2 flex justify-center gap-2 items-center cursor-pointer text-white/90 hover:bg-white/20 transition"
         >
           <FiLogOut size={22} />
           <span className="text-sm">Logout</span>
