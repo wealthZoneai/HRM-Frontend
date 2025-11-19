@@ -30,12 +30,13 @@ const Login: React.FC = () => {
       alert("Please fill all fields");
       return;
     }
-
-    if (role === "employee") {
-      navigate(`/employee/dashboard`);
-    } else if (role === "hr") {
       navigate(`/hr/dashboard`);
-    }
+
+    // if (role === "employee") {
+    //   navigate(`/employee/dashboard`);
+    // } else if (role === "hr") {
+    //   navigate(`/hr/dashboard`);
+    // }
   };
 
   return (

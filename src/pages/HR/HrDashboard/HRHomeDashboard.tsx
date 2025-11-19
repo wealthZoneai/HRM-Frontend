@@ -313,7 +313,7 @@ export default function HRDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <SummaryCard title="Total Employees Count" value={totalEmployees} subtitle="Employees" icon={<FiUsers size={22} />} />
         <SummaryCard title="Present Employees" value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
-        <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />} />
+        <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />}  />
       </div>
 
       {/* middle section: chart + announcements */}

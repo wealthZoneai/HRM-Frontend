@@ -33,12 +33,20 @@ const dailyData: DailyViewItem[] = [
   { id: "2", employee: "Alice Johnson", empId: "EMP02", avatar: "https://i.pravatar.cc/40?img=2", checkIn: "-", checkOut: "-", status: "Absent", department: "Java Backend" },
   { id: "3", employee: "Chris Evans", empId: "EMP03", avatar: "https://i.pravatar.cc/40?img=3", checkIn: "09:30 AM", checkOut: "—", status: "On Leave", department: "Marketing" },
   { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
+  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
+  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
+  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
+  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
 ];
 
 const monthlyData: MonthlySummaryItem[] = [
   { id: "1", employee: "Clement Mendie", avatar: "https://i.pravatar.cc/40?img=1", totalDays: 22, present: 20, absent: 1, onLeave: 1, },
   { id: "2", employee: "Alice Johnson", avatar: "https://i.pravatar.cc/40?img=2", totalDays: 22, present: 18, absent: 3, onLeave: 1, },
   { id: "3", employee: "Chris Evans", avatar: "https://i.pravatar.cc/40?img=3", totalDays: 22, present: 15, absent: 5, onLeave: 2, },
+  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
+  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
+  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
+  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
   { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
 ];
 
@@ -82,7 +90,7 @@ const AttendanceScreen: React.FC = () => {
       {/* 1. Daily Attendance Table (DESIGN IMPROVEMENT APPLIED HERE) */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <h3 className="text-xl font-semibold text-gray-800 p-6 pb-0">Today's Log ({new Date().toLocaleDateString()})</h3>
-       <div className="overflow-x-auto overflow-y-auto max-h-[70vh] md:max-h-none">
+       <div className="overflow-x-auto md:max-h-none">
           <table className="w-full text-sm min-w-[600px] mt-4">
             <thead className="text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
               <tr>
@@ -199,7 +207,7 @@ const AttendanceScreen: React.FC = () => {
   );
 
   const renderAttendanceRecords = () => (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
       
       {/* Header and Filters */}
       <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
@@ -284,7 +292,7 @@ const AttendanceScreen: React.FC = () => {
       </div>
 
       {/* CONTENT */}
-      <div className="max-w-full mx-auto">
+      <div className="max-w-full mx-auto overflow-hidden overflow-y-auto max-h-[60vh] no-scrollbar">
         {activeTab === "daily" && renderDailyView()}
         {activeTab === "monthly" && renderMonthlySummary()}
         {activeTab === "records" && renderAttendanceRecords()}

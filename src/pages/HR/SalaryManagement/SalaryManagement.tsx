@@ -52,6 +52,87 @@ const SalaryManagement: React.FC = () => {
             salary: "500k",
             resumeDate: "3rd-April-2023",
         },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
+        {
+            id: "4",
+            name: "Chris",
+            dept: "Comms",
+            role: "Graphics",
+            email: "b@sujimotiong.com",
+            salary: "500k",
+            resumeDate: "3rd-April-2023",
+        },
     ]);
 
     const filteredEmployees = employees.filter((emp) =>
@@ -97,7 +178,7 @@ const SalaryManagement: React.FC = () => {
             </div>
 
             {/* Table Card */}
-            <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+            <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100 ">
 
                 {/* Fancy Header Row */}
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium grid grid-cols-7 py-3 px-4">
@@ -111,7 +192,7 @@ const SalaryManagement: React.FC = () => {
                 </div>
 
                 {/* Table Body */}
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-100 overflow-y-auto max-h-[50vh] no-scrollbar">
                     {filteredEmployees.map((emp) => (
                         <div
                             key={emp.id}

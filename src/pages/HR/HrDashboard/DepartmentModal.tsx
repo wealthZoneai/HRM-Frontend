@@ -8,11 +8,11 @@ import {
   CartesianGrid,
   LineChart,
   Line,
-  PieChart, // Added for new chart type
+  PieChart, 
   Pie,
   Cell,
-  Tooltip, // Added for chart interaction
-  Legend, // Added for chart legend
+  Tooltip, 
+  Legend,
 } from "recharts";
 
 interface Props {
@@ -37,10 +37,11 @@ const KEY_METRICS = [
 ];
 
 
+// --- FIXED FULLY RESPONSIVE MOBILE VERSION ---
+
 export default function DepartmentModal({ open, onClose, dept }: Props) {
   if (!open || !dept) return null;
 
-  // Pie chart helper for tooltips
   const renderCustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -54,55 +55,72 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
     return null;
   };
 
-
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-999 px-4">
-      {/* Modal Container: Max height, scrollable content */}
-      <div 
-        className="bg-white w-full max-w-5xl rounded-2xl shadow-2xl relative 
-                   max-h-[90vh] overflow-hidden" // FIX: Max height and overflow wrapper
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-3">
+
+      {/* MODAL CONTAINER (RESPONSIVE FIX) */}
+      <div
+        className="
+          bg-white w-full max-w-5xl rounded-2xl shadow-2xl relative 
+          max-h-[93vh] overflow-hidden 
+          sm:max-w-4xl 
+          xs:max-w-full xs:rounded-xl
+        "
       >
-        
-        {/* Scrollable Content Area */}
-        <div className="p-6 md:p-8 overflow-y-auto max-h-[90vh]"> 
+        {/* SCROLLABLE AREA */}
+        <div className="p-4 sm:p-6 md:p-8 overflow-y-auto max-h-[93vh] no-scrollbar">
 
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 text-gray-500 hover:text-black z-10 p-2"
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 text-gray-500 hover:text-black z-10 p-2"
           >
             <span className="text-xl font-medium">✕</span>
           </button>
 
           {/* Header */}
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1">
             {dept.name}
           </h2>
-          <p className="text-lg text-blue-600 font-medium border-b pb-4 mb-8">
+          <p className="text-base sm:text-lg text-blue-600 font-medium border-b pb-3 mb-6 sm:mb-8">
             Detailed Departmental Insights Dashboard
           </p>
 
-          {/* 1. Key Performance Indicators (KPIs) */}
+          {/* KEY METRICS */}
           <div className="mb-10">
-            <h3 className="text-xl font-semibold text-gray-700 mb-4">Key HR Metrics 📊</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">Key HR Metrics 📊</h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               {KEY_METRICS.map((metric) => (
-                <div key={metric.label} className="p-5 rounded-xl bg-white border border-gray-200 shadow-sm transition hover:shadow-md">
-                  <p className="text-sm font-medium text-gray-500">{metric.label}</p>
-                  <p className={`text-3xl font-bold mt-1 ${metric.color}`}>{metric.value}</p>
-                  <p className="text-xs text-gray-400 mt-2">{metric.description}</p>
+                <div
+                  key={metric.label}
+                  className="p-4 sm:p-5 rounded-xl bg-white border border-gray-200 shadow-sm 
+                             transition hover:shadow-md"
+                >
+                  <p className="text-xs sm:text-sm font-medium text-gray-500">
+                    {metric.label}
+                  </p>
+                  <p className={`text-xl sm:text-3xl font-bold mt-1 ${metric.color}`}>
+                    {metric.value}
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-gray-400 mt-2">
+                    {metric.description}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 2. Charts Section (Grid Layout) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            {/* A. Headcount Breakdown (New Pie Chart) */}
-            <div className="bg-gray-50 rounded-xl p-5 shadow-lg border border-gray-100">
-              <h3 className="text-lg font-semibold mb-3 text-gray-700">Headcount Breakdown by Role</h3>
-              <div className="w-full h-80">
+          {/* CHART GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+
+            {/* PIE CHART */}
+            <div className="bg-gray-50 rounded-xl p-4 sm:p-5 shadow-lg border border-gray-100">
+              <h3 className="text-lg font-semibold mb-3 text-gray-700">
+                Headcount Breakdown by Role
+              </h3>
+
+              <div className="w-full h-64 sm:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -111,61 +129,66 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
+                      innerRadius={45}
+                      outerRadius={85}
                       paddingAngle={5}
-                      fill="#8884d8"
                     >
                       {HEADCOUNT_DATA.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        <Cell key={index} fill={entry.color} />
                       ))}
                     </Pie>
+
+                    {/* MOBILE: LEGEND MOVES BOTTOM */}
+                    <Legend
+                      layout="horizontal"
+                      verticalAlign="bottom"
+                      align="center"
+                      wrapperStyle={{ paddingTop: 10 }}
+                    />
+
                     <Tooltip content={renderCustomTooltip} />
-                    <Legend layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ paddingLeft: '20px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* B. Productivity Chart (Improved Bar Chart) */}
-            <div className="bg-gray-50 rounded-xl p-5 shadow-lg border border-gray-100">
+            {/* PRODUCTIVITY BAR CHART */}
+            <div className="bg-gray-50 rounded-xl p-4 sm:p-5 shadow-lg border border-gray-100">
               <h3 className="text-lg font-semibold mb-3 text-gray-700">Monthly Productivity Score 📈</h3>
-              <div className="w-full h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dept.productivityData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+
+              <div className="w-full h-64 sm:h-80">
+                <ResponsiveContainer>
+                  <BarChart data={dept.productivityData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
                     <XAxis dataKey="month" stroke="#6b7280" tickLine={false} axisLine={false} />
                     <YAxis stroke="#6b7280" tickLine={false} axisLine={false} />
-                    <Tooltip 
-                       contentStyle={{ border: 'none', borderRadius: '4px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }} 
-                       labelStyle={{ fontWeight: 'bold', color: '#1f2937' }}
-                    />
-                    <Bar dataKey="score" fill="#1D4ED8" radius={[8, 8, 0, 0]} barSize={20} />
+                    <Tooltip />
+                    <Bar dataKey="score" fill="#1D4ED8" radius={[8, 8, 0, 0]} barSize={22} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* C. Attendance Chart (Improved Line Chart) */}
-            <div className="lg:col-span-2 bg-gray-50 rounded-xl p-5 shadow-lg border border-gray-100">
-              <h3 className="text-lg font-semibold mb-3 text-gray-700">Daily Attendance Rate (Last 30 Days) 📅</h3>
-              <div className="w-full h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={dept.attendanceData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+            {/* ATTENDANCE LINE CHART */}
+            <div className="lg:col-span-2 bg-gray-50 rounded-xl p-4 sm:p-5 shadow-lg border border-gray-100">
+              <h3 className="text-lg font-semibold mb-3 text-gray-700">
+                Daily Attendance Rate (Last 30 Days) 📅
+              </h3>
+
+              <div className="w-full h-64 sm:h-80">
+                <ResponsiveContainer>
+                  <LineChart data={dept.attendanceData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="day" stroke="#6b7280" tickLine={false} axisLine={false} />
                     <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={[70, 100]} />
-                    <Tooltip 
-                       contentStyle={{ border: 'none', borderRadius: '4px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }} 
-                       labelStyle={{ fontWeight: 'bold', color: '#1f2937' }}
-                    />
+                    <Tooltip />
                     <Line
                       type="monotone"
                       dataKey="present"
-                      stroke="#059669" // Green
+                      stroke="#059669"
                       strokeWidth={3}
-                      dot={{ r: 4, fill: '#059669' }}
-                      activeDot={{ r: 8, strokeWidth: 2, stroke: '#10B981' }}
+                      dot={{ r: 4 }}
+                      activeDot={{ r: 7 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -174,8 +197,7 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
 
           </div>
 
-          {/* Spacer to ensure the last chart is not cut off by padding/border */}
-          <div className="h-4"></div> 
+          <div className="h-4"></div>
         </div>
       </div>
     </div>
