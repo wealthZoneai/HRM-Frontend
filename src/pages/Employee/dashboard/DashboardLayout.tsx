@@ -125,7 +125,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
 
         {/* Menu Items */}
-        <div className="flex-1 w-full overflow-y-auto no-scrollbar  relative z-20">
+        <div className="flex-1 w-full  overflow-y-auto no-scrollbar  relative z-20">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
 

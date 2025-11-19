@@ -25,7 +25,7 @@ const STATUS_CONFIG = {
 
 export default function LeaveRequests() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center font-sans text-stone-800">
+    <div className="max-h-[700px] bg-white flex items-center justify-center font-sans text-stone-800">
 
       {/* Main Card */}
       <div className="h-full w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">

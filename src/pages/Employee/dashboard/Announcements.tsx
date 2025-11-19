@@ -54,7 +54,7 @@ export default function Announcements() {
   const [selected, setSelected] = useState<Announcement | null>(null);
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center  font-sans text-stone-800" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="max-h-[700px] bg-white flex items-center justify-center  font-sans text-stone-800" style={{ fontFamily: "'Inter', sans-serif" }}>
       
       {/* Main Card Container */}
       <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">

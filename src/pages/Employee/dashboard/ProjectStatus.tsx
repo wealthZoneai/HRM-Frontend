@@ -15,7 +15,7 @@ export default function ProjectStatus() {
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center font-sans text-stone-800">
+    <div className="max-h-[700px] bg-white flex items-center justify-center font-sans text-stone-800">
 
       {/* Main Card */}
       <div className="w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden p-6 md:p-8 h-[650px] flex flex-col">
