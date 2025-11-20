@@ -17,7 +17,7 @@ export interface DeptDataItem {
   leads: number;
   productivityData: any[];
   attendanceData: any[];
-  [key: string]: any; // <-- Add this line
+  [key: string]: any; 
 }
 
 
@@ -65,10 +65,14 @@ export default function DeptDonutChart({ data }: Props) {
                   outerRadius={120}
                   dataKey="value"
                   cursor="pointer"
+                  stroke="none"
+                  isAnimationActive={false}
                   onClick={(e) => openModal(e)}
                 >
                   {data.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    <Cell key={i} fill={COLORS[i % COLORS.length]}
+                    className="outline-none focus:outline-none"
+                    />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />

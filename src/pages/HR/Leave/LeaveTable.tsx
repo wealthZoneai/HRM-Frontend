@@ -30,7 +30,7 @@ const statusColors: Record<LeaveStatus, string> = {
 
 const LeaveTableResponsive: React.FC<Props> = ({ data, onView }) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 overflow-y-auto max-h-[50vh] no-scrollbar">
       {/* ------------------ DESKTOP / TABLET TABLE (md+) ------------------ */}
       <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">

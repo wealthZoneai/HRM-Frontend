@@ -15,6 +15,7 @@ import {
 
 import Logo from "../../assets/white_logo.png";
 import HrTopbar from "../../components/HrTopbar";
+import LogoutModal from "../../components/LogoutModal";
 
 interface HRLayoutProps {
   children: React.ReactNode;
@@ -23,12 +24,12 @@ interface HRLayoutProps {
 export default function HRLayout({ children }: HRLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [openLogout, setOpenLogout] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const currentUser = {
     name: "Raviteja",
-    id: "WZG-AI-0029"
+    id: "WZG-AI-0029",
   };
 
   const navItems = [
@@ -42,7 +43,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden"> 
+    <div className="flex h-screen overflow-hidden">
 
       {/* MOBILE MENU BUTTON */}
       <button
@@ -72,22 +73,13 @@ export default function HRLayout({ children }: HRLayoutProps) {
         `}
       >
         {/* Logo */}
-        <div className="w-full flex items-center justify-center  border-b border-white/10 relative">
-          <img src={Logo} className="h-25 w-30 brightness-0 invert" />
-
-          {/* <button
-            onClick={() => setIsSidebarOpen((o) => !o)}
-            className="hidden md:flex absolute right-[-12px] bg-white text-blue-700 rounded-full p-1 shadow border"
-          >
-            <FiChevronLeft size={18} />
-          </button> */}
+        <div className="w-full flex items-center justify-center border-b border-white/10 relative py-4">
+          <img src={Logo} className="h-10 brightness-0 invert" />
 
           <button
             onClick={() => setIsSidebarOpen(false)}
             className="md:hidden absolute right-4 text-white"
-          >
-            {/* <FiChevronLeft size={22} /> */}
-          </button>
+          ></button>
         </div>
 
         {/* Menu Items */}
@@ -103,20 +95,22 @@ export default function HRLayout({ children }: HRLayoutProps) {
                   setIsSidebarOpen(false);
                 }}
                 className={`
-                  w-full flex flex-col items-center py-4 cursor-pointer
-                  transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-white text-[#0E4DB5]"
-                      : "text-white/80 hover:bg-white/20 hover:text-white"
+                  w-full cursor-pointer transition-all duration-400
+                  ${isActive
+                    ? "bg-white text-[#0E4DB5] flex flex-row items-center justify-center gap-2 py-4"
+                    : "text-white/80 hover:bg-white/20 hover:text-white flex flex-col items-center py-4"
                   }
                 `}
               >
-                <div className={`mb-1 ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
+                {/* ICON */}
+                <div className={`${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
                   {item.icon}
                 </div>
 
-                <span className={`text-sm ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
+                {/* TEXT */}
+                <span
+                  className={`text-sm ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}
+                >
                   {item.name}
                 </span>
               </div>
@@ -129,13 +123,8 @@ export default function HRLayout({ children }: HRLayoutProps) {
 
         {/* Logout */}
         <div
-          onClick={() => {
-            localStorage.removeItem("authToken");
-            localStorage.removeItem("role");
-            navigate("/login");
-            setIsSidebarOpen(false);
-          }}
-          className="w-full py-5 flex flex-col items-center cursor-pointer text-white/90 hover:bg-white/20 transition"
+          onClick={() => setOpenLogout(true)}
+          className="w-full py-2 flex justify-center gap-2 items-center cursor-pointer text-white/90 hover:bg-white/20 transition"
         >
           <FiLogOut size={22} />
           <span className="text-sm">Logout</span>
@@ -144,14 +133,22 @@ export default function HRLayout({ children }: HRLayoutProps) {
 
       {/* MAIN AREA */}
       <div className="flex-1 flex flex-col">
-
         <HrTopbar name={currentUser.name} id={currentUser.id} />
 
-        {/* ONLY CONTENT SCROLLS */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        {/* CONTENT AREA SCROLLS ONLY */}
+        <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
+
+      <LogoutModal
+        isOpen={openLogout}
+        onClose={() => setOpenLogout(false)}
+        onConfirm={() => {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("role");
+          navigate("/login");
+          setIsSidebarOpen(false);
+        }}
+      />
     </div>
   );
 }
