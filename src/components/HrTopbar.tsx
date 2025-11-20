@@ -1,5 +1,6 @@
-import { Bell, User, CheckCircle } from "lucide-react";
+import { Bell, CheckCircle } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import myPic from "../assets/my_pic.jpg";
 
 interface TopbarProps {
   name: string;
@@ -171,8 +172,8 @@ export default function HrTopbar({ name, id }: TopbarProps) {
 
           {/* PROFILE */}
           <div className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-100 cursor-pointer">
-            <div className="p-2 rounded-full bg-gray-100">
-              <User size={18} className="text-gray-700" />
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+              <img src={myPic} alt="Profile" className="w-full h-full object-cover" />
             </div>
 
             <div className="hidden sm:flex flex-col leading-tight">

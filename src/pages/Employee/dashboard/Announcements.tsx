@@ -1,6 +1,6 @@
-import  { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, X, Calendar, Bell, Info, Clock } from 'lucide-react';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MapPin, X, Calendar, Bell, Info, Clock } from "lucide-react";
 
 // --- Mock Data ---
 const ANNOUNCEMENTS = [
@@ -11,9 +11,10 @@ const ANNOUNCEMENTS = [
     month: "Oct",
     event: "Marketing Strategy",
     time: "10:00 AM",
-    description: "Quarterly review of campaign performance and brainstorming session for the upcoming holiday season strategies.",
+    description:
+      "Quarterly review of campaign performance and brainstorming session for the upcoming holiday season strategies.",
     location: "Executive Conference Room",
-    type: "Strategy"
+    type: "Strategy",
   },
   {
     id: 2,
@@ -22,9 +23,10 @@ const ANNOUNCEMENTS = [
     month: "Oct",
     event: "Design System Review",
     time: "11:00 AM",
-    description: "Critique session for the new mobile design prototypes. Please bring your updated Figma files.",
+    description:
+      "Critique session for the new mobile design prototypes. Please bring your updated Figma files.",
     location: "Design Studio / Figma Live",
-    type: "Design"
+    type: "Design",
   },
   {
     id: 3,
@@ -33,9 +35,10 @@ const ANNOUNCEMENTS = [
     month: "Oct",
     event: "Engineering Sync",
     time: "12:30 PM",
-    description: "Full stack team sync to discuss API architecture changes and workflow division for the Q4 sprint.",
+    description:
+      "Full stack team sync to discuss API architecture changes and workflow division for the Q4 sprint.",
     location: "Zoom Meeting Link",
-    type: "Dev"
+    type: "Dev",
   },
   {
     id: 4,
@@ -44,9 +47,10 @@ const ANNOUNCEMENTS = [
     month: "Oct",
     event: "Client Demo: Alpha",
     time: "04:00 PM",
-    description: "Monthly product demo review with the Alpha Corp stakeholders. Casual business attire required.",
+    description:
+      "Monthly product demo review with the Alpha Corp stakeholders. Casual business attire required.",
     location: "Conference Room A",
-    type: "Client"
+    type: "Client",
   },
 ];
 
@@ -54,16 +58,19 @@ export default function Announcements() {
   const [selected, setSelected] = useState<Announcement | null>(null);
 
   return (
-    <div className="max-h-[700px] bg-white flex items-center justify-center  font-sans text-stone-800" style={{ fontFamily: "'Inter', sans-serif" }}>
-      
+    <div
+      className="max-h-[700px] bg-white flex items-center justify-center  font-sans text-stone-800"
+      style={{ fontFamily: "'Inter', sans-serif" }}
+    >
       {/* Main Card Container */}
       <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
-        
         {/* Header */}
         <div className="px-6 py-8 md:px-8 border-b border-stone-100 flex justify-between items-end bg-white">
           <div>
             {/* <h2 className="text-sm font-bold tracking-widest uppercase text-blue-900/60 mb-1">Updates</h2> */}
-            <h1 className="text-3xl md:text-4xl font-bold text-stone-900 tracking-tight">Announcements</h1>
+            <h1 className="text-3xl md:text-2xl font-bold text-stone-900 tracking-tight">
+              Announcements
+            </h1>
           </div>
           <div className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-stone-50 text-stone-400 border border-stone-100">
             <Bell size={18} />
@@ -74,7 +81,11 @@ export default function Announcements() {
         <div className="max-h-[450px] overflow-y-auto custom-scrollbar">
           <ul className="divide-y divide-stone-50">
             {ANNOUNCEMENTS.map((item) => (
-              <ListItem key={item.id} item={item} onClick={() => setSelected(item)} />
+              <ListItem
+                key={item.id}
+                item={item}
+                onClick={() => setSelected(item)}
+              />
             ))}
           </ul>
         </div>
@@ -114,7 +125,7 @@ interface ListItemProps {
 
 function ListItem({ item, onClick }: ListItemProps) {
   return (
-    <motion.li 
+    <motion.li
       layoutId={`card-${item.id}`}
       onClick={onClick}
       initial={{ opacity: 0, y: 10 }}
@@ -123,7 +134,9 @@ function ListItem({ item, onClick }: ListItemProps) {
     >
       {/* Date Component - Classic Typography */}
       <div className="flex flex-col items-center justify-center w-14 min-w-14">
-        <span className="text-xs font-bold tracking-wider text-stone-400 uppercase group-hover:text-blue-400 transition-colors">{item.day}</span>
+        <span className="text-xs font-bold tracking-wider text-stone-400 uppercase group-hover:text-blue-400 transition-colors">
+          {item.day}
+        </span>
         <span className="text-2xl font-bold text-stone-800 group-hover:text-blue-900 transition-colors">
           {item.date}
         </span>
@@ -137,16 +150,16 @@ function ListItem({ item, onClick }: ListItemProps) {
         <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
           {item.event}
         </h3>
-<div className="flex items-center gap-3 mt-1 text-sm text-stone-500">
-  <span className="flex items-center gap-1 group-hover:text-blue-800/70 transition-colors">
-    <Clock size={14} className="text-stone-400" />
-    <span className="truncate">{item.time}</span>
-  </span>
-  <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-stone-300"></span>
-  <span className="hidden sm:flex items-center gap-1 truncate group-hover:text-blue-800/70 transition-colors">
-     {item.type}
-  </span>
-</div>
+        <div className="flex items-center gap-3 mt-1 text-sm text-stone-500">
+          <span className="flex items-center gap-1 group-hover:text-blue-800/70 transition-colors">
+            <Clock size={14} className="text-stone-400" />
+            <span className="truncate">{item.time}</span>
+          </span>
+          <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-stone-300"></span>
+          <span className="hidden sm:flex items-center gap-1 truncate group-hover:text-blue-800/70 transition-colors">
+            {item.type}
+          </span>
+        </div>
       </div>
 
       {/* Action Icon */}
@@ -182,10 +195,14 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
               {/* Modal Header Image/Pattern Placeholder */}
               <div className="h-24 bg-linear-to-r from-stone-100 to-stone-200 flex items-center justify-between px-6 relative">
                 <div className="flex flex-col">
-                    <span className="text-4xl font-bold text-stone-400 opacity-50">{selected.date}</span>
-                    <span className="text-xs uppercase tracking-widest text-stone-500 font-bold">{selected.month}</span>
+                  <span className="text-4xl font-bold text-stone-400 opacity-50">
+                    {selected.date}
+                  </span>
+                  <span className="text-xs uppercase tracking-widest text-stone-500 font-bold">
+                    {selected.month}
+                  </span>
                 </div>
-                <button 
+                <button
                   onClick={onClose}
                   className="bg-white/50 hover:bg-white p-2 rounded-full transition-colors text-stone-600 hover:text-blue-900"
                 >
@@ -195,7 +212,7 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
 
               {/* Modal Content */}
               <div className="p-6 md:p-8">
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
@@ -203,11 +220,11 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
                   <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-xs font-bold uppercase tracking-wider text-blue-800 mb-3">
                     {selected.type}
                   </span>
-                  
+
                   <h2 className="text-2xl font-bold text-stone-900 mb-4 leading-tight">
                     {selected.event}
                   </h2>
-                  
+
                   <p className="text-stone-600 leading-relaxed mb-8">
                     {selected.description}
                   </p>
@@ -216,16 +233,25 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
                     <div className="flex items-start gap-3">
                       <Calendar className="text-stone-400 mt-0.5" size={18} />
                       <div>
-                        <p className="text-sm font-bold text-stone-900">Date & Time</p>
-                        <p className="text-sm text-stone-500">{selected.day}, {selected.month} {selected.date} at {selected.time}</p>
+                        <p className="text-sm font-bold text-stone-900">
+                          Date & Time
+                        </p>
+                        <p className="text-sm text-stone-500">
+                          {selected.day}, {selected.month} {selected.date} at{" "}
+                          {selected.time}
+                        </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start gap-3">
                       <MapPin className="text-stone-400 mt-0.5" size={18} />
                       <div>
-                        <p className="text-sm font-bold text-stone-900">Location</p>
-                        <p className="text-sm text-stone-500">{selected.location}</p>
+                        <p className="text-sm font-bold text-stone-900">
+                          Location
+                        </p>
+                        <p className="text-sm text-stone-500">
+                          {selected.location}
+                        </p>
                       </div>
                     </div>
                   </div>

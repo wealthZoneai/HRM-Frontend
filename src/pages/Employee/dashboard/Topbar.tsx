@@ -1,6 +1,7 @@
 import { Bell} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {  useRef, useEffect } from "react";
+import myPic from "../../../assets/my_pic.jpg";
 
 interface TopbarProps {
   name: string;
@@ -15,15 +16,15 @@ function toTitleCase(str: string): string {
   );
 }
 
-function getInitials(name: string): string {
-  if (!name) return "U";
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
+// function getInitials(name: string): string {
+//   if (!name) return "U";
+//   return name
+//     .split(" ")
+//     .map((n) => n[0])
+//     .slice(0, 2)
+//     .join("")
+//     .toUpperCase();
+// }
 
 const getGreeting = (): string => {
   const hour = new Date().getHours();
@@ -61,7 +62,7 @@ export default function Topbar({ name, id }: TopbarProps) {
   }, []);
 
   const formattedName = toTitleCase(name);
-  const userInitials = getInitials(formattedName);
+  // const userInitials = getInitials(formattedName);
   const greeting = getGreeting();
 
   return (
@@ -104,8 +105,8 @@ export default function Topbar({ name, id }: TopbarProps) {
             title="View profile"
             className="flex items-center gap-3 cursor-pointer select-none"
           >
-            <div className="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold shadow-md">
-              {userInitials}
+            <div className="h-10 w-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center font-semibold shadow-md">
+              <img src={myPic} alt="Profile" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
