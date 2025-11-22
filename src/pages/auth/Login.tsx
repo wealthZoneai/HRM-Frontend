@@ -31,11 +31,10 @@ const Login: React.FC = () => {
       return;
     }
       // navigate(`/hr/dashboard`);
+      navigate(`/employee/dashboard`);
 
     // if (role === "employee") {
-      navigate(`/employee/dashboard`);
     // } else if (role === "hr") {
-    //   navigate(`/hr/dashboard`);
     // }
   };
 
