@@ -1,8 +1,24 @@
-import { useState } from 'react';
-import { Pencil, X, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Pencil, X, Check, } from 'lucide-react';
 import { motion } from 'framer-motion';
+// import axios from 'axios'; // Import axios for API call (Commented out as requested)
 
-// --- Reusable Helper Components (from previous enhancement) ---
+// --- Helper Data and Components ---
+
+/**
+ * Mock data to simulate the response from an external API call.
+ */
+const DUMMY_JOB_DATA = {
+  jobTitle: 'Senior Product Manager',
+  department: 'Product',
+  manager: 'Jane Foster',
+  employmentType: 'Full time',
+  startDate: '2025-10-26',
+  location: 'Head Office',
+  workEmail: 'jane.foster@company.com',
+  employeeId: 'EMP-1002',
+  jobDescription: `The Senior Product Manager is responsible for leading the product lifecycle from conception to launch, focusing on market needs, strategy, and execution. This role involves close collaboration with engineering, design, and marketing teams to deliver exceptional user value and achieve business objectives. Key responsibilities include defining roadmaps, analyzing metrics, and driving feature development.`,
+};
 
 // Helper function to format the date for display
 function formatDateForDisplay(dateStr: string) {
@@ -27,6 +43,13 @@ const DisplayField = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
+// Base Tailwind class for enhanced input/select styling (better focus UI)
+const INPUT_CLASS =
+  'block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
+const TEXTAREA_CLASS =
+  'block w-full rounded-lg border border-slate-300 p-3 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
+
+
 /**
  * A reusable component for an input field in the edit view.
  */
@@ -41,7 +64,7 @@ const EditField = ({
   name: string;
   value: string;
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => void;
   type?: string;
 }) => (
@@ -58,7 +81,7 @@ const EditField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+      className={INPUT_CLASS}
     />
   </div>
 );
@@ -77,7 +100,7 @@ const EditSelectField = ({
   name: string;
   value: string;
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => void;
   children: React.ReactNode;
 }) => (
@@ -93,34 +116,90 @@ const EditSelectField = ({
       name={name}
       value={value}
       onChange={onChange}
-      className="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+      className={INPUT_CLASS}
     >
       {children}
     </select>
   </div>
 );
 
+/**
+ * Simple skeleton component to display while loading data.
+ */
+const SkeletonLoader = () => (
+  <div className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200 animate-pulse">
+    <div className="h-6 w-48 bg-slate-200 rounded mb-8"></div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-sm">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="space-y-3">
+          <div className="h-3 w-1/4 bg-slate-100 rounded"></div>
+          <div className="h-10 bg-slate-200 rounded-lg"></div>
+        </div>
+      ))}
+    </div>
+    <div className="mt-6 pt-6 border-t border-slate-100">
+      <div className="h-3 w-1/4 bg-slate-100 rounded mb-2"></div>
+      <div className="space-y-2">
+        <div className="h-4 w-full bg-slate-200 rounded-lg"></div>
+        <div className="h-4 w-11/12 bg-slate-200 rounded-lg"></div>
+        <div className="h-4 w-10/12 bg-slate-200 rounded-lg"></div>
+      </div>
+    </div>
+  </div>
+);
+
+
 // --- Main Component ---
 
 const JobInformation = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    jobTitle: 'Senior product manager',
-    department: 'Product',
-    manager: 'David Chen',
-    employmentType: 'Full time',
-    startDate: '2025-10-26',
-    location: 'Head Office',
-    workEmail: 'david.chen@company.com',
-    employeeId: 'EMP-1001',
-    jobDescription: `Our recruitment process is designed to be transparent, fair, and
-efficient — ensuring every candidate gets the opportunity to shine.
-Whether you're a fresher or an experienced professional, we offer
-roles that help you learn, grow, and make an impact.`,
-  });
+  
+  // Initial state structure (will be populated by DUMMY_JOB_DATA)
+  const initialFormState = {
+    jobTitle: '',
+    department: '',
+    manager: '',
+    employmentType: '',
+    startDate: '',
+    location: '',
+    workEmail: '',
+    employeeId: '',
+    jobDescription: '',
+  };
 
-  // Store a copy of the original data to reset to on cancel
-  const [originalData, setOriginalData] = useState(formData);
+  const [formData, setFormData] = useState(initialFormState);
+  const [originalData, setOriginalData] = useState(initialFormState);
+
+  // Effect to simulate data fetching on component mount
+  useEffect(() => {
+    const fetchJobData = async () => {
+      // console.log('Simulating API call to fetch job data...');
+
+      // --- Start of Axios Simulation (Commented out as requested) ---
+      /*
+      try {
+        // In a real application, you'd use a dynamic ID or token
+        // const response = await axios.get('/api/job-info/current-user'); 
+        // setFormData(response.data);
+        // setOriginalData(response.data);
+      } catch (error) {
+        // console.error('Error fetching data:', error);
+      }
+      */
+      // --- End of Axios Simulation ---
+
+      // Using setTimeout to simulate network delay (1.5 seconds)
+      setTimeout(() => {
+        setFormData(DUMMY_JOB_DATA);
+        setOriginalData(DUMMY_JOB_DATA);
+        setIsLoading(false);
+      }, 1500); 
+    };
+
+    fetchJobData();
+  }, []);
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -141,6 +220,7 @@ roles that help you learn, grow, and make an impact.`,
     e.preventDefault();
     // Here you would typically make an API call to save the data
     console.log('Updated Job Info:', formData);
+    // Simulating save success
     setIsEditing(false);
     setOriginalData(formData);
   };
@@ -150,12 +230,16 @@ roles that help you learn, grow, and make an impact.`,
     setIsEditing(false);
   };
 
+  if (isLoading) {
+    return <SkeletonLoader />;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200"
+      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200 max-w-4xl mx-auto"
     >
       {/* --- Component Header --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
@@ -163,7 +247,7 @@ roles that help you learn, grow, and make an impact.`,
         {!isEditing && (
           <button
             onClick={handleEdit}
-            className="inline-flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 w-full sm:w-auto justify-center"
+            className="inline-flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 w-full sm:w-auto justify-center border border-blue-200"
           >
             <Pencil size={16} />
             Edit Job Information
@@ -189,7 +273,7 @@ roles that help you learn, grow, and make an impact.`,
                 onChange={handleChange}
               >
                 <option value="Product">Product</option>
-                <option value="Engineering">Engineering</option>
+                <option value="Software">IT & Software</option>
                 <option value="Design">Design</option>
                 <option value="Marketing">Marketing</option>
                 <option value="Sales">Sales</option>
@@ -237,6 +321,7 @@ roles that help you learn, grow, and make an impact.`,
                 value={formData.workEmail}
                 onChange={handleChange}
               />
+              {/* Employee ID is displayed read-only even in edit mode */}
               <DisplayField label="Employee ID" value={formData.employeeId} />
             </>
           ) : (
@@ -260,7 +345,7 @@ roles that help you learn, grow, and make an impact.`,
         </div>
 
         {/* --- Job Description Section --- */}
-        <div className="mt-6 pt-6 border-t">
+        <div className="mt-6 pt-6 border-t border-slate-200">
           {isEditing ? (
             <div>
               <label
@@ -275,7 +360,7 @@ roles that help you learn, grow, and make an impact.`,
                 value={formData.jobDescription}
                 onChange={handleChange}
                 rows={5}
-                className="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className={TEXTAREA_CLASS}
               />
             </div>
           ) : (
@@ -292,18 +377,18 @@ roles that help you learn, grow, and make an impact.`,
 
         {/* --- Form Actions --- */}
         {isEditing && (
-          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-8 pt-6 border-t">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-8 pt-6 border-t border-slate-200">
             <button
               type="button"
               onClick={handleCancel}
-              className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100"
+              className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 border border-slate-300"
             >
               <X size={16} />
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md transition-colors hover:bg-blue-700"
             >
               <Check size={16} />
               Save Changes

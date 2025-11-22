@@ -15,7 +15,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[999] px-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-999 px-4">
 
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 relative animate-slideUp">
 
@@ -60,7 +60,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
           <button
             onClick={onConfirm}
             className="
-              flex-1 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 
+              flex-1 py-2 rounded-xl bg-linear-to-r from-red-500 to-red-600 
               text-white font-semibold shadow hover:from-red-600 hover:to-red-700 
               transition
             "

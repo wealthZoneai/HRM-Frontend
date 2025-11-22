@@ -15,6 +15,7 @@ import {
 import Topbar from "./Topbar";
 import Logo from "../../../assets/white_logo.png";
 import SidebarImage from "../../../assets/Sidebar.png";
+import LogoutModal from "../../../components/LogoutModal";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -30,6 +31,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
   const navItems: NavItem[] = [
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/employee/dashboard" },
@@ -173,10 +175,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Logout */}
         <div
           onClick={() => {
-            // localStorage.removeItem("authToken");
-            // localStorage.removeItem("role");
-            navigate("/login");
-            // setIsSidebarOpen(false);
+            setIsLogoutOpen(true);
           }}
           className="w-full py-2 flex flex-col items-center cursor-pointer text-white/90 hover:bg-white/20 transition z-20"
         >
@@ -184,6 +183,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <span className="text-sm">Logout</span>
         </div>
       </div>
+
+      {/* Logout modal for sidebar */}
+      <LogoutModal
+        isOpen={isLogoutOpen}
+        onClose={() => setIsLogoutOpen(false)}
+        onConfirm={() => {
+          try {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("role");
+          } catch (e) {}
+          setIsLogoutOpen(false);
+          navigate("/login");
+        }}
+      />
 
       {/* MAIN AREA */}
       <div className="flex-1 flex flex-col">

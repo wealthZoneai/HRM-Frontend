@@ -1,6 +1,8 @@
-import { Bell} from "lucide-react";
+import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {  useRef, useEffect } from "react";
+import DefaultAvatar from "../../../assets/my_pic.jpg";
+import { useRef, useEffect, useState } from "react";
+import LogoutModal from "../../../components/LogoutModal";
 
 interface TopbarProps {
   name: string;
@@ -15,15 +17,16 @@ function toTitleCase(str: string): string {
   );
 }
 
-function getInitials(name: string): string {
-  if (!name) return "U";
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
+// function getInitials(name: string): string {
+
+//   if (!name) return "U";
+//   return name
+//     .split(" ")
+//     .map((n) => n[0])
+//     .slice(0, 2)
+//     .join("")
+//     .toUpperCase();
+// }
 
 const getGreeting = (): string => {
   const hour = new Date().getHours();
@@ -34,6 +37,7 @@ const getGreeting = (): string => {
 
 export default function Topbar({ name, id }: TopbarProps) {
   const navigate = useNavigate();
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +45,20 @@ export default function Topbar({ name, id }: TopbarProps) {
   const handleProfileNavigate = () => {
     navigate("/employee/profile");
     // setIsDropdownOpen(false);
+  };
+
+  const handleLogoutConfirm = () => {
+    // Clear tokens/local state and navigate to login
+    try {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("role");
+    } catch (e) {
+      // ignore
+    }
+    setIsLogoutOpen(false);
+    navigate("/login");
   };
   // const handleLogout = () => {
   //   console.log("Logout...");
@@ -61,7 +79,7 @@ export default function Topbar({ name, id }: TopbarProps) {
   }, []);
 
   const formattedName = toTitleCase(name);
-  const userInitials = getInitials(formattedName);
+  // const userInitials = getInitials(formattedName);
   const greeting = getGreeting();
 
   return (
@@ -94,22 +112,42 @@ export default function Topbar({ name, id }: TopbarProps) {
 
         {/* Profile Avatar + Dropdown */}
         <div className="relative" ref={dropdownRef}>
-          <div
-            onClick={handleProfileNavigate}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") handleProfileNavigate();
-            }}
-            role="button"
-            tabIndex={0}
-            title="View profile"
-            className="flex items-center gap-3 cursor-pointer select-none"
-          >
-            <div className="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold shadow-md">
-              {userInitials}
+          <div className="flex items-center gap-3">
+            <div
+              onClick={handleProfileNavigate}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleProfileNavigate();
+              }}
+              role="button"
+              tabIndex={0}
+              title="View profile"
+              className="flex items-center gap-3 cursor-pointer select-none"
+            >
+              <img
+                src={DefaultAvatar}
+                alt="Profile"
+                className="h-10 w-10 rounded-full object-cover shadow-md"
+              />
             </div>
+
+            {/* Logout trigger */}
+            {/* <button
+              onClick={() => setIsLogoutOpen(true)}
+              title="Logout"
+              className="p-2 rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-150"
+            >
+              <FiLogOut className="h-5 w-5" />
+            </button> */}
           </div>
         </div>
       </div>
+      
+      {/* Logout Modal */}
+      <LogoutModal
+        isOpen={isLogoutOpen}
+        onClose={() => setIsLogoutOpen(false)}
+        onConfirm={handleLogoutConfirm}
+      />
     </div>
   );
 }

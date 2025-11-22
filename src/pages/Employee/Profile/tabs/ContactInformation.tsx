@@ -42,8 +42,11 @@ const ProfileDetails = () => {
     personalMail: "raviteja@gmail.com",
     phone: "123456789",
     empId: "0155565",
-    firstName: "Ravi Teja",
-    lastName: "ID 78564",
+    bloodGroup:"O +ve",
+    alternativeNumber:"0987654321",
+    firstName: "Ravi",
+    middleName:"lorem ipsum",
+    lastName: "Teja",
     dob: "2002-11-10",
     gender: "Male",
   });
@@ -120,6 +123,18 @@ const ProfileDetails = () => {
                 value={data.empId}
                 onChange={handleChange}
               />
+              <EditLineField
+                label="Blood Group"
+                name="bloodgroup"
+                value={data.bloodGroup}
+                onChange={handleChange}
+              />
+              <EditLineField
+                label="Alternative Phone"
+                name="alternative number"
+                value={data.alternativeNumber}
+                onChange={handleChange}
+              />
             </>
           ) : (
             <>
@@ -127,6 +142,8 @@ const ProfileDetails = () => {
               <UnderlineField label="Personal mail ID" value={data.personalMail} />
               <UnderlineField label="Phone number" value={data.phone} />
               <UnderlineField label="Emp ID" value={data.empId} />
+              <UnderlineField label="Blood Group" value={data.bloodGroup} />
+              <UnderlineField label="Alternative Number" value={data.alternativeNumber} />
             </>
           )}
         </div>
@@ -152,6 +169,12 @@ const ProfileDetails = () => {
                 onChange={handleChange}
               />
               <EditLineField
+                label="middle Name"
+                name="middleName"
+                value={data.middleName}
+                onChange={handleChange}
+              />
+              <EditLineField
                 label="Date of Birth"
                 name="dob"
                 value={data.dob}
@@ -168,6 +191,7 @@ const ProfileDetails = () => {
           ) : (
             <>
               <UnderlineField label="First Name" value={data.firstName} />
+              <UnderlineField label="Middle Name" value={data.middleName} />
               <UnderlineField label="Last Name" value={data.lastName} />
               <UnderlineField label="Date of Birth" value={data.dob} />
               <UnderlineField label="Gender" value={data.gender} />
