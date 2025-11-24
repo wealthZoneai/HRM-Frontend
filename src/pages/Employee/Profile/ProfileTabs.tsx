@@ -10,7 +10,7 @@ const tabs = [
   { full: "Job Information", short: "Job Info" },
   { full: "Bank Details", short: "Bank" },
   { full: "Identification", short: "ID" },
-  { full: "PF Details", short: "PF" }
+  // { full: "PF Details", short: "PF" }
 ];
 
 const ProfileTabs = () => {
@@ -34,7 +34,7 @@ const ProfileTabs = () => {
           <button
             key={idx}
             onClick={() => setActive(idx)}
-            className={`px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors min-w-[40px] sm:min-w-0 ${active === idx
+            className={`px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors min-w-10 sm:min-w-0 ${active === idx
                 ? "border-b-2 border-blue-600 text-blue-600 bg-blue-50"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
               }`}
