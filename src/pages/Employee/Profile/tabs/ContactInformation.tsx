@@ -42,10 +42,10 @@ const ProfileDetails = () => {
     personalMail: "raviteja@gmail.com",
     phone: "123456789",
     empId: "0155565",
-    bloodGroup:"O +ve",
-    alternativeNumber:"0987654321",
+    bloodGroup: "O +ve",
+    alternativeNumber: "0987654321",
     firstName: "Ravi",
-    middleName:"lorem ipsum",
+    middleName: "lorem ipsum",
     lastName: "Teja",
     dob: "2002-11-10",
     gender: "Male",
@@ -79,7 +79,7 @@ const ProfileDetails = () => {
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
 
       {/* CONTACT DETAILS */}
-      <div className="border rounded-lg sm:rounded-xl p-3 sm:p-4">
+      <div className="border rounded-lg sm:rounded-xl p-4 sm:p-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
           <h2 className="text-base sm:text-lg font-semibold">Contact Details</h2>
 
@@ -150,7 +150,7 @@ const ProfileDetails = () => {
       </div>
 
       {/* PERSONAL INFO */}
-      <div className="border rounded-lg sm:rounded-xl p-3 sm:p-4">
+      <div className="border rounded-lg sm:rounded-xl p-4 sm:p-4">
         <h2 className="text-base sm:text-lg font-semibold mb-4">Personal Information</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">

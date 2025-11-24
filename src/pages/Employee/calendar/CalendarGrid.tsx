@@ -25,22 +25,17 @@ export default function CalendarGrid({ month, year, events }: Props) {
   return (
     <div>
       {/* Day of the Week Headers */}
-      <div className="grid grid-cols-7 mb-1 md:mb-2">
+      <div className="grid grid-cols-7 mb-2">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <div key={d} className="hidden sm:block text-xs sm:text-sm font-medium text-gray-500 text-center mb-2">
-            {d}
-          </div>
-        ))}
-        {/* Mobile: Show abbreviated day names */}
-        {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
-          <div key={d} className="sm:hidden text-xs font-medium text-gray-500 text-center mb-2">
-            {d}
+          <div key={d} className="text-xs font-semibold text-gray-400 uppercase tracking-wider text-center py-2">
+            <span className="hidden sm:block">{d}</span>
+            <span className="sm:hidden">{d.charAt(0)}</span>
           </div>
         ))}
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+      <div className="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-xl overflow-hidden shadow-sm">
         {grid.map((day, i) => {
           const dateKey = day ? formatDate(year, month, day) : null;
           const dayEvents = events.filter((e) => e.date === dateKey);

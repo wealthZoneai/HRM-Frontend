@@ -45,7 +45,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     //   path: "/employee/notifications",
     // },
 
- 
+
 
     {
       name: "Calendar",
@@ -54,7 +54,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     },
 
     { name: "Payroll", icon: <FiDollarSign size={20} />, path: "/employee/payroll" },
-       {
+    {
       name: "Leaves",
       icon: <FiFileText size={20} />,
       path: "/employee/leave-management",
@@ -78,7 +78,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden"> 
+    <div className="flex h-screen overflow-hidden">
 
       {/* MOBILE MENU BUTTON */}
       <button
@@ -139,20 +139,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   setIsSidebarOpen(false);
                 }}
                 className={`
-                  w-full flex flex-col items-center py-4 cursor-pointer
-                  transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-white text-[#0E4DB5]"
-                      : "text-white/80 hover:bg-white/20 hover:text-white"
+                  w-full cursor-pointer transition-all duration-200
+                  ${isActive
+                    ? "flex flex-row items-center justify-start px-6 py-4 gap-3 bg-white text-[#0E4DB5]"
+                    : "flex flex-col items-center justify-center py-4 text-white/80 hover:bg-white/20 hover:text-white"
                   }
                 `}
               >
-                <div className={`mb-1 ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
+                <div className={`${isActive ? "text-[#0E4DB5]" : "mb-1 text-white/80"}`}>
                   {item.icon}
                 </div>
 
-                <span className={`text-sm ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
+                <span className={`text-sm font-medium ${isActive ? "text-[#0E4DB5]" : "text-white/80"}`}>
                   {item.name}
                 </span>
               </div>
@@ -177,7 +175,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           onClick={() => {
             setIsLogoutOpen(true);
           }}
-          className="w-full py-2 flex flex-col items-center cursor-pointer text-white/90 hover:bg-white/20 transition z-20"
+          className="w-full py-2 flex justify-center gap-2 items-center cursor-pointer text-white/90 hover:bg-white/20 transition z-20"
         >
           <FiLogOut size={22} />
           <span className="text-sm">Logout</span>
@@ -194,7 +192,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("authToken");
             localStorage.removeItem("role");
-          } catch (e) {}
+          } catch (e) { }
           setIsLogoutOpen(false);
           navigate("/login");
         }}

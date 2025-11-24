@@ -1,41 +1,60 @@
+import { Calendar, Activity, AlertCircle } from "lucide-react";
+
 export default function LeaveBalances() {
   const balances = [
     {
       label: "Annual Leave",
       days: 14,
-      icon: "https://img.icons8.com/fluency-systems-regular/48/00A3FF/calendar-week.png",
+      total: 20,
+      icon: Calendar,
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+      border: "border-blue-100",
     },
     {
       label: "Sick Leave",
       days: 8,
-      icon: "https://img.icons8.com/fluency-systems-regular/48/00A3FF/plus-medical.png",
+      total: 12,
+      icon: Activity,
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
+      border: "border-emerald-100",
     },
     {
       label: "Unpaid Leaves",
       days: 2,
-      icon: "https://img.icons8.com/fluency-systems-regular/48/00A3FF/data-in-transit.png",
+      total: 0, // Unpaid usually doesn't have a limit shown this way, but keeping structure
+      icon: AlertCircle,
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      border: "border-amber-100",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
       {balances.map((b) => (
         <div
           key={b.label}
-          className="flex items-center p-3 sm:p-4 md:p-6 bg-white border border-slate-200 rounded-lg sm:rounded-xl shadow-sm"
+          className={`relative overflow-hidden p-6 bg-white border ${b.border} rounded-2xl shadow-sm hover:shadow-md transition-shadow group`}
         >
-          <img
-            src={b.icon}
-            alt={b.label}
-            className="w-8 sm:w-10 h-8 sm:h-10 mr-3 sm:mr-5 opacity-80 shrink-0"
-          />
-          <div className="min-w-0">
-            <p className="font-medium text-slate-600 text-xs sm:text-sm">{b.label}</p>
-            <p className="text-blue-600 text-xl sm:text-2xl md:text-3xl font-bold mt-1">
-              {b.days}
-            </p>
-            <p className="text-xs sm:text-sm text-slate-500">Days</p>
+          <div className="flex justify-between items-start mb-4">
+            <div className={`p-3 rounded-xl ${b.bg} ${b.color}`}>
+              <b.icon size={24} />
+            </div>
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Available</span>
           </div>
+
+          <div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-bold text-gray-900">{b.days}</span>
+              <span className="text-sm text-gray-500 font-medium">Days</span>
+            </div>
+            <p className="text-sm text-gray-500 mt-1 font-medium">{b.label}</p>
+          </div>
+
+          {/* Decorative background circle */}
+          <div className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full ${b.bg} opacity-50 group-hover:scale-110 transition-transform duration-500`} />
         </div>
       ))}
     </div>

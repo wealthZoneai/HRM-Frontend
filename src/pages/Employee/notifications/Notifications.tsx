@@ -10,10 +10,10 @@ export default function Notifications() {
   const filtered = active === "All" ? notificationsData : [];
 
   return (
-      <div className="p-6">
-        <h2 className="text-lg font-semibold mb-1">System Alerts</h2>
-        <NotificationTabs active={active} onChange={setActive} />
-        <NotificationsList data={filtered} />
-      </div>
+    <div className="p-4 sm:p-6">
+      <h2 className="text-base sm:text-lg font-semibold mb-1">System Alerts</h2>
+      <NotificationTabs active={active} onChange={setActive} />
+      <NotificationsList data={filtered} />
+    </div>
   );
 }

@@ -8,7 +8,6 @@ export default function Calendar() {
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
 
-  // --- ADDED: Handlers for dropdowns ---
   const handleMonthChange = (m: number) => {
     setMonth(m);
   };
@@ -16,7 +15,6 @@ export default function Calendar() {
   const handleYearChange = (y: number) => {
     setYear(y);
   };
-  // -------------------------------------
 
   const events: CalendarEvent[] = [
     { id: "1", date: "2026-01-01", title: "New Year’s Day", type: "holiday" },
@@ -59,20 +57,33 @@ export default function Calendar() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-3 sm:p-4 md:p-6 bg-white rounded-lg sm:rounded-xl shadow-md border border-gray-100">
-      <CalendarHeader
-        month={month}
-        year={year}
-        onNextMonth={handleNextMonth}
-        onPrevMonth={handlePrevMonth}
-        onSetToday={handleSetToday}
-        // --- ADDED: Pass handlers to header ---
-        onMonthChange={handleMonthChange}
-        onYearChange={handleYearChange}
-        // ---------------------------------------
-      />
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+          Calendar
+        </h2>
+        <p className="text-sm text-gray-500">
+          Manage your schedule and view upcoming events
+        </p>
+      </div>
 
-      <CalendarGrid month={month} year={year} events={events} />
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
+          <CalendarHeader
+            month={month}
+            year={year}
+            onNextMonth={handleNextMonth}
+            onPrevMonth={handlePrevMonth}
+            onSetToday={handleSetToday}
+            onMonthChange={handleMonthChange}
+            onYearChange={handleYearChange}
+          />
+        </div>
+
+        <div className="p-4 sm:p-6 bg-gray-50/30">
+          <CalendarGrid month={month} year={year} events={events} />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import CustomSelect from "./CustomSelect"; // <-- Import the new component
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 
 interface Props {
   month: number;
@@ -9,20 +9,6 @@ interface Props {
   onMonthChange: (month: number) => void;
   onYearChange: (year: number) => void;
 }
-
-// SVG Icon for the arrows
-const ChevronIcon = ({ className }: { className: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className={`w-5 h-5 ${className}`}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-  </svg>
-);
 
 export default function CalendarHeader({
   month,
@@ -38,59 +24,70 @@ export default function CalendarHeader({
     "July", "August", "September", "October", "November", "December",
   ];
 
-  // --- Create options arrays for the custom select ---
-  const monthOptions = monthNames.map((m, idx) => ({
-    value: idx,
-    label: m,
-  }));
-
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i).map(
-    (y) => ({ value: y, label: String(y) })
-  );
-  // ----------------------------------------------------
+  const yearOptions = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-3 sm:gap-0">
-      {/* --- UPDATED: Replaced <select> with <CustomSelect> --- */}
-      <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-        <CustomSelect
-          value={month}
-          onChange={(value) => onMonthChange(Number(value))}
-          options={monthOptions}
-        />
-        <CustomSelect
-          value={year}
-          onChange={(value) => onYearChange(Number(value))}
-          options={yearOptions}
-        />
-      </div>
-      {/* -------------------------------------------------- */}
+    <div className="flex flex-col gap-4">
+      {/* Title and Month/Year Selectors */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+          {monthNames[month]} {year}
+        </h2>
 
-      {/* Navigation */}
-      <div className="flex items-center gap-2 w-full sm:w-auto">
+        {/* Month/Year Dropdowns */}
+        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
+          <select
+            value={month}
+            onChange={(e) => onMonthChange(Number(e.target.value))}
+            className="bg-transparent text-sm text-gray-600 focus:outline-none cursor-pointer py-1 px-2"
+            aria-label="Select Month"
+          >
+            {monthNames.map((m, idx) => (
+              <option key={idx} value={idx}>{m.slice(0, 3)}</option>
+            ))}
+          </select>
+          <div className="w-px h-4 bg-gray-300"></div>
+          <select
+            value={year}
+            onChange={(e) => onYearChange(Number(e.target.value))}
+            className="bg-transparent text-sm text-gray-600 focus:outline-none cursor-pointer py-1 px-2"
+            aria-label="Select Year"
+          >
+            {yearOptions.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Navigation Controls */}
+      <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={onSetToday}
-          className="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 flex-1 sm:flex-none"
+          className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-colors shadow-sm"
         >
-          Today
+          <CalendarIcon size={16} />
+          <span className="hidden sm:inline">Today</span>
+          <span className="sm:hidden">Today</span>
         </button>
 
-        {/* Prev/Next Buttons */}
-        <button
-          onClick={onPrevMonth}
-          className="p-2 text-gray-500 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50"
-          aria-label="Previous month"
-        >
-          <ChevronIcon className="transform" />
-        </button>
-        <button
-          onClick={onNextMonth}
-          className="p-2 text-gray-500 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50"
-          aria-label="Next month"
-        >
-          <ChevronIcon className="transform rotate-180" />
-        </button>
+        <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm ml-auto">
+          <button
+            onClick={onPrevMonth}
+            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-l-lg transition-colors border-r border-gray-200"
+            aria-label="Previous month"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={onNextMonth}
+            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-r-lg transition-colors"
+            aria-label="Next month"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -154,7 +154,7 @@ const SkeletonLoader = () => (
 const JobInformation = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // Initial state structure (will be populated by DUMMY_JOB_DATA)
   const initialFormState = {
     jobTitle: '',
@@ -194,7 +194,7 @@ const JobInformation = () => {
         setFormData(DUMMY_JOB_DATA);
         setOriginalData(DUMMY_JOB_DATA);
         setIsLoading(false);
-      }, 1500); 
+      }, 1500);
     };
 
     fetchJobData();

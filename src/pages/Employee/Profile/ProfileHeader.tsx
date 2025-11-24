@@ -1,71 +1,71 @@
 import { motion } from 'framer-motion';
-// Import the 'IdCard' and 'ExternalLink' icons
-import { Briefcase, Building, IdCard, } from 'lucide-react';
-import Pic from '../../../assets/my_pic.jpg'
+import { Briefcase, IdCard, MapPin, Calendar } from 'lucide-react';
+import Pic from '../../../assets/my_pic.jpg';
 
 const ProfileHeader = () => {
   return (
     <motion.div
-      // Add a subtle fade-in animation on load
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      // Responsive layout: column on mobile, row on small screens and up
-      // Responsive padding and gap
-      className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 bg-white p-4 sm:p-6 rounded-2xl shadow-sm sm:shadow-lg"
+      className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100"
     >
-      {/* Profile Image with Status Indicator */}
-      <div className="relative shrink-0">
-        <img
-          src={Pic}
-          alt="Profile"
-          // Responsive image size - reduced on mobile
-          className="h-16 w-16 sm:h-24 sm:w-24 rounded-full border-4 border-slate-50 object-cover"
-        />
-        {/* Status Dot - responsive size and position */}
-        <span className="absolute bottom-0 right-0 sm:bottom-1 sm:right-1 h-3 w-3 sm:h-5 sm:w-5 rounded-full border-2 border-white bg-green-500" />
-      </div>
+      {/* Content Area */}
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
 
-      {/* Profile Info - 'grow' works in flex-row. Added w-full for flex-col */}
-      {/* Responsive text alignment: center on mobile, left on desktop */}
-      <div className="grow w-full text-center sm:text-left">
-        {/* Responsive heading size */}
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
-          Ravi Teja
-        </h2>
+          {/* Profile Image */}
+          <div className="relative shrink-0 mx-auto sm:mx-0">
+            <img
+              src={Pic}
+              alt="Profile"
+              className="h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-gray-50 shadow-sm object-cover bg-white"
+            />
+            <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full border-2 border-white bg-green-500 shadow-sm" />
+          </div>
 
-        {/* Info with Icons */}
-        {/*
-          - Stacks vertically on mobile (flex-col) and centers items
-          - Becomes a horizontal, wrapping row on desktop (sm:flex-row sm:flex-wrap)
-          - Justifies center on mobile, start on desktop
-        */}
-        <div className="mt-2 flex flex-col items-center gap-1 sm:flex-row sm:flex-wrap sm:justify-start sm:gap-4">
-          <span className="flex items-center gap-2 text-md text-slate-600">
-            <Briefcase size={16} className="text-slate-400" />
-            Frontend Developer
-          </span>
-          <span className="flex items-center gap-2 text-md text-slate-500">
-            <Building size={16} className="text-slate-400" />
-            Engineering Department
-          </span>
-          {/* Added Employee ID */}
-          <span className="flex items-center gap-2 text-md text-slate-500">
-            <IdCard size={16} className="text-slate-400" />
-            EMP-12345
-          </span>
+          {/* Profile Info */}
+          <div className="flex-1 text-center sm:text-left w-full">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+                  Ravi Teja
+                </h2>
+                <p className="text-sm sm:text-base text-gray-500 font-medium mt-1">Senior Frontend Developer</p>
+              </div>
+
+              {/* Status Badge or Quick Action */}
+              <div className="hidden sm:block">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 border border-green-200">
+                  Active Employee
+                </span>
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="mt-6 flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-4">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
+                <Briefcase size={14} className="text-blue-500 shrink-0" />
+                <span>Engineering</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
+                <IdCard size={14} className="text-purple-500 shrink-0" />
+                <span>EMP-0155565</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
+                <MapPin size={14} className="text-red-500 shrink-0" />
+                <span>Hyderabad, India</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
+                <Calendar size={14} className="text-orange-500 shrink-0" />
+                <span>Joined Nov 2022</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* --- New Actions Section --- */}
-      {/* This section stacks below on mobile (w-full) and sits to the right on desktop (sm:w-auto) */}
-      <div className="shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
-        {/* <button
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 border border-blue-200 hover:border-blue-300"
-        >
-          <ExternalLink size={16} />
-          View Public Profile
-        </button> */}
       </div>
     </motion.div>
   );

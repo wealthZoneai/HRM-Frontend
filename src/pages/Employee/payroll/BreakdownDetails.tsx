@@ -1,69 +1,82 @@
 import {
-  FiPlus,
-  FiMinus,
-  FiFileText,
-  FiChevronDown,
-} from "react-icons/fi";
+  Plus,
+  Minus,
+  FileText,
+  ChevronDown,
+} from "lucide-react";
 
 const iconMap: { [key: string]: React.ReactElement } = {
-  "+": <FiPlus className="text-green-500 text-base sm:text-lg" />,
-  "-": <FiMinus className="text-red-500 text-base sm:text-lg" />,
-  "*": <FiFileText className="text-blue-500 text-base sm:text-lg" />,
+  "+": <Plus size={18} className="text-green-600" />,
+  "-": <Minus size={18} className="text-red-600" />,
+  "*": <FileText size={18} className="text-blue-600" />,
 };
 
-export default function BreakdownDetails({ breakdown }: any) {
+export default function BreakdownDetails({ breakdown, isVisible }: any) {
   return (
-    <div className="bg-white shadow-md border border-slate-200 rounded-2xl p-4 sm:p-8">
+    <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-6 sm:p-8">
       {/* Heading */}
-      <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-4 sm:mb-6">
+      <h3 className="text-lg font-bold text-gray-900 mb-6">
         Detailed Breakdown
       </h3>
 
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-3">
         {breakdown.map((section: any, i: number) => (
           <details
             key={i}
-            className="group border border-slate-200 rounded-xl overflow-hidden transition-all duration-300 open:bg-slate-50"
+            className="group border border-gray-200 rounded-xl overflow-hidden transition-all duration-300 open:bg-gray-50/50 open:shadow-sm"
           >
-            <summary className="flex justify-between items-center p-4 sm:p-5 cursor-pointer list-none">
+            <summary className="flex justify-between items-center p-4 cursor-pointer list-none hover:bg-gray-50 transition-colors">
 
               {/* LEFT – icon + category */}
-              <div className="flex items-center gap-3 sm:gap-4">
-                <span className="text-lg sm:text-xl">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${section.icon === '+' ? 'bg-green-50' :
+                  section.icon === '-' ? 'bg-red-50' : 'bg-blue-50'
+                  }`}>
                   {iconMap[section.icon as keyof typeof iconMap]}
-                </span>
-                <span className="font-medium text-slate-800 text-sm sm:text-base">
+                </div>
+                <span className="font-medium text-gray-900 text-sm sm:text-base">
                   {section.category}
                 </span>
               </div>
 
               {/* RIGHT – amount + arrow */}
-              <div className="flex items-center gap-3 sm:gap-4">
-                <span className="font-semibold text-slate-900 text-sm sm:text-base">
-                  {section.amount < 0 ? "-" : ""}₹
-                  {Math.abs(section.amount).toLocaleString()}
+              <div className="flex items-center gap-4">
+                <span className={`font-semibold text-sm sm:text-base ${section.amount < 0 ? "text-red-600" : "text-gray-900"
+                  }`}>
+                  {isVisible ? (
+                    <>
+                      {section.amount < 0 ? "-" : ""}₹
+                      {Math.abs(section.amount).toLocaleString()}
+                    </>
+                  ) : (
+                    "••••"
+                  )}
                 </span>
-                <FiChevronDown className="text-slate-400 text-sm sm:text-base transition-transform duration-200 group-open:rotate-180" />
+                <ChevronDown size={18} className="text-gray-400 transition-transform duration-200 group-open:rotate-180" />
               </div>
 
             </summary>
 
             {/* Inner details */}
-            <div className="p-4 sm:p-5 pt-3 sm:pt-4 border-t border-slate-200 bg-white space-y-2 sm:space-y-3">
-
+            <div className="px-4 pb-4 pt-2 border-t border-gray-100 space-y-2">
               {section.items.map((item: any, index: number) => (
-                <p
+                <div
                   key={index}
-                  className="flex justify-between items-center text-xs sm:text-sm"
+                  className="flex justify-between items-center text-sm pl-11 pr-2 py-1"
                 >
-                  <span className="text-slate-600">{item.label}</span>
-                  <span className="font-medium text-slate-800">
-                    {item.amount < 0 ? "-" : ""}₹
-                    {Math.abs(item.amount).toLocaleString()}
+                  <span className="text-gray-500">{item.label}</span>
+                  <span className="font-medium text-gray-700">
+                    {isVisible ? (
+                      <>
+                        {item.amount < 0 ? "-" : ""}₹
+                        {Math.abs(item.amount).toLocaleString()}
+                      </>
+                    ) : (
+                      "••••"
+                    )}
                   </span>
-                </p>
+                </div>
               ))}
-
             </div>
           </details>
         ))}

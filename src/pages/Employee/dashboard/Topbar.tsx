@@ -2,7 +2,7 @@ import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DefaultAvatar from "../../../assets/my_pic.jpg";
 import { useRef, useEffect, useState } from "react";
-import myPic from "../../../assets/my_pic.jpg";
+// import myPic from "../../../assets/my_pic.jpg";
 import LogoutModal from "../../../components/LogoutModal";
 
 interface TopbarProps {
