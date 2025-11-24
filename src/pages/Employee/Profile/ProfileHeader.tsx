@@ -46,12 +46,12 @@ const ProfileHeader = () => {
             <div className="mt-6 flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-4">
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <Briefcase size={14} className="text-blue-500 shrink-0" />
-                <span>Engineering</span>
+                <span>Software Engineer</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <IdCard size={14} className="text-purple-500 shrink-0" />
-                <span>EMP-0155565</span>
+                <span>WZG-AI-0029</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
@@ -61,7 +61,7 @@ const ProfileHeader = () => {
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <Calendar size={14} className="text-orange-500 shrink-0" />
-                <span>Joined Nov 2022</span>
+                <span>Joined Sep 2025</span>
               </div>
             </div>
           </div>
