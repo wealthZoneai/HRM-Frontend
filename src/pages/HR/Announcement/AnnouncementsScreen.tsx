@@ -128,25 +128,39 @@ const AnnouncementCard: React.FC<{ announcement: Announcement }> = ({ announceme
 // Main Announcements Screen Component
 export default function AnnouncementsScreen() {
   const [open, setOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="mx-auto max-w-6xl">
+
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Announcement</h1>
-          <button className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-colors" onClick={() => setOpen(true)}>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+            Announcements
+          </h1>
+
+          <button
+            className="
+              flex items-center justify-center bg-blue-600 text-white 
+              px-4 py-2 rounded-lg shadow-md 
+              hover:bg-blue-700 
+              transition-colors w-full sm:w-auto
+            "
+            onClick={() => setOpen(true)}
+          >
             <FiPlus size={20} className="mr-2" />
             Add Announcements
           </button>
         </div>
 
-        {/* Announcements List */}
-        <div className="space-y-6">
-          {DUMMY_ANNOUNCEMENTS.map(announcement => (
+        {/* Announcement List */}
+        <div className="flex flex-col gap-4 sm:gap-6">
+          {DUMMY_ANNOUNCEMENTS.map((announcement) => (
             <AnnouncementCard key={announcement.id} announcement={announcement} />
           ))}
         </div>
       </div>
+
       <AddAnnouncementModal
         isOpen={open}
         onClose={() => setOpen(false)}

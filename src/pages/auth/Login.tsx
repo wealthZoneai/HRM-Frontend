@@ -10,33 +10,52 @@ import Logo from "../../assets/logo_svg.svg";
 import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../Services/apiHelpers";
+import { useAppDispatch } from "../../hooks";
+import { setUserData } from "../../store/slice/userData";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
-  const [role, ] = useState<"employee" | "hr" | "admin">("employee");
+  const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const dispatch = useAppDispatch();
   const handleForgotPassword = () => {
     navigate('/forgotpassword')
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Logging in as:", role,);
+
     if (!username.trim() || !password.trim()) {
       alert("Please fill all fields");
       return;
     }
-      // navigate(`/hr/dashboard`);
-      navigate(`/employee/dashboard`);
 
-    // if (role === "employee") {
-    // } else if (role === "hr") {
-    // }
+    try {
+      const response = await loginUser({ username, password });
+      console.log(response)
+      if (response.status === 200) {
+        if (response.data.role === "admin" || response.data.role === "hr") {
+          navigate(`/hr/dashboard`);
+        } else {
+          navigate(`/employee/dashboard`);
+        }
+          dispatch(setUserData({
+            token: response.data.access,
+            role: response.data.role,
+            userName: response.data.username
+          }));
+      } 
+
+    } catch (error) {
+      console.error(error);
+      alert("Login failed");
+    }
   };
+
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-[#f6f7fb] px-6">
