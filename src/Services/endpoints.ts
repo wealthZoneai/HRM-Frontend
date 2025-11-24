@@ -8,6 +8,7 @@ const endpoints = {
     // hr endpoints
 
     createEmployes: 'api/create-employee/',
+    getAllEmployes: 'api/employee-list/',
 
 
     // employee endpoints

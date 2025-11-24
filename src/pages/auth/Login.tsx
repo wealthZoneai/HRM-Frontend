@@ -38,17 +38,19 @@ const Login: React.FC = () => {
       const response = await loginUser({ username, password });
       console.log(response)
       if (response.status === 200) {
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
         if (response.data.role === "admin" || response.data.role === "hr") {
           navigate(`/hr/dashboard`);
         } else {
           navigate(`/employee/dashboard`);
         }
-          dispatch(setUserData({
-            token: response.data.access,
-            role: response.data.role,
-            userName: response.data.username
-          }));
-      } 
+        dispatch(setUserData({
+          token: response.data.access,
+          role: response.data.role,
+          userName: response.data.username
+        }));
+      }
 
     } catch (error) {
       console.error(error);

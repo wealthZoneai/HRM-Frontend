@@ -1,35 +1,31 @@
 import axios from "axios";
+import { refreshAccessToken } from "./authHelpers";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
     requiresAuth?: boolean;
+    _retry?: boolean;
   }
 }
 
 const httpClient = axios.create({
-  // baseURL: "https://otrasfinalbackend-31829298905.europe-west1.run.app/",
   baseURL: "http://127.0.0.1:8000/",
-  // headers: {
-  //   deviceType: "Web",
-  // },
   timeout: 30000,
 });
 
+/* ===========================
+   REQUEST INTERCEPTOR
+=========================== */
 httpClient.interceptors.request.use(
-  (config) => {
-    // ✅ Only proceed if requiresAuth is true
+  async (config) => {
     if (config.requiresAuth) {
-      const token = localStorage.getItem("token");
+      const access = localStorage.getItem("access");
 
-      // ✅ Add Authorization header only if token exists
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-      } else {
-        console.warn("⚠️ No token found in localStorage. Request may be unauthorized.");
+      if (access) {
+        config.headers["Authorization"] = `Bearer ${access}`;
       }
     }
 
-    // ✅ Handle FormData (if uploading files)
     if (config.data instanceof FormData) {
       config.headers["Content-Type"] = "multipart/form-data";
     }
@@ -37,6 +33,33 @@ httpClient.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+/* ===========================
+   RESPONSE INTERCEPTOR
+   AUTO REFRESH TOKEN
+=========================== */
+httpClient.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If access token expired
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      const newAccessToken = await refreshAccessToken();
+
+      if (newAccessToken) {
+        httpClient.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+        return httpClient(originalRequest); // retry
+      }
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 export default httpClient;

@@ -17,7 +17,17 @@ export interface PersonalInfo {
 }
 
 export interface NextOfKin {
-  name?: string;
+  username?: string;
+  password?: string;
+  email?: string;
+  employeeId?: string;
+  jobTitle?: string;
+  department?: string;
+  employmentType?: string;
+  role?: string;
+  startDate?: string;
+  firstName?: string;
+
   middleName?: string;
   lastName?: string;
   phone?: string;
@@ -28,7 +38,9 @@ export interface NextOfKin {
 export interface BankAccount {
   bankName?: string;
   accountNumber?: string;
+  confirmAccountNumber?: string;
   accountName?: string;
+  ifscCode?: string;
 }
 
 export interface Documents {

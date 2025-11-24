@@ -48,3 +48,11 @@ export function CreateEmployes({
     requiresAuth: true,
   });
 }
+
+
+export function GetAllEmployes() {
+  return server.get(endpoints.getAllEmployes, { requiresAuth: true });
+}
+
+
+
