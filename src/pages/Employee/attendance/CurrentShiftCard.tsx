@@ -9,7 +9,7 @@ interface CurrentShiftCardProps {
 
 export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState<string>("");
+  const [currentTime, setCurrentTime] = useState<string>(new Date().toLocaleTimeString("en-US"));
 
   // Live clock updater
   useEffect(() => {

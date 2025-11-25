@@ -301,7 +301,7 @@ const CollapsibleSection = ({
         className="w-full flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4"
       >
         <div className="flex items-center gap-3 text-left">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 border border-blue-200 text-[11px] font-semibold text-blue-700 flex-shrink-0">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 border border-blue-200 text-[11px] font-semibold text-blue-700 shrink-0">
             {step}
           </div>
           <div>
@@ -318,7 +318,7 @@ const CollapsibleSection = ({
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.18 }}
-          className="flex-shrink-0 ml-2"
+          className="shrink-0 ml-2"
         >
           <ChevronDown className="h-4 w-4 text-slate-500" />
         </motion.div>

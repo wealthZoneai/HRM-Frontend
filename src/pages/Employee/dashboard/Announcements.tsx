@@ -59,16 +59,16 @@ export default function Announcements() {
 
   return (
     <div
-      className="max-h-[700px] bg-white flex items-center justify-center  font-sans text-stone-800"
+      className="max-h-[500px] bg-white flex items-center justify-center  font-sans text-stone-800"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       {/* Main Card Container */}
       <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-8 md:px-8 border-b border-stone-100 flex justify-between items-end bg-white">
+        <div className="px-6 py-6 md:px-8 border-b border-stone-100 flex justify-between items-end bg-white">
           <div>
             {/* <h2 className="text-sm font-bold tracking-widest uppercase text-blue-900/60 mb-1">Updates</h2> */}
-            <h1 className="text-3xl md:text-2xl font-bold text-stone-900 tracking-tight">
+            <h1 className="text-2xl md:text-xl font-bold text-stone-900 tracking-tight">
               Announcements
             </h1>
           </div>
@@ -78,7 +78,7 @@ export default function Announcements() {
         </div>
 
         {/* Scrollable List Area */}
-        <div className="max-h-[450px] overflow-y-auto custom-scrollbar">
+        <div className="max-h-[380px] overflow-y-auto custom-scrollbar">
           <ul className="divide-y divide-stone-50">
             {ANNOUNCEMENTS.map((item) => (
               <ListItem

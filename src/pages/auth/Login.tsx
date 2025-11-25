@@ -13,11 +13,12 @@ import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../Services/apiHelpers";
 import { useAppDispatch } from "../../hooks";
 import { setUserData } from "../../store/slice/userData";
+import { showLoginSuccess, showLoginError, showWarning } from "../../utils/toast";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
-  const [role,] = useState<"employee" | "hr" | "admin">("employee");
+  // const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -30,32 +31,37 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     if (!username.trim() || !password.trim()) {
-      alert("Please fill all fields");
+      showWarning("Please fill in all fields");
       return;
     }
+    navigate(`/employee/dashboard`);
 
-    try {
-      const response = await loginUser({ username, password });
-      console.log(response)
-      if (response.status === 200) {
-        localStorage.setItem("access", response.data.access);
-        localStorage.setItem("refresh", response.data.refresh);
-        if (response.data.role === "admin" || response.data.role === "hr") {
-          navigate(`/hr/dashboard`);
-        } else {
-          navigate(`/employee/dashboard`);
-        }
-        dispatch(setUserData({
-          token: response.data.access,
-          role: response.data.role,
-          userName: response.data.username
-        }));
-      }
+    // try {
+    //   const response = await loginUser({ username, password });
+    //   console.log(response)
+    //   if (response.status === 200) {
+    //     localStorage.setItem("access", response.data.access);
+    //     localStorage.setItem("refresh", response.data.refresh);
+    //     if (response.data.role === "admin" || response.data.role === "hr") {
+    //       navigate(`/hr/dashboard`);
+    //     } else {
+    //       navigate(`/employee/dashboard`);
+    //     }
+    //     dispatch(setUserData({
+    //       token: response.data.access,
+    //       role: response.data.role,
+    //       userName: response.data.username
+    //     }));
 
-    } catch (error) {
-      console.error(error);
-      alert("Login failed");
-    }
+    //     // Show success toast with username
+    //     showLoginSuccess(response.data.username);
+
+    //   }
+
+    // } catch (error) {
+    //   console.error(error);
+    //   showLoginError("Invalid credentials. Please check your email and password.");
+    // }
   };
 
 

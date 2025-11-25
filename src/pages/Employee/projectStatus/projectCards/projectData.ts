@@ -20,4 +20,25 @@ export const projects = [
     tasks: "20/20",
     due: "Oct 25, 2025",
   },
+  {
+    name: "Mobile App Development",
+    status: "On Track",
+    progress: 60,
+    tasks: "12/20",
+    due: "Jan 10, 2026",
+  },
+  {
+    name: "Internal Audit System",
+    status: "Delayed",
+    progress: 30,
+    tasks: "5/15",
+    due: "Feb 28, 2026",
+  },
+  {
+    name: "Marketing Website",
+    status: "Completed",
+    progress: 100,
+    tasks: "18/18",
+    due: "Sep 15, 2025",
+  },
 ];
