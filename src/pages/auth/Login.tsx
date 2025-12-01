@@ -10,10 +10,8 @@ import Logo from "../../assets/logo_svg.svg";
 import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../Services/apiHelpers";
-import { useAppDispatch } from "../../hooks";
-import { setUserData } from "../../store/slice/userData";
-import { showLoginSuccess, showLoginError, showWarning } from "../../utils/toast";
+
+import { showWarning } from "../../utils/toast";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -22,7 +20,6 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useAppDispatch();
   const handleForgotPassword = () => {
     navigate('/forgotpassword')
   }
@@ -164,13 +161,13 @@ const Login: React.FC = () => {
 
             {/* USERNAME */}
             <div>
-              <label className="block text-sm text-white mb-2">Email</label>
+              <label className="block text-sm text-white mb-2">Username</label>
               <div className="relative">
                 <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   className="w-full bg-gray-100 p-3 pl-10 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="Enter your email"
+                  placeholder="Enter your name"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />

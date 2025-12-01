@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import DefaultAvatar from "../../../assets/my_pic.jpg";
 import { useRef, useEffect, useState } from "react";
 // import myPic from "../../../assets/my_pic.jpg";
@@ -38,13 +38,27 @@ const getGreeting = (): string => {
 
 export default function Topbar({ name, id }: TopbarProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleNotification = () => navigate("/employee/notifications");
+  const handleNotification = () => {
+    // Toggle between notifications page and dashboard
+    if (location.pathname === "/employee/notifications") {
+      navigate("/employee/dashboard");
+    } else {
+      navigate("/employee/notifications");
+    }
+  };
+
   const handleProfileNavigate = () => {
-    navigate("/employee/profile");
+    // Toggle between profile page and dashboard
+    if (location.pathname === "/employee/profile") {
+      navigate("/employee/dashboard");
+    } else {
+      navigate("/employee/profile");
+    }
     // setIsDropdownOpen(false);
   };
 
@@ -87,7 +101,7 @@ export default function Topbar({ name, id }: TopbarProps) {
     <div className="w-full flex flex-col lg:flex-row justify-between items-center py-4 px-4 sm:px-6 bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40 gap-3 lg:gap-0 backdrop-blur-md">
       {/* LEFT SIDE - Centered on mobile */}
       <div className="flex flex-col leading-tight text-center lg:text-left order-2 lg:order-1 w-full lg:w-auto">
-        <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+        <h1 className="text-md font-bold text-gray-800 tracking-tight">
           Hello, {formattedName}
         </h1>
         <p className="text-xs text-gray-500 font-medium">Employee ID: {id}</p>
@@ -108,7 +122,7 @@ export default function Topbar({ name, id }: TopbarProps) {
           className="relative p-2 rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-150"
         >
           <Bell className="h-6 w-6" />
-          <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border border-white"></span>
+          {/* <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border border-white"></span> */}
         </button>
 
         {/* Profile Avatar + Dropdown */}
@@ -142,7 +156,7 @@ export default function Topbar({ name, id }: TopbarProps) {
           </div>
         </div>
       </div>
-      
+
       {/* Logout Modal */}
       <LogoutModal
         isOpen={isLogoutOpen}

@@ -31,7 +31,7 @@ export default function CalendarHeader({
     <div className="flex flex-col gap-4">
       {/* Title and Month/Year Selectors */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+        <h2 className="text-xl md:text-md font-bold text-gray-900">
           {monthNames[month]} {year}
         </h2>
 

@@ -11,10 +11,10 @@ export default function AttendanceStat({ title, value }: StatProps) {
   const progressOffset = circumference - (value / 100) * circumference;
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center gap-3 w-full transition-all hover:shadow-md hover:-translate-y-0.5">
+    <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center gap-3 w-full transition-all hover:shadow-md hover:-translate-y-0.5 font-sans">
       <div className="flex items-center gap-2">
-        <UserCheck className="w-4 h-4 text-gray-500" />
-        <span className="text-sm text-gray-600 font-medium">{title}</span>
+        <UserCheck className="w-4 h-4 text-stone-500" />
+        <span className="text-sm text-stone-600 font-medium">{title}</span>
       </div>
 
       {/* <h2 className="text-3xl font-semibold text-gray-800 tracking-tight">
@@ -45,7 +45,7 @@ export default function AttendanceStat({ title, value }: StatProps) {
           />
         </svg>
 
-        <span className="absolute text-sm font-semibold text-gray-800">
+        <span className="absolute text-sm font-semibold text-stone-800">
           {value}%
         </span>
       </div>

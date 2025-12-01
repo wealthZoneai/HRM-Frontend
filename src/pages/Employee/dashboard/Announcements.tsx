@@ -59,8 +59,7 @@ export default function Announcements() {
 
   return (
     <div
-      className="max-h-[500px] bg-white flex items-center justify-center  font-sans text-stone-800"
-      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="max-h-[500px] bg-white flex items-center justify-center font-sans text-stone-800"
     >
       {/* Main Card Container */}
       <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
@@ -89,13 +88,6 @@ export default function Announcements() {
             ))}
           </ul>
         </div>
-
-        {/* Footer / Action Area */}
-        {/* <div className="bg-stone-50 px-6 py-4 border-t border-stone-100 text-center">
-          <button className="text-sm font-medium text-stone-500 hover:text-blue-900 transition-colors">
-            View archived announcements
-          </button>
-        </div> */}
       </div>
 
       {/* Detail Modal */}

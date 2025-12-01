@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Pencil, X, Check, } from 'lucide-react';
+import { X, Check, } from 'lucide-react';
 import { motion } from 'framer-motion';
 // import axios from 'axios'; // Import axios for API call (Commented out as requested)
 
@@ -49,10 +49,6 @@ const INPUT_CLASS =
 const TEXTAREA_CLASS =
   'block w-full rounded-lg border border-slate-300 p-3 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
 
-
-/**
- * A reusable component for an input field in the edit view.
- */
 const EditField = ({
   label,
   name,
@@ -86,9 +82,6 @@ const EditField = ({
   </div>
 );
 
-/**
- * A reusable component for a select dropdown in the edit view.
- */
 const EditSelectField = ({
   label,
   name,
@@ -123,83 +116,21 @@ const EditSelectField = ({
   </div>
 );
 
-/**
- * Simple skeleton component to display while loading data.
- */
-const SkeletonLoader = () => (
-  <div className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200 animate-pulse">
-    <div className="h-6 w-48 bg-slate-200 rounded mb-8"></div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-sm">
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="space-y-3">
-          <div className="h-3 w-1/4 bg-slate-100 rounded"></div>
-          <div className="h-10 bg-slate-200 rounded-lg"></div>
-        </div>
-      ))}
-    </div>
-    <div className="mt-6 pt-6 border-t border-slate-100">
-      <div className="h-3 w-1/4 bg-slate-100 rounded mb-2"></div>
-      <div className="space-y-2">
-        <div className="h-4 w-full bg-slate-200 rounded-lg"></div>
-        <div className="h-4 w-11/12 bg-slate-200 rounded-lg"></div>
-        <div className="h-4 w-10/12 bg-slate-200 rounded-lg"></div>
-      </div>
-    </div>
-  </div>
-);
-
-
-// --- Main Component ---
-
 const JobInformation = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(DUMMY_JOB_DATA);
+  const [originalData, setOriginalData] = useState(DUMMY_JOB_DATA);
 
-  // Initial state structure (will be populated by DUMMY_JOB_DATA)
-  const initialFormState = {
-    jobTitle: '',
-    department: '',
-    manager: '',
-    employmentType: '',
-    startDate: '',
-    location: '',
-    workEmail: '',
-    employeeId: '',
-    jobDescription: '',
-  };
-
-  const [formData, setFormData] = useState(initialFormState);
-  const [originalData, setOriginalData] = useState(initialFormState);
-
-  // Effect to simulate data fetching on component mount
+  // In a real application, you would fetch data here
   useEffect(() => {
-    const fetchJobData = async () => {
-      // console.log('Simulating API call to fetch job data...');
-
-      // --- Start of Axios Simulation (Commented out as requested) ---
-      /*
-      try {
-        // In a real application, you'd use a dynamic ID or token
-        // const response = await axios.get('/api/job-info/current-user'); 
-        // setFormData(response.data);
-        // setOriginalData(response.data);
-      } catch (error) {
-        // console.error('Error fetching data:', error);
-      }
-      */
-      // --- End of Axios Simulation ---
-
-      // Using setTimeout to simulate network delay (1.5 seconds)
-      setTimeout(() => {
-        setFormData(DUMMY_JOB_DATA);
-        setOriginalData(DUMMY_JOB_DATA);
-        setIsLoading(false);
-      }, 1500);
-    };
-
-    fetchJobData();
+    // Simulate API call
+    // axios.get('/api/job-data').then(response => {
+    //   setFormData(response.data);
+    //   setOriginalData(response.data);
+    // });
+    setFormData(DUMMY_JOB_DATA);
+    setOriginalData(DUMMY_JOB_DATA);
   }, []);
-
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -209,11 +140,6 @@ const JobInformation = () => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleEdit = () => {
-    setOriginalData(formData);
-    setIsEditing(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -230,10 +156,6 @@ const JobInformation = () => {
     setIsEditing(false);
   };
 
-  if (isLoading) {
-    return <SkeletonLoader />;
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -244,13 +166,13 @@ const JobInformation = () => {
       {/* --- Component Header --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
         <h2 className="text-base sm:text-xl font-semibold text-slate-800">Job Information</h2>
+
         {!isEditing && (
           <button
-            onClick={handleEdit}
-            className="inline-flex items-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 w-full sm:w-auto justify-center border border-blue-200"
+            onClick={() => setIsEditing(true)}
+            className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
           >
-            <Pencil size={16} />
-            Edit Job Information
+            Edit Information
           </button>
         )}
       </div>

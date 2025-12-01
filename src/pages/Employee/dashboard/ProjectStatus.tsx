@@ -61,15 +61,15 @@ export default function ProjectStatus() {
   const total = currentProject.data.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div className="max-h-[500px] bg-white flex items-center justify-center font-sans text-stone-800">
+    <div className="h-full bg-white flex items-center justify-center font-sans text-stone-800">
 
       {/* Main Card */}
-      <div className="w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden p-6 md:p-6 h-[500px] flex flex-col">
+      <div className="w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden p-6 md:p-6 flex flex-col h-full">
 
         {/* Header */}
         <div className="flex justify-between items-start mb-6">
           <div className="flex-1">
-            <h1 className="text-3xl md:text-2xl font-bold text-stone-900 tracking-tight">Project Status</h1>
+            <h1 className="text-2xl md:text-xl font-bold text-stone-900 tracking-tight">Project Status</h1>
             <div className="flex items-center gap-2 mt-2">
               <span className="text-sm font-medium text-stone-500">
                 {currentIndex + 1} / {projectsData.length}
@@ -100,7 +100,7 @@ export default function ProjectStatus() {
         </div>
 
         {/* Chart Section - Animated */}
-        <div className="relative w-full flex-1 mb-4">
+        <div className="relative w-full flex-1 mb-4 min-h-[250px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentProject.id}
@@ -116,8 +116,8 @@ export default function ProjectStatus() {
                     data={currentProject.data}
                     cx="50%"
                     cy="50%"
-                    innerRadius="75%"
-                    outerRadius="95%"
+                    innerRadius="60%"
+                    outerRadius="90%"
                     paddingAngle={5}
                     dataKey="value"
                     stroke="none"
@@ -138,8 +138,7 @@ export default function ProjectStatus() {
                     y="45%"
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    className="fill-blue-900 text-3xl font-bold"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
+                    className="fill-blue-900 text-3xl font-bold font-sans"
                   >
                     {Math.round((currentProject.data[0].value / total) * 100)}%
                   </text>
@@ -148,8 +147,7 @@ export default function ProjectStatus() {
                     y="58%"
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    className="fill-stone-400 text-xs font-medium uppercase tracking-widest"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
+                    className="fill-stone-400 text-xs font-medium uppercase tracking-widest font-sans"
                   >
                     Complete
                   </text>
@@ -162,7 +160,6 @@ export default function ProjectStatus() {
                       padding: "12px",
                       border: "1px solid #e7e5e4", // stone-200
                       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
-                      fontFamily: "'Inter', sans-serif",
                     }}
                     itemStyle={{ color: "#1c1917", fontSize: "14px", fontWeight: 500 }}
                     formatter={(value) => [`${value}%`, ""]}

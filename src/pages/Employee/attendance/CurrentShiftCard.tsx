@@ -47,7 +47,7 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
               </p>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
               Shift started at{" "}
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 9:00 AM
@@ -69,7 +69,7 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl blur-xl"></div>
               <div className="relative bg-white/80 backdrop-blur-sm px-8 py-4 rounded-2xl border border-blue-200/50 shadow-xl">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Current Time</p>
-                <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent tabular-nums">
+                <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent tabular-nums">
                   {currentTime}
                 </h2>
               </div>

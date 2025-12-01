@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { tasks as initialTasks, employees, type Task, type Subtask } from "./taskData";
 import TaskItem from "./TaskItem";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MessageSquare, Inbox, Filter, Plus, Calendar, User } from "lucide-react";
+import { X, MessageSquare, Inbox, Filter, Plus, } from "lucide-react";
 
 // Current logged-in employee (hardcoded for demo)
 const CURRENT_EMPLOYEE = "John Doe";
@@ -109,6 +109,7 @@ export default function TaskList() {
       status: "notStarted",
       assignedBy: CURRENT_EMPLOYEE, // Created by current user
       assignedTo: newTask.assignedTo,
+      assignedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       subtasks: [],
     };
 
@@ -134,7 +135,7 @@ export default function TaskList() {
       {/* Header */}
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900">My Open Tasks</h3>
+          <h3 className="text-xl md:text-md font-bold text-gray-900">My Open Tasks</h3>
           <button
             onClick={() => setShowAddTask(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all shadow-sm"
@@ -407,8 +408,8 @@ export default function TaskList() {
                     setShowChallenges(false);
                   }}
                   className={`px-4 py-2 rounded-lg text-white text-sm ${!selectedTask || !challengeInput.trim()
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700"
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
                     }`}
                   disabled={!selectedTask || !challengeInput.trim()}
                 >

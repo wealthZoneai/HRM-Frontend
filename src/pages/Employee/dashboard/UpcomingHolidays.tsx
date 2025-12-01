@@ -11,16 +11,16 @@ const HOLIDAYS = [
 
 export default function UpcomingHolidays() {
   return (
-    <div className="max-h-[700px] bg-white flex items-center justify-center  font-sans text-stone-800" >
+    <div className="max-h-[700px] bg-white flex items-center justify-center font-sans text-stone-800" >
 
       {/* Main Card */}
       <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
-        
+
         {/* Header */}
         <div className="px-6 pt-8 pb-6 flex justify-between items-start">
           <div>
             {/* <h2 className="text-xs font-bold tracking-widest uppercase text-blue-900/60 mb-1">Calendar</h2> */}
-            <h1 className="text-2xl font-bold text-stone-900 tracking-tight">Upcoming Holidays</h1>
+            <h1 className="text-2xl md:text-xl font-bold text-stone-900 tracking-tight">Upcoming Holidays</h1>
           </div>
           <button className="p-2 rounded-full hover:bg-stone-50 text-stone-400 hover:text-blue-900 transition-colors">
             <CalendarDays size={20} />
@@ -31,8 +31,8 @@ export default function UpcomingHolidays() {
         <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
           <ul className="divide-y divide-stone-50">
             {HOLIDAYS.map((h, i) => (
-              <li 
-                key={i} 
+              <li
+                key={i}
                 className="group flex items-center justify-between p-6 hover:bg-stone-50 cursor-default transition-colors duration-200"
               >
                 <div className="flex items-center gap-4">
@@ -43,7 +43,7 @@ export default function UpcomingHolidays() {
 
                   {/* Text Content */}
                   <div>
-                    <h3 className="font-bold text-stone-900 text-base group-hover:text-blue-900 transition-colors">
+                    <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
                       {h.name}
                     </h3>
                     <div className="flex items-center gap-2 mt-0.5">

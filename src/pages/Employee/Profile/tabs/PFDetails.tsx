@@ -390,7 +390,7 @@ const SubmitButton = ({ label }: { label: string }) => (
     className="
       inline-flex items-center justify-between gap-2 
       bg-blue-600 text-white rounded-md
-      px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg 
+      px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg  
       text-sm font-semibold 
       hover:bg-blue-700 
       shadow-lg hover:shadow-xl

@@ -9,7 +9,7 @@ export default function PaymentHistory({ history, isVisible }: any) {
   const [activeYear, setActiveYear] = useState(years[0]);
 
   return (
-    <div className="w-full bg-white shadow-sm border border-gray-200 rounded-2xl p-6">
+    <div className="w-full bg-white shadow-sm border border-gray-200 rounded-2xl p-6 h-full flex flex-col">
       <div className="flex items-center gap-2 mb-6">
         <History size={20} className="text-gray-400" />
         <h3 className="text-lg font-bold text-gray-900">
@@ -23,7 +23,7 @@ export default function PaymentHistory({ history, isVisible }: any) {
         onChange={setActiveYear}
       />
 
-      <div className="mt-6 space-y-3">
+      <div className="mt-6 space-y-3 flex-1 overflow-auto">
         {history[activeYear].length ? (
           history[activeYear].map((item: any, i: number) => (
             <PaymentHistoryItem key={i} item={item} isVisible={isVisible} />

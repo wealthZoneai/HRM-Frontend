@@ -2,11 +2,11 @@ import { Wallet, TrendingDown, TrendingUp, Calendar, Eye, EyeOff } from "lucide-
 
 export default function SalarySummary({ summary, isVisible, toggleVisibility }: any) {
   return (
-    <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+    <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-6 sm:p-8 relative overflow-hidden h-full flex flex-col">
       {/* Decorative background gradient */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 opacity-50 pointer-events-none"></div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex-1">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
           <Calendar size={16} />
           <span>Latest payslip: {summary.latestPayslipDate}</span>
@@ -15,7 +15,7 @@ export default function SalarySummary({ summary, isVisible, toggleVisibility }: 
         <div className="mb-8">
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Net Pay</p>
           <div className="flex items-center gap-4">
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">
+            <h1 className="text-4xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
               {isVisible ? `₹${summary.netPay.toLocaleString()}` : "••••••"}
             </h1>
             <button

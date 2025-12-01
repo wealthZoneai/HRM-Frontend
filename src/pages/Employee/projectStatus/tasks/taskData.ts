@@ -9,6 +9,7 @@ export interface Task {
   title: string;
   priority: "High" | "Medium" | "Low";
   due: string;
+  assignedDate: string; // Date when task was assigned
   status: "none" | "completed" | "inProgress" | "notStarted";
   assignedBy: string; // Team Lead who assigned the task
   assignedTo: string; // Employee assigned to the task
@@ -29,6 +30,7 @@ export const tasks: Task[] = [
     title: "Design new onboarding flow",
     priority: "High",
     due: "Oct 25, 2025",
+    assignedDate: "Oct 15, 2025",
     status: "inProgress",
     assignedBy: "Sarah Johnson",
     assignedTo: "John Doe",
@@ -42,6 +44,7 @@ export const tasks: Task[] = [
     title: "Fix navigation bug",
     priority: "Medium",
     due: "Oct 26, 2025",
+    assignedDate: "Oct 18, 2025",
     status: "notStarted",
     assignedBy: "Mike Johnson",
     assignedTo: "John Doe",
@@ -54,6 +57,7 @@ export const tasks: Task[] = [
     title: "Update API documentation",
     priority: "Low",
     due: "Oct 28, 2025",
+    assignedDate: "Oct 20, 2025",
     status: "completed",
     assignedBy: "Sarah Johnson",
     assignedTo: "Jane Smith",
@@ -66,6 +70,7 @@ export const tasks: Task[] = [
     title: "Optimize database queries",
     priority: "High",
     due: "Oct 30, 2025",
+    assignedDate: "Oct 22, 2025",
     status: "inProgress",
     assignedBy: "David Brown",
     assignedTo: "Mike Johnson",

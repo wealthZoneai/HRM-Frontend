@@ -11,7 +11,7 @@ export default function LeaveManagement() {
       {/* === Header === */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+          <h2 className="text-xl md:text-md font-bold text-gray-900 tracking-tight">
             Leave Management
           </h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -37,7 +37,7 @@ export default function LeaveManagement() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">
-            Request History
+            Leave History
           </h3>
         </div>
         <LeaveHistoryTable />

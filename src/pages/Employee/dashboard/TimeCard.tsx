@@ -28,6 +28,7 @@ export default function TimeCard({
         p-6 rounded-2xl shadow-md border border-white/30
         flex flex-col gap-4 w-full
         transition-all duration-300 ease-out
+        font-sans
         ${isHovered && !disabled ? "shadow-lg -translate-y-1" : ""}
         ${disabled ? "opacity-70 cursor-not-allowed" : "cursor-default"}
       `}
@@ -43,13 +44,13 @@ export default function TimeCard({
           <div className="p-1.5 rounded-lg bg-blue-50">
             <Clock className="w-4 h-4 text-blue-600" />
           </div>
-          <span className="text-sm font-semibold text-gray-600 tracking-wide uppercase">
+          <span className="text-sm font-semibold text-stone-500 tracking-wide uppercase">
             {label}
           </span>
         </div>
 
         {/* Time */}
-        <h2 className="text-4xl font-bold text-gray-900 tracking-tighter">
+        <h2 className="text-3xl font-bold text-stone-900 tracking-tighter">
           {time}
         </h2>
 
