@@ -50,7 +50,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
     const p = state.personal;
     const k = state.kin;
     const b = state.bankAccounts[0] || {};
-    const d = state.documents;
+    // const d = state.documents;
 
     switch (state.step) {
       case 0: // PERSONAL
