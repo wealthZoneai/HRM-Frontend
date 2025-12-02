@@ -11,14 +11,15 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
 
-import { showLoginError, showLoginSuccess, showWarning } from "../../utils/toast";
-import { loginUser } from "../../Services/apiHelpers";
-import { setUserData } from "../../store/slice/userData";
-import { useDispatch } from "react-redux";
+import {  showWarning } from "../../utils/toast";
+// showLoginError, showLoginSuccess,
+// import { loginUser } from "../../Services/apiHelpers";
+// import { setUserData } from "../../store/slice/userData";
+// import { useDispatch } from "react-redux";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
