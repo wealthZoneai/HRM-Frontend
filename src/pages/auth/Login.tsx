@@ -35,9 +35,7 @@ const Login: React.FC = () => {
       showWarning("Please fill in all fields");
       return;
     }
-
-    navigate(`/hr/dashboard`);
-
+navigate(`/hr/dashboard`);
     // try {
     //   const response = await loginUser({ username, password });
     //   console.log(response)
