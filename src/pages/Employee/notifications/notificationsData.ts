@@ -2,6 +2,14 @@ import type { NotificationItem } from "../notifications/NotificationCard/types";
 
 export const notificationsData: NotificationItem[] = [
   {
+    id: "0",
+    type: "hrms",
+    title: "HRMS Portal",
+    message: "Please record your Login Time",
+    time: "Just now",
+    isUnread: true
+  },
+  {
     id: "1",
     type: "acceptance",
     title: "Acceptance",

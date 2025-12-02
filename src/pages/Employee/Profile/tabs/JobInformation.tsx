@@ -17,6 +17,8 @@ const DUMMY_JOB_DATA = {
   location: 'Head Office',
   workEmail: 'jane.foster@company.com',
   employeeId: 'EMP-1002',
+  idCardFront: '/id-card-front.png',
+  idCardBack: '/id-card-back.png',
   jobDescription: `The Senior Product Manager is responsible for leading the product lifecycle from conception to launch, focusing on market needs, strategy, and execution. This role involves close collaboration with engineering, design, and marketing teams to deliver exceptional user value and achieve business objectives. Key responsibilities include defining roadmaps, analyzing metrics, and driving feature development.`,
 };
 
@@ -161,20 +163,20 @@ const JobInformation = () => {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200 max-w-4xl mx-auto"
+      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl max-w-4xl mx-auto"
     >
       {/* --- Component Header --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
         <h2 className="text-base sm:text-xl font-semibold text-slate-800">Job Information</h2>
 
-        {!isEditing && (
+        {/* {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
             className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
           >
             Edit Information
           </button>
-        )}
+        )} */}
       </div>
 
       {/* --- Form --- */}
@@ -295,6 +297,38 @@ const JobInformation = () => {
               </p>
             </div>
           )}
+        </div>
+
+        {/* --- ID Card Photo Section --- */}
+        <div className="mt-6 pt-6 border-t border-slate-200">
+          <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
+            ID Card Photos
+          </label>
+          <div className="flex flex-col sm:flex-row gap-6">
+            {/* Front Side */}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-slate-700">Front Side</span>
+              <div className="relative w-64 h-40 rounded-xl overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-50 group">
+                <img
+                  src={formData.idCardFront}
+                  alt="ID Card Front"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+            </div>
+
+            {/* Back Side */}
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-slate-700">Back Side</span>
+              <div className="relative w-64 h-40 rounded-xl overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-50 group">
+                <img
+                  src={formData.idCardBack}
+                  alt="ID Card Back"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* --- Form Actions --- */}

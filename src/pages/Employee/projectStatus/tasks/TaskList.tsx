@@ -28,7 +28,7 @@ export default function TaskList() {
   });
 
   // Status options
-  const statusOptions = ["All", "Not Started", "In Progress", "Completed", "None"];
+  const statusOptions = ["All", "Not Started", "In Progress", "Completed"];
 
   // Priority options
   const priorityOptions = ["All", "High", "Medium", "Low"];
@@ -42,8 +42,8 @@ export default function TaskList() {
         selectedStatus === "All" ||
         (selectedStatus === "Not Started" && task.status === "notStarted") ||
         (selectedStatus === "In Progress" && task.status === "inProgress") ||
-        (selectedStatus === "Completed" && task.status === "completed") ||
-        (selectedStatus === "None" && task.status === "none");
+        (selectedStatus === "Completed" && task.status === "completed");
+
 
       const matchesPriority = selectedPriority === "All" || task.priority === selectedPriority;
 
@@ -178,7 +178,7 @@ export default function TaskList() {
               >
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
-                    {status === "All" ? "All Status" : status}
+                    {status === "All" ? "Status" : status}
                   </option>
                 ))}
               </select>
@@ -193,7 +193,7 @@ export default function TaskList() {
               >
                 {priorityOptions.map((priority) => (
                   <option key={priority} value={priority}>
-                    {priority === "All" ? "All Priority" : priority}
+                    {priority === "All" ? "Priority" : priority}
                   </option>
                 ))}
               </select>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, User, FileText } from "lucide-react";
+import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, User, FileText, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Enhanced data with detailed information
@@ -115,11 +115,7 @@ export default function LeaveRequests() {
               return (
                 <div
                   key={req.id}
-                  onClick={() => {
-                    console.log("Clicked leave request:", req);
-                    setSelectedLeave(req);
-                  }}
-                  className="group flex items-center justify-between p-4 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-stone-100 transition-all duration-300 cursor-pointer"
+                  className="group flex items-center justify-between p-4 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-stone-100 transition-all duration-300 cursor-default"
                 >
                   {/* Left Info */}
                   <div className="flex items-start gap-4">
@@ -142,10 +138,22 @@ export default function LeaveRequests() {
                     </div>
                   </div>
 
-                  {/* Status Badge */}
-                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold tracking-wide uppercase ${STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].style}`}>
-                    <StatusIcon size={12} strokeWidth={3} />
-                    {req.status}
+                  {/* Status Badge & Info */}
+                  <div className="flex items-center gap-3">
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold tracking-wide uppercase ${STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].style}`}>
+                      <StatusIcon size={12} strokeWidth={3} />
+                      {req.status}
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedLeave(req);
+                      }}
+                      className="p-2 text-stone-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300"
+                    >
+                      <Info size={20} />
+                    </button>
                   </div>
                 </div>
               );
@@ -161,7 +169,7 @@ export default function LeaveRequests() {
             <>
               {/* Backdrop */}
               <motion.div
-                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -170,7 +178,7 @@ export default function LeaveRequests() {
 
               {/* Modal */}
               <motion.div
-                className="fixed top-1/2 left-1/2 z-[101] w-[95%] max-w-2xl bg-white rounded-2xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2"
+                className="fixed top-1/2 left-1/2 z-101 w-[95%] max-w-2xl bg-white rounded-2xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}

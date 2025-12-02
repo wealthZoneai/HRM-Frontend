@@ -5,12 +5,15 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import Logo from "../../assets/logo_svg.svg";
 import { useNavigate } from "react-router-dom";
+import { showSuccess, showWarning } from "../../utils/toast";
+import { ForgotPassword as ForgotPasswordApi } from "../../Services/apiHelpers";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email.trim()) {
@@ -18,12 +21,33 @@ const ForgotPassword: React.FC = () => {
       return;
     }
 
-    alert("Password reset link sent (dummy flow).");
+    //Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showWarning("Please enter a valid email address");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await ForgotPasswordApi(email);
+
+      if (response.status === 200 || response.status === 201) {
+        showSuccess("OTP sent successfully");
+        navigate('/otpverify', {state:{email}});
+      }
+    } catch (err: any) {
+      console.error("Forgot password error: ", err);
+
+      const errorMessage = err.response?.data?.email?.[0] || err.response?.data?.detail || "Failed to send OTP. Please try again.";
+      showWarning(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleOTP = () => {
-    navigate('/otpverify')
-  }
+
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-[#f6f7fb] px-6">
@@ -97,7 +121,7 @@ const ForgotPassword: React.FC = () => {
         {/* RIGHT SECTION */}
         <div className="relative z-10 p-8 md:p-12 flex flex-col justify-center">
           <form onSubmit={handleSubmit} className="space-y-6">
-            
+
             <h2 className="text-2xl font-bold text-white text-center mb-2">
               Forgot Password?
             </h2>
@@ -122,9 +146,10 @@ const ForgotPassword: React.FC = () => {
 
             {/* SUBMIT */}
             <button
+            disabled={isLoading}
               type="submit"
               className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition shadow-sm"
-              onClick={handleOTP}
+            // onClick={handleOTP}
             >
               Send OTP
             </button>

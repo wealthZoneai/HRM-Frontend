@@ -38,7 +38,7 @@ function AppRouters() {
 
       {/* Login */}
       <Route path="/login" element={<EmployeeLogin />} />
-      <Route path="forgotpassword" element={<ForgotPassword />} />
+      <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="otpverify" element={<OTPVerification />} />
       <Route path="resetpassword" element={<ResetPassword />} />
 

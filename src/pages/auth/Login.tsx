@@ -11,17 +11,21 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
 
-import { showWarning } from "../../utils/toast";
+import { showLoginError, showLoginSuccess, showWarning } from "../../utils/toast";
+import { loginUser } from "../../Services/apiHelpers";
+import { setUserData } from "../../store/slice/userData";
+import { useDispatch } from "react-redux";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const handleForgotPassword = () => {
-    navigate('/forgotpassword')
+    navigate('/forgot-password')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,34 +35,33 @@ const Login: React.FC = () => {
       showWarning("Please fill in all fields");
       return;
     }
-    navigate(`/employee/dashboard`);
 
-    // try {
-    //   const response = await loginUser({ username, password });
-    //   console.log(response)
-    //   if (response.status === 200) {
-    //     localStorage.setItem("access", response.data.access);
-    //     localStorage.setItem("refresh", response.data.refresh);
-    //     if (response.data.role === "admin" || response.data.role === "hr") {
-    //       navigate(`/hr/dashboard`);
-    //     } else {
-    //       navigate(`/employee/dashboard`);
-    //     }
-    //     dispatch(setUserData({
-    //       token: response.data.access,
-    //       role: response.data.role,
-    //       userName: response.data.username
-    //     }));
+    try {
+      const response = await loginUser({ username, password });
+      console.log(response)
+      if (response.status === 200) {
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
+        if (response.data.role === "admin" || response.data.role === "hr") {
+          navigate(`/hr/dashboard`);
+        } else if(response.data.role === "employee" || response.data.role === "intern") {
+          navigate(`/employee/dashboard`);
+        }
+        dispatch(setUserData({
+          token: response.data.access,
+          role: response.data.role,
+          userName: response.data.username
+        }));
 
-    //     // Show success toast with username
-    //     showLoginSuccess(response.data.username);
+        // Show success toast with username
+        showLoginSuccess(response.data.username);
 
-    //   }
+      }
 
-    // } catch (error) {
-    //   console.error(error);
-    //   showLoginError("Invalid credentials. Please check your email and password.");
-    // }
+    } catch (error) {
+      console.error(error);
+      showLoginError("Invalid credentials. Please check your email and password.");
+    }
   };
 
 
@@ -134,30 +137,6 @@ const Login: React.FC = () => {
         {/* RIGHT SECTION */}
         <div className="relative z-10 p-8 md:p-12 flex flex-col justify-center">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* ROLE SELECTION */}
-            {/* <div>
-              <label className="block mb-2 text-sm text-white font-medium">
-                Login As
-              </label>
-
-              <div className="grid grid-cols-3 gap-3">
-                {["admin", "hr", "employee"].map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setRole(r as any)}
-                    className={`w-full py-2 rounded-md text-sm font-semibold border transition-all duration-200
-                      ${
-                        role === r
-                          ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-transparent text-white border-white hover:bg-blue-600 hover:text-white"
-                      }`}
-                  >
-                    {r.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            </div> */}
 
             {/* USERNAME */}
             <div>

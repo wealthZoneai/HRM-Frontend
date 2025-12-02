@@ -47,7 +47,7 @@ export default function MonthSummaryCard() {
       <div className="absolute top-0 right-0 w-32 h-32 bg-blue-300/30 rounded-full blur-3xl opacity-40 translate-x-16 -translate-y-16"></div>
 
       <h3 className="text-lg font-semibold mb-6 text-gray-900 relative z-10">
-        Current Month Summary
+        {new Date().toLocaleString('default', { month: 'long' })}'s Summary
       </h3>
 
       <div className="space-y-5 relative z-10">

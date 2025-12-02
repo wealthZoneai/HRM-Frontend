@@ -1,11 +1,11 @@
-import { Calendar, Activity, AlertCircle } from "lucide-react";
+import { Calendar, Activity, Baby, Heart } from "lucide-react";
 
 export default function LeaveBalances() {
   const balances = [
     {
-      label: "Annual Leave",
-      days: 14,
-      total: 20,
+      label: "Casual Leave",
+      days: 12,
+      total: 12,
       icon: Calendar,
       color: "text-blue-600",
       bg: "bg-blue-50",
@@ -21,18 +21,27 @@ export default function LeaveBalances() {
       border: "border-emerald-100",
     },
     {
-      label: "Unpaid Leaves",
-      days: 2,
-      total: 0, // Unpaid usually doesn't have a limit shown this way, but keeping structure
-      icon: AlertCircle,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-      border: "border-amber-100",
+      label: "Maternity Leave",
+      days: 90,
+      total: 180,
+      icon: Baby,
+      color: "text-pink-600",
+      bg: "bg-pink-50",
+      border: "border-pink-100",
+    },
+    {
+      label: "Paternity Leave",
+      days: 5,
+      total: 15,
+      icon: Heart,
+      color: "text-purple-600",
+      bg: "bg-purple-50",
+      border: "border-purple-100",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
       {balances.map((b) => (
         <div
           key={b.label}

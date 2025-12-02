@@ -5,7 +5,7 @@ export default function NotificationTabs({
   active: string;
   onChange: (val: string) => void;
 }) {
-  const tabs = ["All", "Unread", "Responses", "Project Status"];
+  const tabs = ["All", "Unread"];
 
   return (
     <div className="flex gap-2 sm:gap-3 mb-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">

@@ -5,32 +5,34 @@ import UpcomingHolidays from "../UpcomingHolidays";
 import LeaveRequests from "../LeaveRequests";
 import ProjectStatus from "../ProjectStatus";
 
+import Timesheet from "../Timesheet";
+
 export default function EmployeeDashboard() {
   return (
-      <div className="space-y-6">
+    <div className="space-y-6">
 
-        {/* Time In/Out + Attendance Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <TimeCard label="Time In" time="9:00 AM" actionLabel="Clock in" />
-          <TimeCard label="Time Out" time="7:00 PM" actionLabel="Clock out" />
+      {/* Time In/Out + Attendance Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <TimeCard label="Time In" time="9:00 AM" actionLabel="Clock in" />
+        <TimeCard label="Time Out" time="7:00 PM" actionLabel="Clock out" />
 
-          <AttendanceStat title="Monthly Attendance" value={80} />
-          {/* <AttendanceStat title="On Time %" value={95} /> */}
-        </div>
-
-        {/* Performance + Attendance Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <ProjectStatus />
-          {/* <Attendanc  eChart /> */}
-          <Announcements />
-        </div>
-
-        {/* Bottom Grid: Announcements, Holidays, Leaves */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <LeaveRequests />
-          <UpcomingHolidays />
-        </div>
-
+        <AttendanceStat title="Monthly Attendance" value={80} />
+        {/* <AttendanceStat title="On Time %" value={95} /> */}
       </div>
+
+      {/* Performance + Attendance Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <ProjectStatus />
+        <Timesheet />
+        <Announcements />
+      </div>
+
+      {/* Bottom Grid: Announcements, Holidays, Leaves */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <LeaveRequests />
+        <UpcomingHolidays />
+      </div>
+
+    </div>
   );
 }

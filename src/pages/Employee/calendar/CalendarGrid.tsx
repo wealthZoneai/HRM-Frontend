@@ -39,12 +39,14 @@ export default function CalendarGrid({ month, year, events }: Props) {
         {grid.map((day, i) => {
           const dateKey = day ? formatDate(year, month, day) : null;
           const dayEvents = events.filter((e) => e.date === dateKey);
+          const isWeekend = i % 7 === 0 || i % 7 === 6;
 
           return (
             <CalendarDayCell
               key={i}
               day={day}
               isToday={dateKey === todayKey}
+              isWeekend={isWeekend}
               events={dayEvents}
             />
           );

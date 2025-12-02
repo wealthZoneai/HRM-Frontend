@@ -56,3 +56,17 @@ export function GetAllEmployes() {
 
 
 
+//employees
+
+export function ForgotPassword(email:string){
+  const body = {email};
+  return server.post(endpoints.forgotPassword, body, {requiresAuth:false})
+}
+
+export function OTPVerify({email, otp}:{email:string, otp:string}){
+  const body = {email, otp};
+  return server.post(endpoints.verifyOTP, body, {requiresAuth:false})
+}
+
+
+

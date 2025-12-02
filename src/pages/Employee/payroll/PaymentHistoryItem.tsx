@@ -10,7 +10,7 @@ export default function PaymentHistoryItem({ item, isVisible }: any) {
         <div>
           <p className="font-semibold text-gray-900 text-sm">{item.date}</p>
           <p className="text-xs text-gray-500 mt-0.5">
-            Net Pay: <span className="font-medium text-gray-700">{isVisible ? `₹${item.net.toLocaleString()}` : "••••"}</span>
+            Pay Slip: <span className="font-medium text-gray-700">{isVisible ? `₹${item.net.toLocaleString()}` : "••••"}</span>
           </p>
         </div>
       </div>

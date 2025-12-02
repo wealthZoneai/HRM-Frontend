@@ -2,6 +2,7 @@
 
 const endpoints = {
 
+    //authentication
     login: 'api/login/',
     register: 'api/auth/candidateSignup',
 
@@ -12,7 +13,8 @@ const endpoints = {
 
 
     // employee endpoints
-    
+    forgotPassword: 'api/forgot-password/',
+    verifyOTP: 'api/verify-otp/',
 
 }
 

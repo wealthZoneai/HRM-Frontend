@@ -4,9 +4,10 @@ interface Props {
   day: number | null;
   events: CalendarEvent[];
   isToday: boolean;
+  isWeekend: boolean;
 }
 
-export default function CalendarDayCell({ day, events, isToday }: Props) {
+export default function CalendarDayCell({ day, events, isToday, isWeekend }: Props) {
   // Empty cell for days outside the current month
   if (!day) {
     return <div className="bg-gray-50/50 h-20 sm:h-28 md:h-36"></div>;
@@ -26,7 +27,9 @@ export default function CalendarDayCell({ day, events, isToday }: Props) {
   };
 
   return (
-    <div className={`bg-white h-20 sm:h-28 md:h-36 p-1 sm:p-2 flex flex-col transition-colors hover:bg-gray-50 ${isToday ? 'bg-blue-50/30' : ''}`}>
+    <div className={`h-20 sm:h-28 md:h-36 p-1 sm:p-2 flex flex-col transition-colors hover:bg-gray-50 
+      ${isToday ? 'bg-blue-50/30' : !isWeekend ? 'bg-indigo-50/30' : 'bg-white'}
+    `}>
       {/* Day Number */}
       <div className="flex justify-between items-start">
         <span

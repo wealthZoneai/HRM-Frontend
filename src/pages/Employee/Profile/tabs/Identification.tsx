@@ -1,375 +1,405 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle, UploadCloud, FileText, XCircle, AlertTriangle, File, FileImage, FileUp, ExternalLink } from "lucide-react";
+import {
+    UploadCloud,
+    FileText,
+    X,
+    CheckCircle,
+    Eye,
+    Trash2,
+    AlertCircle,
+    Image as ImageIcon
+} from "lucide-react";
 
-// --- TYPE DEFINITIONS & DATA ---
+// --- TYPES ---
 
-type UploadUrls = Record<string, { 
-    frontUrl: string | null; 
-    backUrl: string | null;
-    frontFileName: string | null; // NEW: Store original file name
-    backFileName: string | null;  // NEW: Store original file name
-}>;
-type UploadSide = 'frontUrl' | 'backUrl';
+type UploadSide = 'front' | 'back';
 
-const documents = [
-  { label: "Aadhaar Card", key: "aadhar", instructions: ["Front side must clearly show photo and address.", "Back side must clearly show all details."], requiresBack: true },
-  { label: "PAN Card", key: "pan", instructions: ["Front side only, back is optional.", "Ensure signature and photo are clear."], requiresBack: false },
-  { label: "ID Card (Company/Govt.)", key: "idcard", instructions: ["Front side only.", "Must be issued by current/previous employer or government body."], requiresBack: false },
-  { label: "Passport", key: "passport", instructions: ["Photo page and Address page.", "Ensure validity date is clear."], requiresBack: true },
+interface DocumentType {
+    id: string;
+    label: string;
+    guidelines: string[];
+    requiresBack: boolean;
+    isOptional?: boolean;
+}
+
+interface UploadedFile {
+    url: string;
+    name: string;
+    type: string;
+}
+
+interface DocumentState {
+    front: UploadedFile | null;
+    back: UploadedFile | null;
+}
+
+type AllDocumentsState = Record<string, DocumentState>;
+
+// --- DATA ---
+
+const documents: DocumentType[] = [
+    {
+        id: "aadhar",
+        label: "Aadhar Card",
+        guidelines: [
+            "Ensure the photo and address are clearly visible.",
+            "Upload both Front and Back sides.",
+            "Supported formats: JPG, PNG, PDF (Max 5MB)."
+        ],
+        requiresBack: true
+    },
+    {
+        id: "pan",
+        label: "PAN Card",
+        guidelines: [
+            "Ensure the PAN number and signature are clear.",
+            "Front side is mandatory.",
+            "Back side is optional if not applicable."
+        ],
+        requiresBack: false
+    },
+    {
+        id: "idcard",
+        label: "ID Card",
+        guidelines: [
+            "Upload your company or government issued ID card.",
+            "Front side is mandatory.",
+            "Back side is optional."
+        ],
+        requiresBack: false,
+        isOptional: true
+    },
+    {
+        id: "passport",
+        label: "Passport",
+        guidelines: [
+            "Ensure the photo and address pages are clear.",
+            "Upload both Front and Back sides.",
+            "Supported formats: JPG, PNG, PDF (Max 5MB)."
+        ],
+        requiresBack: true,
+        isOptional: true
+    },
 ];
 
-// Initial state for upload URLs
-const initialUploadState: UploadUrls = {
-  aadhar: { frontUrl: null, backUrl: null, frontFileName: null, backFileName: null },
-  pan: { frontUrl: null, backUrl: null, frontFileName: null, backFileName: null },
-  idcard: { frontUrl: null, backUrl: null, frontFileName: null, backFileName: null },
-  passport: { frontUrl: null, backUrl: null, frontFileName: null, backFileName: null },
-};
+// --- COMPONENTS ---
 
-
-// --- HELPER COMPONENTS ---
-
-/**
- * Generates a mock URL for successful upload simulation.
- */
-const mockUpload = (fileName: string) => {
-    // Simulate API delay
-    return new Promise<string>((resolve) => {
-        setTimeout(() => {
-            // Generates a mock URL that includes the file name
-            resolve(`https://mockapi.com/uploads/${Date.now()}/${fileName.replace(/[^a-zA-Z0-9\.]/g, '_')}`);
-        }, 500);
-    });
-};
-
-/**
- * Renders the file input and status for a single side (Front or Back) of a document.
- */
-const UploadSection = ({ side, uploadKey, currentUrl, fileName, onUpload, disabled = false, isOptional = false }: {
-    side: 'Front' | 'Back';
-    uploadKey: UploadSide;
-    currentUrl: string | null;
-    fileName: string | null; // NEW prop
-    onUpload: (side: UploadSide, url: string | null, fileName: string | null) => void;
-    disabled?: boolean;
-    isOptional?: boolean;
+const PreviewModal = ({
+    file,
+    onClose
+}: {
+    file: UploadedFile | null;
+    onClose: () => void;
 }) => {
-    const [isUploading, setIsUploading] = useState(false);
-    
-    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setIsUploading(true);
-        // Simulate upload and get a mock URL
-        const mockUrl = await mockUpload(file.name);
-        onUpload(uploadKey, mockUrl, file.name); // Pass URL and file name
-        setIsUploading(false);
-
-        // Reset the file input value so the same file can be selected again
-        e.target.value = '';
-    };
-
-    const handleRemove = () => {
-        onUpload(uploadKey, null, null); // Pass null for both URL and file name to clear
-    };
-
-    const isUploaded = !!currentUrl;
-    const buttonLabel = isUploaded ? 'Change File' : `Select ${side} Side`;
-    
-    // Determine file extension for icon
-    const getFileIcon = (name: string | null) => {
-        if (!name) return File;
-        const extension = name.split('.').pop()?.toLowerCase();
-        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension || '')) {
-            return FileImage;
-        }
-        return FileText; // Default for PDF/other
-    };
-
-    const FileIcon = getFileIcon(fileName);
+    if (!file) return null;
 
     return (
-        <div className="flex flex-col">
-            <label className="text-sm font-medium text-slate-700 mb-1.5 flex items-center justify-between">
-                {side} Side {isOptional && <span className="text-xs font-normal text-slate-500">(Optional)</span>}
-            </label>
-            <div className="flex items-center gap-3">
-                <input
-                    id={`${uploadKey}-input`}
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    disabled={isUploading || disabled}
-                />
-                
-                {/* Custom Upload Button */}
-                <label 
-                    htmlFor={`${uploadKey}-input`} 
-                    className={`
-                        flex-1 flex items-center justify-center gap-2 
-                        px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-colors
-                        ${isUploaded ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-blue-600 text-white hover:bg-blue-700'}
-                        ${disabled ? 'bg-slate-300 cursor-not-allowed' : ''}
-                    `}
+        <AnimatePresence>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                onClick={onClose}
+            >
+                <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
                 >
-                    {isUploading ? (
-                        <>
-                            <UploadCloud size={16} className="animate-bounce" />
-                            Uploading...
-                        </>
-                    ) : (
-                        <>
-                            <FileUp size={16} />
-                            {buttonLabel}
-                        </>
-                    )}
-                </label>
+                    <div className="flex justify-between items-center p-4 border-b">
+                        <h3 className="font-semibold text-lg text-gray-800 truncate pr-4">{file.name}</h3>
+                        <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                            <X size={24} className="text-gray-500" />
+                        </button>
+                    </div>
 
-                {/* Status Indicator */}
-                <div className="flex items-center text-xs sm:text-sm whitespace-nowrap min-w-[100px]">
-                    {isUploaded ? (
-                        <>
-                            <CheckCircle size={18} className="text-green-500 mr-1" />
-                            <span className="text-green-700 font-semibold">Ready</span>
-                        </>
-                    ) : (
-                        <>
-                            <XCircle size={18} className="text-red-400 mr-1" />
-                            <span className="text-slate-500">Pending</span>
-                        </>
-                    )}
-                </div>
+                    <div className="flex-1 overflow-auto p-4 bg-gray-50 flex items-center justify-center">
+                        {file.type.includes('image') ? (
+                            <img src={file.url} alt="Preview" className="max-w-full h-auto rounded-md shadow-sm" />
+                        ) : (
+                            <div className="flex flex-col items-center text-gray-500 gap-3">
+                                <FileText size={64} />
+                                <p>Preview not available for this file type.</p>
+                                <a
+                                    href={file.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-blue-600 hover:underline"
+                                >
+                                    Download to view
+                                </a>
+                            </div>
+                        )}
+                    </div>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
+    );
+};
+
+const UploadCard = ({
+    file,
+    onUpload,
+    onRemove,
+    onPreview,
+    label
+}: {
+    file: UploadedFile | null;
+    onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onRemove: () => void;
+    onPreview: () => void;
+    label: string;
+}) => {
+    return (
+        <div className="flex-1 min-w-[200px]">
+            <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">{label}</span>
+                {file && <CheckCircle size={16} className="text-green-500" />}
             </div>
-            
-            {/* --- NEW: PREVIEW/STATUS BLOCK --- */}
-            <AnimatePresence>
-                {isUploaded && currentUrl && fileName && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="mt-3 flex items-center justify-between p-2.5 bg-slate-100 rounded-lg border border-slate-200"
-                    >
-                        <div className="flex items-center gap-2 truncate">
-                            <FileIcon size={20} className="text-blue-500 shrink-0" />
-                            <span className="text-xs text-slate-700 truncate font-mono">{fileName}</span>
+
+            {file ? (
+                <div className="relative group border-2 border-green-100 bg-green-50/30 rounded-xl p-4 h-40 flex flex-col items-center justify-center gap-3 transition-all hover:border-green-200">
+                    <div className="p-3 bg-white rounded-full shadow-sm">
+                        <ImageIcon size={24} className="text-green-600" />
+                    </div>
+                    <div className="text-center px-2 w-full">
+                        <p className="text-xs text-gray-600 truncate font-medium">{file.name}</p>
+                        <p className="text-xs text-gray-400 mt-1">Uploaded</p>
+                    </div>
+
+                    {/* Actions Overlay */}
+                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-2 backdrop-blur-[1px]">
+                        <button
+                            onClick={onPreview}
+                            className="p-2 bg-white text-blue-600 rounded-full shadow-md hover:scale-110 transition-transform"
+                            title="Preview"
+                        >
+                            <Eye size={18} />
+                        </button>
+                        <button
+                            onClick={onRemove}
+                            className="p-2 bg-white text-red-500 rounded-full shadow-md hover:scale-110 transition-transform"
+                            title="Remove"
+                        >
+                            <Trash2 size={18} />
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <label className="cursor-pointer group block">
+                    <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*,.pdf"
+                        onChange={onUpload}
+                    />
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 h-40 flex flex-col items-center justify-center gap-2 transition-colors group-hover:border-blue-400 group-hover:bg-blue-50/30">
+                        <div className="p-3 bg-gray-100 rounded-full group-hover:bg-blue-100 transition-colors">
+                            <UploadCloud size={24} className="text-gray-400 group-hover:text-blue-500" />
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                            <a 
-                                href={currentUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-xs text-blue-600 hover:text-blue-800 flex items-center"
-                                title="View uploaded file (Mock URL)"
-                            >
-                                View File
-                                <ExternalLink size={14} className="ml-1" />
-                            </a>
-                             {/* Remove Button */}
-                            <button 
-                                type="button" 
-                                onClick={handleRemove} 
-                                title="Remove Document"
-                                className="p-0.5 rounded-full text-red-600 hover:bg-red-100 transition-colors"
-                            >
-                                <XCircle size={20} />
-                            </button>
+                        <div className="text-center">
+                            <p className="text-sm font-medium text-gray-600 group-hover:text-blue-600">Click to upload</p>
+                            <p className="text-xs text-gray-400 mt-1">SVG, PNG, JPG or PDF</p>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    </div>
+                </label>
+            )}
         </div>
     );
 };
 
-/**
- * Main card container for a single document type.
- */
-const DocumentCard = ({ doc, uploaded, handleFileUpload }: {
-    doc: typeof documents[0];
-    uploaded: UploadUrls[keyof UploadUrls];
-    handleFileUpload: (key: string, side: UploadSide, url: string | null, fileName: string | null) => void;
+const DocumentRow = ({
+    doc,
+    state,
+    onUpload,
+    onRemove,
+    onPreview
+}: {
+    doc: DocumentType;
+    state: DocumentState;
+    onUpload: (side: UploadSide, file: File) => void;
+    onRemove: (side: UploadSide) => void;
+    onPreview: (file: UploadedFile) => void;
 }) => {
-    const isCompleted = !!uploaded.frontUrl && (!doc.requiresBack || !!uploaded.backUrl);
-
-    // Handler specific to this card's key
-    const onUpload = (side: UploadSide, url: string | null, fileName: string | null) => {
-        handleFileUpload(doc.key, side, url, fileName);
-    };
-
-    return (
-        <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className={`
-                p-4 sm:p-6 rounded-xl shadow-lg border-2 transition-all duration-300
-                ${isCompleted ? 'border-green-300 bg-green-50/50' : 'border-slate-200 bg-white'}
-            `}
-        >
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-200">
-                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <FileText size={20} className="text-blue-600" />
-                    {doc.label}
-                </h3>
-                {isCompleted && <CheckCircle size={24} className="text-green-600" aria-label="All pages uploaded" />}
-            </div>
-
-            {/* Instructions */}
-            <div className="mb-6 p-3 bg-blue-50/70 border border-blue-200 rounded-lg">
-                <p className="text-xs font-semibold text-blue-800 mb-1">Upload Instructions:</p>
-                <ul className="list-disc list-inside space-y-0.5 text-xs text-blue-700">
-                    {doc.instructions.map((inst, i) => (
-                        <li key={i}>{inst}</li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Upload Sections */}
-            <div className="grid grid-cols-1 gap-6">
-                <UploadSection
-                    side="Front"
-                    uploadKey="frontUrl"
-                    currentUrl={uploaded.frontUrl}
-                    fileName={uploaded.frontFileName}
-                    onUpload={onUpload}
-                />
-                
-                {doc.requiresBack && (
-                    <UploadSection
-                        side="Back"
-                        uploadKey="backUrl"
-                        currentUrl={uploaded.backUrl}
-                        fileName={uploaded.backFileName}
-                        onUpload={onUpload}
-                    />
-                )}
-                
-                {/* Handle PAN Card/Single-page optional back side */}
-                {!doc.requiresBack && (
-                    <UploadSection
-                        side="Back"
-                        uploadKey="backUrl"
-                        currentUrl={uploaded.backUrl}
-                        fileName={uploaded.backFileName}
-                        onUpload={onUpload}
-                        isOptional={true}
-                    />
-                )}
-            </div>
-        </motion.div>
-    );
-};
-
-
-// --- MAIN COMPONENT ---
-
-const Identification = () => {
-    const [uploaded, setUploaded] = useState<UploadUrls>(initialUploadState);
-
-    // Global handler to update the state based on the document key, side, URL, and file name
-    const handleFileUpload = (docKey: string, side: UploadSide, url: string | null, fileName: string | null) => {
-        const fileNameKey = side === 'frontUrl' ? 'frontFileName' : 'backFileName';
-        setUploaded((prev) => ({
-            ...prev,
-            [docKey]: {
-                ...prev[docKey],
-                [side]: url,
-                [fileNameKey]: fileName, // Store the file name
-            },
-        }));
-    };
-    
-    // Check if all *required* documents (Aadhar, Pan, ID, Passport) are uploaded
-    const isReadyToSave = documents.every(doc => {
-        // Must have front URL
-        if (!uploaded[doc.key]?.frontUrl) return false;
-        // If it requires a back side (Aadhar, Passport), the back URL must also exist
-        if (doc.requiresBack && !uploaded[doc.key]?.backUrl) return false;
-        return true;
-    });
-
-    // Simple reset function for Cancel button
-    const handleCancel = () => {
-        setUploaded(initialUploadState);
-        console.log("Uploads cancelled/reset.");
-    };
-
-    const handleSave = () => {
-        if (isReadyToSave) {
-            console.log("Saving uploaded documents:", uploaded);
-            // TODO: Final API call to save all URLs/data to backend
-            alert('Documents submitted successfully! Check console for data structure.');
-        } else {
-            alert('Please complete all required document uploads before saving.');
+    const handleFileChange = (side: UploadSide) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            onUpload(side, file);
+            e.target.value = ''; // Reset input
         }
     };
 
-    // Replace the default alert() with a custom modal in a real app
-    const alert = (message: string) => {
-        console.warn(message);
-        window.alert(message);
+    return (
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+            {/* Top: Centered Heading */}
+            <div className="flex flex-col items-center mb-6 border-b border-gray-100 pb-4">
+                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    {doc.label}
+                    {state.front && (!doc.requiresBack || state.back) && (
+                        <CheckCircle size={20} className="text-green-500" />
+                    )}
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                    {doc.isOptional ? "Optional Document" : "Mandatory Document"}
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                {/* Left Side: Guidelines */}
+                <div className="lg:col-span-4 flex flex-col justify-center">
+                    <div className="bg-blue-50/50 rounded-lg p-4 border border-blue-100 h-full">
+                        <h4 className="text-xs font-semibold text-blue-800 uppercase tracking-wider mb-3 flex items-center gap-1">
+                            <AlertCircle size={14} /> Guidelines
+                        </h4>
+                        <ul className="space-y-3">
+                            {doc.guidelines.map((line, idx) => (
+                                <li key={idx} className="text-xs text-blue-700 flex items-start gap-2">
+                                    <span className="block w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
+                                    <span className="leading-relaxed">{line}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Right Side: Upload Cards */}
+                <div className="lg:col-span-8">
+                    <div className="flex flex-col sm:flex-row gap-6 h-full items-center">
+                        <UploadCard
+                            label="Front Side"
+                            file={state.front}
+                            onUpload={handleFileChange('front')}
+                            onRemove={() => onRemove('front')}
+                            onPreview={() => state.front && onPreview(state.front)}
+                        />
+
+                        {(doc.requiresBack || state.back) ? (
+                            <UploadCard
+                                label="Back Side"
+                                file={state.back}
+                                onUpload={handleFileChange('back')}
+                                onRemove={() => onRemove('back')}
+                                onPreview={() => state.back && onPreview(state.back)}
+                            />
+                        ) : (
+                            <UploadCard
+                                label="Back Side (Optional)"
+                                file={state.back}
+                                onUpload={handleFileChange('back')}
+                                onRemove={() => onRemove('back')}
+                                onPreview={() => state.back && onPreview(state.back)}
+                            />
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const Identification = () => {
+    const [docState, setDocState] = useState<AllDocumentsState>({
+        aadhar: { front: null, back: null },
+        pan: { front: null, back: null },
+        idcard: { front: null, back: null },
+        passport: { front: null, back: null },
+    });
+
+    const [previewFile, setPreviewFile] = useState<UploadedFile | null>(null);
+
+    // Mock upload function
+    const handleUpload = (docId: string, side: UploadSide, file: File) => {
+        // In a real app, upload to server here.
+        // We'll create a fake URL for preview.
+        const fakeUrl = URL.createObjectURL(file);
+
+        setDocState(prev => ({
+            ...prev,
+            [docId]: {
+                ...prev[docId],
+                [side]: {
+                    url: fakeUrl,
+                    name: file.name,
+                    type: file.type
+                }
+            }
+        }));
     };
 
+    const handleRemove = (docId: string, side: UploadSide) => {
+        setDocState(prev => ({
+            ...prev,
+            [docId]: {
+                ...prev[docId],
+                [side]: null
+            }
+        }));
+    };
+
+    // Check if all mandatory documents are uploaded
+    const isFormValid = documents.every(doc => {
+        if (doc.isOptional) return true;
+        const state = docState[doc.id];
+        const hasFront = !!state?.front;
+        const hasBack = doc.requiresBack ? !!state?.back : true;
+        return hasFront && hasBack;
+    });
 
     return (
-        <div className="space-y-6 max-w-3xl mx-auto">
-            <h2 className="text-2xl font-semibold text-slate-800 pt-2">Document Submission</h2>
-            <p className="text-slate-600 text-sm">Please upload the front and back sides of your identification documents. *Required documents must be fully completed to submit.</p>
-            
-            {/* --- GENERAL GUIDELINES SECTION --- */}
-            <div className="p-4 bg-yellow-50/70 border-l-4 border-yellow-400 rounded-lg shadow-sm">
-                <h3 className="flex items-center text-base font-semibold text-yellow-800 mb-2">
-                    <AlertTriangle size={18} className="mr-2" />
-                    General Document Guidelines
-                </h3>
-                <ul className="list-disc list-inside space-y-1 text-sm text-yellow-700">
-                    <li>**File Format:** Only **PDF, JPG, or PNG** formats are accepted.</li>
-                    <li>**File Size:** Each uploaded file must not exceed **5 MB**.</li>
-                    <li>**Clarity:** Ensure the document is well-lit, uncropped, and all text is clearly legible without glare.</li>
-                    <li>**Validity:** Documents must be valid and not expired.</li>
-                </ul>
+        <div className="max-w-5xl mx-auto space-y-8 pb-10">
+
+            {/* Header */}
+            <div className="flex flex-col gap-2">
+                <h2 className="text-2xl font-bold text-gray-900">Identification Documents</h2>
+                <p className="text-gray-500">Upload your government issued identification documents for verification.</p>
             </div>
-            
-            {/* Document Cards */}
+
+            {/* Document Rows */}
             <div className="space-y-6">
-                {documents.map((doc) => (
-                    <DocumentCard
-                        key={doc.key}
+                {documents.map(doc => (
+                    <DocumentRow
+                        key={doc.id}
                         doc={doc}
-                        uploaded={uploaded[doc.key]}
-                        handleFileUpload={handleFileUpload}
+                        state={docState[doc.id] || { front: null, back: null }}
+                        onUpload={(side, file) => handleUpload(doc.id, side, file)}
+                        onRemove={(side) => handleRemove(doc.id, side)}
+                        onPreview={setPreviewFile}
                     />
                 ))}
             </div>
 
-            {/* Save + Cancel buttons */}
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-6 border-t border-slate-200">
-                <button 
-                    onClick={handleCancel}
-                    className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-100 text-sm font-medium text-slate-700 transition-colors"
-                >
-                    Cancel
-                </button>
-                <button 
-                    onClick={handleSave}
-                    disabled={!isReadyToSave}
-                    className={`
-                        px-6 py-2 text-white font-semibold rounded-lg text-sm transition-colors shadow-lg
-                        ${isReadyToSave 
-                            ? 'bg-blue-600 hover:bg-blue-700' 
-                            : 'bg-gray-400 cursor-not-allowed'
+            {/* Submit Action */}
+            <div className="flex justify-end pt-4 border-t border-gray-200">
+                <button
+                    disabled={!isFormValid}
+                    className={`px-8 py-3 rounded-xl font-semibold shadow-lg transition-all transform 
+                        ${isFormValid
+                            ? "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
+                        }`}
+                    onClick={() => {
+                        if (isFormValid) {
+                            console.log("Submitting documents:", docState);
+                            // Add actual submit logic here
                         }
-                    `}
+                    }}
                 >
-                    Save & Submit Documents
+                    Submit Documents
                 </button>
             </div>
+
+            {/* Preview Modal */}
+            {previewFile && (
+                <PreviewModal
+                    file={previewFile}
+                    onClose={() => setPreviewFile(null)}
+                />
+            )}
         </div>
     );
 };

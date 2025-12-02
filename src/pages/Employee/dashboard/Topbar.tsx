@@ -4,6 +4,7 @@ import DefaultAvatar from "../../../assets/my_pic.jpg";
 import { useRef, useEffect, useState } from "react";
 // import myPic from "../../../assets/my_pic.jpg";
 import LogoutModal from "../../../components/LogoutModal";
+// import { useSelector } from "react-redux";
 
 interface TopbarProps {
   name: string;
@@ -37,6 +38,7 @@ const getGreeting = (): string => {
 };
 
 export default function Topbar({ name, id }: TopbarProps) {
+  // const username = useSelector((store) => store?.userName)
   const navigate = useNavigate();
   const location = useLocation();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
@@ -121,7 +123,10 @@ export default function Topbar({ name, id }: TopbarProps) {
           onClick={handleNotification}
           className="relative p-2 rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-150"
         >
-          <Bell className="h-6 w-6" />
+          <Bell
+            className={`h-6 w-6 ${location.pathname === "/employee/notifications" ? "text-blue-600" : ""}`}
+            fill={location.pathname === "/employee/notifications" ? "currentColor" : "none"}
+          />
           {/* <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border border-white"></span> */}
         </button>
 

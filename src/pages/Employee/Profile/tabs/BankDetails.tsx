@@ -44,7 +44,7 @@ const BankDetails = () => {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-slate-200"
+      className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl"
     >
       {/* --- Component Header --- */}
       <div className="flex justify-between items-center mb-4">

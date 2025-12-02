@@ -50,7 +50,7 @@ export default function TimeCard({
         </div>
 
         {/* Time */}
-        <h2 className="text-3xl font-bold text-stone-900 tracking-tighter">
+        <h2 className="text-2xl font-bold text-stone-900 tracking-tighter">
           {time}
         </h2>
 

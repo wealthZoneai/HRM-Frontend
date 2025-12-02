@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import { useState, useRef} from "react";
+import { useState, useRef } from "react";
 import myPic from "../assets/my_pic.jpg";
 import NotificationPanel from "./NotificationPanel";
 
@@ -51,7 +51,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
             onClick={() => setOpenNotif(!openNotif)}
             className="relative p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
           >
-            <Bell size={20} className="text-gray-700" />
+            <Bell size={20} className="text-gray-700" fill={openNotif ? "currentColor" : "none"} />
 
             {/* Badge */}
             <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] px-1.5 py-px rounded-full">
@@ -73,7 +73,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
 
         {/* UNIQUE NOTIFICATION PANEL */}
 
-        <NotificationPanel open={openNotif} anchorRef={bellRef}  onClose={() => setOpenNotif(false)}/>
+        <NotificationPanel open={openNotif} anchorRef={bellRef} onClose={() => setOpenNotif(false)} />
       </div>
     </>
   );
