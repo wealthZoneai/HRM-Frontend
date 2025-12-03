@@ -28,6 +28,7 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import OTPVerification from "../pages/auth/OTPVerification";
 import ResetPassword from "../pages/auth/RestPassword";
 import HRLayout from "../pages/HR/HRLayout";
+import LeadStatus from "../pages/Team Lead/LeadStatus";
 // import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
 
 function AppRouters() {
@@ -99,6 +100,7 @@ function AppRouters() {
         <Route path="leave-management/success" element={<ApplyLeaveSuccess />} />
 
         <Route path="policy" element={<Policies />} />
+        <Route path="lead-status" element={<LeadStatus />} />
         {/* <Route path="/upload/:type" element={<UploadPage />} /> */}
       </Route>
 
@@ -117,25 +119,25 @@ function AppRouters() {
         <Route path="dashboard" element={<HRHomeDashboard />} />
         <Route path="Holidays" element={<HolidayCard />} />
       </Route> */}
-            <Route
-                path="/hr/*"
-                element={
-                    // <ProtectedRoute allowedRole="HR">
-                    <HRLayout>
-                        <Outlet />
-                    </HRLayout>
-                    // </ProtectedRoute>
-                }
-            >
-                <Route path="dashboard" element={<HRHomeDashboard />} />
-                <Route path="Holidays" element={<HolidayCard />} />
-                <Route path="Employees" element={<EmployeeScreen />} />
-                <Route path="Announcements" element={<AnnouncementsScreen />} />
-                <Route path="salary" element={<SalaryManagement />} />
-                <Route path="attendance" element={<AttendanceScreen />} />
-                <Route path="leave-management" element={<HrLeaveManagement />} />
-                <Route path="addEmployeeWizard" element={<AddEmployeeWizard />} />
-            </Route>
+      <Route
+        path="/hr/*"
+        element={
+          // <ProtectedRoute allowedRole="HR">
+          <HRLayout>
+            <Outlet />
+          </HRLayout>
+          // </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<HRHomeDashboard />} />
+        <Route path="Holidays" element={<HolidayCard />} />
+        <Route path="Employees" element={<EmployeeScreen />} />
+        <Route path="Announcements" element={<AnnouncementsScreen />} />
+        <Route path="salary" element={<SalaryManagement />} />
+        <Route path="attendance" element={<AttendanceScreen />} />
+        <Route path="leave-management" element={<HrLeaveManagement />} />
+        <Route path="addEmployeeWizard" element={<AddEmployeeWizard />} />
+      </Route>
 
       {/* ADMIN ROUTES */}
       <Route

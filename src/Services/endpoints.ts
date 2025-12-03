@@ -15,6 +15,7 @@ const endpoints = {
     // employee endpoints
     forgotPassword: 'api/forgot-password/',
     verifyOTP: 'api/verify-otp/',
+    resetPassword: 'api/reset-password/',
 
 }
 

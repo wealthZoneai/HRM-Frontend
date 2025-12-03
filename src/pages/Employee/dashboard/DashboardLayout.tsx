@@ -10,7 +10,8 @@ import {
   FiBook,
   FiDollarSign,
   FiChevronLeft,
-  FiLogOut
+  FiLogOut,
+  FiUsers
 } from "react-icons/fi";
 import Topbar from "./Topbar";
 import Logo from "../../../assets/white_logo.png";
@@ -32,6 +33,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+
+  const role = localStorage.getItem("role");
 
   const navItems: NavItem[] = [
     { name: "Dashboard", icon: <FiHome size={20} />, path: "/employee/dashboard" },
@@ -64,7 +67,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       icon: <FiBook size={20} />,
       path: "/employee/policy",
     },
-  ];
+    {
+      name: "Lead Status",
+      icon: <FiUsers size={20} />,
+      path: "/employee/lead-status",
+    },
+  ].filter((item) => {
+    if (role === "intern" && item.name === "Payroll") {
+      return false;
+    }
+    if (item.name === "Lead Status" && role !== "tl") {
+      return false;
+    }
+    return true;
+  });
 
   // const handleLogout = () => {
   //   localStorage.removeItem("authToken");

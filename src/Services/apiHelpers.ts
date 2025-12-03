@@ -68,5 +68,35 @@ export function OTPVerify({email, otp}:{email:string, otp:string}){
   return server.post(endpoints.verifyOTP, body, {requiresAuth:false})
 }
 
+export function ResetPassword({email, new_password, confirm_password}:{email:string, new_password:string, confirm_password:string}){
+  const body = {email, new_password, confirm_password};
+  return server.post(endpoints.resetPassword, body, {requiresAuth:false})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

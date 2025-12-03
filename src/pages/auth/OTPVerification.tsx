@@ -12,7 +12,7 @@ const OTPVerification: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Get email passed from ForgotPassword page
   const email = location.state?.email;
 
@@ -25,7 +25,7 @@ const OTPVerification: React.FC = () => {
 
   const handleResend = async () => {
     if (!email) return;
-    
+
     try {
       await ResendOTP(email);
       showSuccess("OTP has been resent successfully");
@@ -52,14 +52,15 @@ const OTPVerification: React.FC = () => {
 
       if (response.status === 200 || response.status === 201) {
         showSuccess("OTP Verified Successfully!");
+        localStorage.setItem("resetEmail", email);
         // Navigate to Reset Password page, passing email and otp (or token)
         navigate('/resetpassword', { state: { email, otp: otpString } });
       }
     } catch (error: any) {
       console.error("OTP Verification Error:", error);
-      const errorMessage = error.response?.data?.otp?.[0] || 
-                           error.response?.data?.detail || 
-                           "Invalid OTP. Please try again.";
+      const errorMessage = error.response?.data?.otp?.[0] ||
+        error.response?.data?.detail ||
+        "Invalid OTP. Please try again.";
       showError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -78,7 +79,7 @@ const OTPVerification: React.FC = () => {
       next?.focus();
     }
   };
-  
+
   // Handle backspace to move to previous input
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
@@ -185,11 +186,10 @@ const OTPVerification: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 mt-4 text-white font-bold rounded-md transition shadow-sm ${
-                isLoading 
-                  ? "bg-blue-400 cursor-not-allowed" 
+              className={`w-full py-3 mt-4 text-white font-bold rounded-md transition shadow-sm ${isLoading
+                  ? "bg-blue-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
-              }`}
+                }`}
             >
               {isLoading ? "Verifying..." : "Verify OTP"}
             </button>

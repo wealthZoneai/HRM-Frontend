@@ -10,18 +10,16 @@ import Logo from "../../assets/logo_svg.svg";
 import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
-
-import {  showWarning } from "../../utils/toast";
-// showLoginError, showLoginSuccess,
-// import { loginUser } from "../../Services/apiHelpers";
-// import { setUserData } from "../../store/slice/userData";
-// import { useDispatch } from "react-redux";
+import { showWarning, showLoginError, showLoginSuccess } from "../../utils/toast";
+import { loginUser } from "../../Services/apiHelpers";
+import { setUserData } from "../../store/slice/userData";
+import { useDispatch } from "react-redux";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // const [role,] = useState<"employee" | "hr" | "admin">("employee");
+  const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,33 +34,33 @@ const Login: React.FC = () => {
       showWarning("Please fill in all fields");
       return;
     }
-navigate(`/hr/dashboard`);
-    // try {
-    //   const response = await loginUser({ username, password });
-    //   console.log(response)
-    //   if (response.status === 200) {
-    //     localStorage.setItem("access", response.data.access);
-    //     localStorage.setItem("refresh", response.data.refresh);
-    //     if (response.data.role === "admin" || response.data.role === "hr") {
-    //       navigate(`/hr/dashboard`);
-    //     } else if(response.data.role === "employee" || response.data.role === "intern") {
-    //       navigate(`/employee/dashboard`);
-    //     }
-    //     dispatch(setUserData({
-    //       token: response.data.access,
-    //       role: response.data.role,
-    //       userName: response.data.username
-    //     }));
+    // navigate(`/hr/dashboard`);
+    try {
+      const response = await loginUser({ username, password });
+      console.log(response)
+      if (response.status === 200) {
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
+        if (response.data.role === "admin" || response.data.role === "hr") {
+          navigate(`/hr/dashboard`);
+        } else if (response.data.role === "employee" || response.data.role === "intern" || response.data.role === "tl") {
+          navigate(`/employee/dashboard`);
+        }
+        dispatch(setUserData({
+          token: response.data.access,
+          role: response.data.role,
+          userName: response.data.username
+        }));
 
-    //     // Show success toast with username
-    //     showLoginSuccess(response.data.username);
+        // Show success toast with username
+        showLoginSuccess(response.data.username);
 
-    //   }
+      }
 
-    // } catch (error) {
-    //   console.error(error);
-    //   showLoginError("Invalid credentials. Please check your email and password.");
-    // }
+    } catch (error) {
+      console.error(error);
+      showLoginError("Invalid credentials. Please check your email and password.");
+    }
   };
 
 
