@@ -93,6 +93,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     id: "WZG-AI-0029"
   };
 
+  const mainContentRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo(0, 0);
+    }
+  }, [location.pathname]);
+
   return (
     <div className="flex h-screen overflow-hidden">
 
@@ -220,7 +228,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <Topbar name={currentUser.name} id={currentUser.id} />
 
         {/* ONLY CONTENT SCROLLS */}
-        <main className="flex-1 overflow-y-auto px-8 py-6">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto px-8 py-6">
           {children}
         </main>
       </div>

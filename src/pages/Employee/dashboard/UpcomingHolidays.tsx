@@ -1,5 +1,6 @@
 
 import { Calendar, CalendarDays, } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HOLIDAYS = [
   { name: "New Year Day", date: "1 Jan", day: "Monday", type: "Public" },
@@ -10,6 +11,10 @@ const HOLIDAYS = [
 ];
 
 export default function UpcomingHolidays() {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/employee/calendar");
+  }
   return (
     <div className="max-h-[700px] bg-white flex items-center justify-center font-sans text-stone-800" >
 
@@ -22,7 +27,7 @@ export default function UpcomingHolidays() {
             {/* <h2 className="text-xs font-bold tracking-widest uppercase text-blue-900/60 mb-1">Calendar</h2> */}
             <h1 className="text-2xl md:text-xl font-bold text-stone-900 tracking-tight">Upcoming Holidays</h1>
           </div>
-          <button className="p-2 rounded-full hover:bg-stone-50 text-stone-400 hover:text-blue-900 transition-colors">
+          <button onClick={handleClick} className="p-2 rounded-full hover:bg-stone-50 text-stone-400 hover:text-blue-900 transition-colors">
             <CalendarDays size={20} />
           </button>
         </div>

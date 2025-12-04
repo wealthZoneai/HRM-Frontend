@@ -31,6 +31,9 @@ export default function TaskItem({
   const [subtaskInput, setSubtaskInput] = useState("");
   const [subtaskAssignee, setSubtaskAssignee] = useState(assignedTo); // Default to task owner
 
+  const role = localStorage.getItem("role");
+  const isTL = role === "tl";
+
   const renderStatusIcon = () => {
     switch (status) {
       case "completed":
@@ -93,12 +96,12 @@ export default function TaskItem({
           {/* Status Badge */}
           <span
             className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${status === "completed"
-                ? "bg-green-100 text-green-700"
-                : status === "inProgress"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : status === "notStarted"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-gray-100 text-gray-700"
+              ? "bg-green-100 text-green-700"
+              : status === "inProgress"
+                ? "bg-yellow-100 text-yellow-700"
+                : status === "notStarted"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-gray-100 text-gray-700"
               }`}
           >
             {status === "completed"
@@ -168,16 +171,16 @@ export default function TaskItem({
                   <div className="flex items-center gap-2 cursor-pointer">
                     <button
                       className={`flex items-center justify-center w-5 h-5 rounded-full border-2 transition-all ${subtask.completed
-                          ? "bg-green-500 border-green-500"
-                          : "border-gray-400 hover:border-green-500"
+                        ? "bg-green-500 border-green-500"
+                        : "border-gray-400 hover:border-green-500"
                         }`}
                     >
                       {subtask.completed && <Check size={14} className="text-white" />}
                     </button>
                     <span
                       className={`text-sm ${subtask.completed
-                          ? "line-through text-gray-500"
-                          : "text-gray-800 group-hover:text-gray-900"
+                        ? "line-through text-gray-500"
+                        : "text-gray-800 group-hover:text-gray-900"
                         }`}
                     >
                       {subtask.title}
@@ -216,21 +219,23 @@ export default function TaskItem({
                   autoFocus
                 />
 
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 flex-1">
-                    <span className="text-xs text-gray-500">Assign to:</span>
-                    <select
-                      value={subtaskAssignee}
-                      onChange={(e) => setSubtaskAssignee(e.target.value)}
-                      className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                    >
-                      {employees.map((emp) => (
-                        <option key={emp} value={emp}>
-                          {emp}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div className={`flex items-center ${isTL ? "justify-between" : "justify-end"} gap-2`}>
+                  {isTL && (
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="text-xs text-gray-500">Assign to:</span>
+                      <select
+                        value={subtaskAssignee}
+                        onChange={(e) => setSubtaskAssignee(e.target.value)}
+                        className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                      >
+                        {employees.map((emp) => (
+                          <option key={emp} value={emp}>
+                            {emp}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   <div className="flex gap-2">
                     <button

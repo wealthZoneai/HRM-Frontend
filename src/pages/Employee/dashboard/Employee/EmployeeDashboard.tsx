@@ -5,8 +5,6 @@ import UpcomingHolidays from "../UpcomingHolidays";
 import LeaveRequests from "../LeaveRequests";
 import ProjectStatus from "../ProjectStatus";
 
-import Timesheet from "../Timesheet";
-
 export default function EmployeeDashboard() {
   return (
     <div className="space-y-6">
@@ -21,9 +19,8 @@ export default function EmployeeDashboard() {
       </div>
 
       {/* Performance + Attendance Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ProjectStatus />
-        <Timesheet />
         <Announcements />
       </div>
 
