@@ -11,7 +11,7 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
 // showLoginError, showLoginSuccess
-import { showWarning,  } from "../../utils/toast";
+import { showWarning, } from "../../utils/toast";
 // import { loginUser } from "../../Services/apiHelpers";
 // import { setUserData } from "../../store/slice/userData";
 // import { useDispatch } from "react-redux";
@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   // const dispatch = useDispatch();
 
-  const [role,] = useState<"employee" | "hr" | "admin">("employee");
+  // const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
