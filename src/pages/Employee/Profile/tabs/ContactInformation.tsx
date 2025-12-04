@@ -25,7 +25,11 @@ const EditLineField = ({
   <div className="space-y-1">
     <label className="text-sm font-medium text-gray-700">{label}</label>
     <input
-
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full border-b border-gray-300 py-1 text-gray-900 focus:border-blue-500 focus:outline-none transition-colors"
     />
   </div>
 );

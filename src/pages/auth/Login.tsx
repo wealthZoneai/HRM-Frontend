@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [role,] = useState<"employee" | "hr" | "admin">("employee");
+  // const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
