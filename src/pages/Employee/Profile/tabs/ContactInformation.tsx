@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Pencil, X, Check } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Pencil, X, Check, ChevronDown } from "lucide-react";
 
 const UnderlineField = ({ label, value }: { label: string; value: string }) => (
   <div className="space-y-1">
@@ -25,19 +25,85 @@ const EditLineField = ({
   <div className="space-y-1">
     <label className="text-sm font-medium text-gray-700">{label}</label>
     <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="w-full border-b border-gray-300 focus:border-blue-600 outline-none py-1 text-gray-900"
+
     />
   </div>
 );
+
+const CustomSelect = ({
+  label,
+  name,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  options: string[];
+  onChange: (name: string, value: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="space-y-1 relative" ref={dropdownRef}>
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <div
+        className="w-full border-b border-gray-300 py-1 text-gray-900 cursor-pointer flex justify-between items-center"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className={!value ? "text-gray-500" : ""}>
+          {value || `Select ${label}`}
+        </span>
+        <ChevronDown
+          size={16}
+          className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
+        />
+      </div>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full bg-white shadow-xl rounded-lg mt-1 py-1 border border-gray-100 max-h-60 overflow-auto animate-in fade-in zoom-in-95 duration-100">
+          {options.map((option) => (
+            <div
+              key={option}
+              className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${value === option
+                ? "bg-blue-50 text-blue-600 font-medium"
+                : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              onClick={() => {
+                onChange(name, option);
+                setIsOpen(false);
+              }}
+            >
+              {option}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ProfileDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const [data, setData] = useState({
+    employeeId: "WZ-101",
     firstName: "Ravi",
     middleName: "lorem ipsum",
     lastName: "Teja",
@@ -54,9 +120,13 @@ const ProfileDetails = () => {
   const [backup, setBackup] = useState(data);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    setData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -119,6 +189,10 @@ const ProfileDetails = () => {
                 <p className="text-sm font-medium text-gray-700">Work mail (Read-only)</p>
                 <p className="text-gray-900 py-1 border-b border-gray-200">{data.workMail}</p>
               </div>
+              <div className="space-y-1 opacity-60">
+                <p className="text-sm font-medium text-gray-700">Employee ID (Read-only)</p>
+                <p className="text-gray-900 py-1 border-b border-gray-200">{data.employeeId}</p>
+              </div>
               <EditLineField
                 label="Personal mail ID"
                 name="personalMail"
@@ -151,17 +225,21 @@ const ProfileDetails = () => {
                 value={data.bloodGroup}
                 onChange={handleChange}
               />
-              <EditLineField
+
+              <CustomSelect
                 label="Gender"
                 name="gender"
                 value={data.gender}
-                onChange={handleChange}
+                options={["Male", "Female", "Other"]}
+                onChange={handleSelectChange}
               />
-              <EditLineField
+
+              <CustomSelect
                 label="Marital Status"
                 name="maritalStatus"
                 value={data.maritalStatus}
-                onChange={handleChange}
+                options={["Single", "Married", "Divorced", "Widowed"]}
+                onChange={handleSelectChange}
               />
             </>
           ) : (
@@ -170,6 +248,7 @@ const ProfileDetails = () => {
               <UnderlineField label="Middle Name" value={data.middleName} />
               <UnderlineField label="Last Name" value={data.lastName} />
               <UnderlineField label="Work mail" value={data.workMail} />
+              <UnderlineField label="Employee ID" value={data.employeeId} />
               <UnderlineField label="Personal mail ID" value={data.personalMail} />
               <UnderlineField label="Phone number" value={data.phone} />
               <UnderlineField label="Alternative Number" value={data.alternativeNumber} />

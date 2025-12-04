@@ -48,7 +48,7 @@ export default function Topbar({ name, id }: TopbarProps) {
   const handleNotification = () => {
     // Toggle between notifications page and dashboard
     if (location.pathname === "/employee/notifications") {
-      navigate("/employee/dashboard");
+      navigate(-1);
     } else {
       navigate("/employee/notifications");
     }
@@ -57,7 +57,7 @@ export default function Topbar({ name, id }: TopbarProps) {
   const handleProfileNavigate = () => {
     // Toggle between profile page and dashboard
     if (location.pathname === "/employee/profile") {
-      navigate("/employee/dashboard");
+      navigate(-1)
     } else {
       navigate("/employee/profile");
     }

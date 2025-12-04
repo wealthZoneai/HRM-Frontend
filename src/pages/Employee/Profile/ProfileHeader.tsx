@@ -61,7 +61,7 @@ const ProfileHeader = () => {
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <Calendar size={14} className="text-orange-500 shrink-0" />
-                <span>Joined Sep 2025</span>
+                <span>Joined 24/09/2025</span>
               </div>
             </div>
           </div>

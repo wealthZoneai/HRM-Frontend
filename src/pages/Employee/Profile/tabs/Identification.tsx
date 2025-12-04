@@ -18,7 +18,6 @@ type UploadSide = 'front' | 'back';
 interface DocumentType {
     id: string;
     label: string;
-    guidelines: string[];
     requiresBack: boolean;
     isOptional?: boolean;
 }
@@ -42,45 +41,33 @@ const documents: DocumentType[] = [
     {
         id: "aadhar",
         label: "Aadhar Card",
-        guidelines: [
-            "Ensure the photo and address are clearly visible.",
-            "Upload both Front and Back sides.",
-            "Supported formats: JPG, PNG, PDF (Max 5MB)."
-        ],
         requiresBack: true
     },
     {
         id: "pan",
         label: "PAN Card",
-        guidelines: [
-            "Ensure the PAN number and signature are clear.",
-            "Front side is mandatory.",
-            "Back side is optional if not applicable."
-        ],
         requiresBack: false
     },
     {
         id: "idcard",
         label: "ID Card",
-        guidelines: [
-            "Upload your company or government issued ID card.",
-            "Front side is mandatory.",
-            "Back side is optional."
-        ],
         requiresBack: false,
         isOptional: true
     },
     {
         id: "passport",
         label: "Passport",
-        guidelines: [
-            "Ensure the photo and address pages are clear.",
-            "Upload both Front and Back sides.",
-            "Supported formats: JPG, PNG, PDF (Max 5MB)."
-        ],
         requiresBack: true,
         isOptional: true
     },
+];
+
+const commonGuidelines = [
+    "Ensure the photo and details are clearly visible.",
+    "Supported formats: JPG, PNG, PDF (Max 5MB).",
+    "Front side is mandatory for all documents.",
+    "Back side is required for Aadhar Card and Passport.",
+    "Ensure the documents are valid and not expired."
 ];
 
 // --- COMPONENTS ---
@@ -248,54 +235,33 @@ const DocumentRow = ({
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <div className="w-full sm:max-w-md flex gap-6">
+                    <UploadCard
+                        label="Front Side"
+                        file={state.front}
+                        onUpload={handleFileChange('front')}
+                        onRemove={() => onRemove('front')}
+                        onPreview={() => state.front && onPreview(state.front)}
+                    />
 
-                {/* Left Side: Guidelines */}
-                <div className="lg:col-span-4 flex flex-col justify-center">
-                    <div className="bg-blue-50/50 rounded-lg p-4 border border-blue-100 h-full">
-                        <h4 className="text-xs font-semibold text-blue-800 uppercase tracking-wider mb-3 flex items-center gap-1">
-                            <AlertCircle size={14} /> Guidelines
-                        </h4>
-                        <ul className="space-y-3">
-                            {doc.guidelines.map((line, idx) => (
-                                <li key={idx} className="text-xs text-blue-700 flex items-start gap-2">
-                                    <span className="block w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
-                                    <span className="leading-relaxed">{line}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-
-                {/* Right Side: Upload Cards */}
-                <div className="lg:col-span-8">
-                    <div className="flex flex-col sm:flex-row gap-6 h-full items-center">
+                    {(doc.requiresBack || state.back) ? (
                         <UploadCard
-                            label="Front Side"
-                            file={state.front}
-                            onUpload={handleFileChange('front')}
-                            onRemove={() => onRemove('front')}
-                            onPreview={() => state.front && onPreview(state.front)}
+                            label="Back Side"
+                            file={state.back}
+                            onUpload={handleFileChange('back')}
+                            onRemove={() => onRemove('back')}
+                            onPreview={() => state.back && onPreview(state.back)}
                         />
-
-                        {(doc.requiresBack || state.back) ? (
-                            <UploadCard
-                                label="Back Side"
-                                file={state.back}
-                                onUpload={handleFileChange('back')}
-                                onRemove={() => onRemove('back')}
-                                onPreview={() => state.back && onPreview(state.back)}
-                            />
-                        ) : (
-                            <UploadCard
-                                label="Back Side (Optional)"
-                                file={state.back}
-                                onUpload={handleFileChange('back')}
-                                onRemove={() => onRemove('back')}
-                                onPreview={() => state.back && onPreview(state.back)}
-                            />
-                        )}
-                    </div>
+                    ) : (
+                        <UploadCard
+                            label="Back Side (Optional)"
+                            file={state.back}
+                            onUpload={handleFileChange('back')}
+                            onRemove={() => onRemove('back')}
+                            onPreview={() => state.back && onPreview(state.back)}
+                        />
+                    )}
                 </div>
             </div>
         </div>
@@ -357,6 +323,22 @@ const Identification = () => {
             <div className="flex flex-col gap-2">
                 <h2 className="text-2xl font-bold text-gray-900">Identification Documents</h2>
                 <p className="text-gray-500">Upload your government issued identification documents for verification.</p>
+            </div>
+
+            {/* Common Guidelines */}
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
+                    <AlertCircle size={20} />
+                    Upload Guidelines
+                </h3>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {commonGuidelines.map((line, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-blue-800 text-sm">
+                            <CheckCircle size={16} className="mt-0.5 shrink-0 text-blue-500" />
+                            <span>{line}</span>
+                        </li>
+                    ))}
+                </ul>
             </div>
 
             {/* Document Rows */}
