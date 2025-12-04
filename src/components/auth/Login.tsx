@@ -26,9 +26,9 @@ const Login: React.FC = () => {
       alert("Please fill all fields");
       return;
     }
-      // navigate(`/hr/dashboard`);
+      navigate(`/hr/dashboard`);
 
-    navigate(`/employee/dashboard`);
+    // navigate(`/employee/dashboard`);
   };
 
   return (
