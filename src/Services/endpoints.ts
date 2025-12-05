@@ -16,6 +16,7 @@ const endpoints = {
     forgotPassword: 'api/forgot-password/',
     verifyOTP: 'api/verify-otp/',
     resetPassword: 'api/reset-password/',
+    refresh : 'api/refresh/'
 
 }
 

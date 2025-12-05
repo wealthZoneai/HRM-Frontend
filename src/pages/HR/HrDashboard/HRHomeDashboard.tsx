@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { FiUsers, FiBriefcase, FiHome } from "react-icons/fi";
+import { FiUsers, FiBriefcase, FiHome, FiUserX } from "react-icons/fi";
 import type { DeptDataItem } from "./DeptDonutChart";
 import type { AnnouncementItem } from "./Announcements";
 import type { InterviewItem } from "./InterviewTable";
@@ -8,6 +8,8 @@ import SummaryCard from "./SummaryCard";
 import DeptDonutChart from "./DeptDonutChart";
 import Announcements from "./Announcements";
 import InterviewTable from "./InterviewTable";
+import TimeCard from "../../Employee/dashboard/TimeCard";
+import AttendanceStat from "../../Employee/dashboard/AttendanceStat";
 
 // const initialDeptData: DeptDataItem[] = [
 //   { name: "React Department", value: 30, color: "#81f172ff" },
@@ -302,6 +304,7 @@ export default function HRDashboardPage() {
   const totalEmployees = useMemo(() => deptData.reduce((s, d) => s + d.value, 0), [deptData]);
   const presentEmployees = Math.max(0, Math.round(totalEmployees * 0.9)); // sample
   const wfh = Math.round(totalEmployees * 0.06);
+  const absentees = totalEmployees - presentEmployees - wfh;
 
   function markInterviewComplete(id: string) {
     setInterviews(prev => prev.map(it => it.id === id ? { ...it, status: "Completed" } : it));
@@ -309,11 +312,19 @@ export default function HRDashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* top summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Top Section: Time & Attendance */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <TimeCard label="Time In" time="9:00 AM" actionLabel="Clock in" />
+        <TimeCard label="Time Out" time="7:00 PM" actionLabel="Clock out" />
+        <AttendanceStat title="Monthly Attendance" value={80} />
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <SummaryCard title="Total Employees Count" value={totalEmployees} subtitle="Employees" icon={<FiUsers size={22} />} />
         <SummaryCard title="Present Employees" value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
-        <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />}  />
+        <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />} />
+        <SummaryCard title="Absentees" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} trend="down" />
       </div>
 
       {/* middle section: chart + announcements */}
