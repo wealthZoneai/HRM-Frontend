@@ -61,19 +61,7 @@ const StepKin: React.FC = () => {
     let errorMsg = "";
 
     switch (field) {
-      case "username":
-        if (!value.trim()) errorMsg = "Username is required";
-        break;
 
-      case "password":
-        if (!value.trim()) errorMsg = "Password is required";
-        else if (value.length < 6)
-          errorMsg = "Password must be at least 6 characters";
-        else if (!/[A-Z]/.test(value))
-          errorMsg = "Include at least one uppercase letter";
-        else if (!/[0-9]/.test(value))
-          errorMsg = "Include at least one number";
-        break;
 
       case "email":
         if (!value.trim()) errorMsg = "Email is required";
@@ -112,22 +100,7 @@ const StepKin: React.FC = () => {
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* USERNAME */}
-          <InputField
-            label="Username *"
-            value={kin.username}
-            error={errors.username}
-            onChange={(v) => updateField("username", v)}
-          />
 
-          {/* PASSWORD */}
-          <InputField
-            label="Password *"
-            type="password"
-            value={kin.password}
-            error={errors.password}
-            onChange={(v) => updateField("password", v)}
-          />
 
           {/* EMAIL */}
           <InputField

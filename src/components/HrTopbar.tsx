@@ -33,6 +33,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
               weekday: "long",
               month: "short",
               day: "numeric",
+              year: "numeric",
             })}
           </p>
         </div>

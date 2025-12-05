@@ -80,12 +80,27 @@ const StepPersonal: React.FC = () => {
             }
           />
 
+          <TextField
+            label="Middle Name"
+            value={personal.middleName}
+            onChange={(v) =>
+              dispatch({ type: "SET_PERSONAL", payload: { middleName: v } })
+            }
+          />
 
           <TextField
             label="Last Name *"
             value={personal.lastName}
             onChange={(v) =>
               dispatch({ type: "SET_PERSONAL", payload: { lastName: v } })
+            }
+          />
+
+          <TextField
+            label="Personal Email"
+            value={personal.personalEmail}
+            onChange={(v) =>
+              dispatch({ type: "SET_PERSONAL", payload: { personalEmail: v } })
             }
           />
 
@@ -98,11 +113,27 @@ const StepPersonal: React.FC = () => {
           />
 
           <TextField
+            label="Alternative Number"
+            value={personal.alternativeNumber}
+            onChange={(v) =>
+              dispatch({ type: "SET_PERSONAL", payload: { alternativeNumber: v } })
+            }
+          />
+
+          <TextField
             label="Date of Birth"
             type="date"
             value={personal.dob}
             onChange={(v) =>
               dispatch({ type: "SET_PERSONAL", payload: { dob: v } })
+            }
+          />
+
+          <TextField
+            label="Blood Group"
+            value={personal.bloodGroup}
+            onChange={(v) =>
+              dispatch({ type: "SET_PERSONAL", payload: { bloodGroup: v } })
             }
           />
 
@@ -114,25 +145,26 @@ const StepPersonal: React.FC = () => {
             }
           >
             <option value="">Select</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
           </SelectField>
 
-          {/* <TextField
-            label="Email Address"
-            value={personal.email}
+          <SelectField
+            label="Marital Status"
+            value={personal.maritalStatus}
             onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { email: v } })
+              dispatch({ type: "SET_PERSONAL", payload: { maritalStatus: v } })
             }
-          /> */}
+          >
+            <option value="">Select</option>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Divorced">Divorced</option>
+            <option value="Widowed">Widowed</option>
+          </SelectField>
 
-          <TextField
-            label="Home Address"
-            value={personal.homeAddress}
-            onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { homeAddress: v } })
-            }
-          />
+
         </div>
       </div>
     </div>

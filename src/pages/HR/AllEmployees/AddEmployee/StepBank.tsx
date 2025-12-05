@@ -112,6 +112,27 @@ const StepBank: React.FC = () => {
             </select>
           </Field>
 
+          {/* ACCOUNT HOLDER NAME */}
+          <Field label="Account Holder Name *" error={errors.accountName}>
+            <input
+              value={bank.accountName || ""}
+              onChange={(e) => setBankField("accountName", e.target.value)}
+              onBlur={(e) => validateField("accountName", e.target.value)}
+              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </Field>
+
+          {/* BRANCH NAME */}
+          <Field label="Branch Name" error={null}>
+            <input
+              value={bank.branchName || ""}
+              onChange={(e) => setBankField("branchName", e.target.value)}
+              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </Field>
+
           {/* ACCOUNT NUMBER */}
           <Field label="Account Number *" error={errors.accountNumber}>
             <input
@@ -120,8 +141,9 @@ const StepBank: React.FC = () => {
               onBlur={(e) =>
                 validateField("accountNumber", e.target.value)
               }
-              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={!bank.bankName}
+              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-blue-500 ${!bank.bankName ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             />
           </Field>
 
@@ -138,19 +160,9 @@ const StepBank: React.FC = () => {
               onBlur={(e) =>
                 validateField("confirmAccountNumber", e.target.value)
               }
-              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </Field>
-
-          {/* ACCOUNT HOLDER NAME */}
-          <Field label="Account Holder Name *" error={errors.accountName}>
-            <input
-              value={bank.accountName || ""}
-              onChange={(e) => setBankField("accountName", e.target.value)}
-              onBlur={(e) => validateField("accountName", e.target.value)}
-              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={!bank.bankName}
+              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-blue-500 ${!bank.bankName ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             />
           </Field>
 

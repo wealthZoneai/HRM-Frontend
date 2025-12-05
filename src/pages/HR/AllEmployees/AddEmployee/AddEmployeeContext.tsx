@@ -13,7 +13,9 @@ export interface PersonalInfo {
   gender?: string;
   religion?: string;
   maritalStatus?: string;
-  homeAddress?: string;
+  alternativeNumber?: string;
+  bloodGroup?: string;
+  personalEmail?: string;
 }
 
 export interface NextOfKin {
@@ -41,6 +43,7 @@ export interface BankAccount {
   confirmAccountNumber?: string;
   accountName?: string;
   ifscCode?: string;
+  branchName?: string;
 }
 
 export interface Documents {

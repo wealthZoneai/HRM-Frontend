@@ -12,35 +12,75 @@ import TimeCard from "../../Employee/dashboard/TimeCard";
 import AttendanceStat from "../../Employee/dashboard/AttendanceStat";
 
 // const initialDeptData: DeptDataItem[] = [
-//   { name: "React Department", value: 30, color: "#81f172ff" },
-//   { name: "Java Department", value: 25, color: "#FFD166" },
+//   { name: "React Team", value: 30, color: "#81f172ff" },
+//   { name: "Java Team", value: 25, color: "#FFD166" },
 //   { name: "Digital Marketing", value: 30, color: "#9B72F1" },
-//   { name: "UI/UX Department", value: 28, color: "#2B6EF6" },
-//   { name: "Python Department", value: 18, color: "#3ABAB4" },
-//   { name: "Testing Department", value: 12, color: "#FF8A65" },
-//   { name: "HR Department", value: 30, color: "#9B72F1" },
+//   { name: "UI/UX Team", value: 28, color: "#2B6EF6" },
+//   { name: "Python Team", value: 18, color: "#3ABAB4" },
+//   { name: "Testing Team", value: 12, color: "#FF8A65" },
+//   { name: "HR Team", value: 30, color: "#9B72F1" },
 //   { name: "Cyber Security", value: 30, color: "#9B72F1" },
 //   { name: "BDMS", value: 30, color: "#9B72F1" },
 //   { name: "SPA", value: 30, color: "#9B72F1" },
 // ];
 
 const initialAnnouncements: AnnouncementItem[] = [
-  { id: "a1", title: "Company-Wide Meeting", date: "Mar 25", summary: "All hands meeting to discuss Q1 results", color: "bg-red-100 text-red-700" },
-  { id: "a2", title: "New WFH Policy", date: "Mar 20", summary: "Updated policy for remote working", color: "bg-green-100 text-green-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
-  { id: "a3", title: "Upcoming Holiday", date: "Mar 20", summary: "Office will be closed", color: "bg-blue-100 text-blue-700" },
+  {
+    id: "1",
+    title: "Quarterly Strategy Meeting",
+    date: "Oct 08",
+    summary: "Review of Q3 performance and strategic planning for Q4 objectives with all department heads.",
+    color: "bg-purple-100 text-purple-700"
+  },
+  {
+    id: "2",
+    title: "New Health Insurance Policy",
+    date: "Oct 12",
+    summary: "Open enrollment for the new health insurance plan begins next week. Please review the updated benefits guide.",
+    color: "bg-blue-100 text-blue-700"
+  },
+  {
+    id: "3",
+    title: "Diwali Celebration",
+    date: "Oct 25",
+    summary: "Office-wide Diwali celebration starts at 4 PM. Traditional wear is encouraged! Snacks and sweets will be provided.",
+    color: "bg-orange-100 text-orange-700"
+  },
+  {
+    id: "4",
+    title: "IT Security Audit",
+    date: "Oct 28",
+    summary: "Mandatory security audit for all workstations. Please ensure your systems are updated and passwords are changed.",
+    color: "bg-red-100 text-red-700"
+  },
+  {
+    id: "5",
+    title: "Employee Training: Soft Skills",
+    date: "Nov 02",
+    summary: "Workshop on effective communication and leadership skills. Required for all team leads and managers.",
+    color: "bg-green-100 text-green-700"
+  },
+  {
+    id: "6",
+    title: "Annual Performance Reviews",
+    date: "Nov 15",
+    summary: "Performance review cycle begins. Managers, please schedule 1:1s with your team members by the end of the month.",
+    color: "bg-indigo-100 text-indigo-700"
+  },
+  {
+    id: "7",
+    title: "Office Renovation Notice",
+    date: "Nov 20",
+    summary: "The 2nd-floor cafeteria will be closed for renovations. Temporary refreshments will be available in the lobby.",
+    color: "bg-yellow-100 text-yellow-700"
+  },
+  {
+    id: "8",
+    title: "Holiday Schedule Update",
+    date: "Dec 01",
+    summary: "The updated holiday calendar for next year is now available on the portal. Please plan your leaves accordingly.",
+    color: "bg-teal-100 text-teal-700"
+  }
 ];
 
 const initialInterviews: InterviewItem[] = [
@@ -58,7 +98,7 @@ const initialInterviews: InterviewItem[] = [
 ];
 const initialDeptData: DeptDataItem[] = [
   {
-    name: "React Department",
+    name: "React Team",
     value: 30,
     interns: 4,
     juniors: 10,
@@ -82,7 +122,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "Java Department",
+    name: "Java Team",
     value: 25,
     interns: 3,
     juniors: 8,
@@ -130,7 +170,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "UI/UX Department",
+    name: "UI/UX Team",
     value: 28,
     interns: 5,
     juniors: 10,
@@ -154,7 +194,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "Python Department",
+    name: "Python Team",
     value: 18,
     interns: 2,
     juniors: 6,
@@ -178,7 +218,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "Testing Department",
+    name: "QA Testing Team",
     value: 12,
     interns: 1,
     juniors: 4,
@@ -202,7 +242,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "HR Department",
+    name: "HR Team",
     value: 20,
     interns: 1,
     juniors: 6,
@@ -271,7 +311,7 @@ const initialDeptData: DeptDataItem[] = [
     ],
   },
   {
-    name: "SPA",
+    name: "SAP",
     value: 20,
     interns: 1,
     juniors: 6,
@@ -321,20 +361,22 @@ export default function HRDashboardPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Total Employees Count" value={totalEmployees} subtitle="Employees" icon={<FiUsers size={22} />} />
-        <SummaryCard title="Present Employees" value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
+        <SummaryCard title="Total Employee Count" value={totalEmployees} subtitle="Employees" icon={<FiUsers size={22} />} />
+        <SummaryCard title="Present Employee  " value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
         <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />} />
-        <SummaryCard title="Absentees" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} trend="down" />
+        <SummaryCard title="Absentees" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} />
       </div>
 
       {/* middle section: chart + announcements */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div >
+        <div>
           <DeptDonutChart data={deptData} />
         </div>
 
-        <div>
-          <Announcements items={announcements} />
+        <div className="lg:relative">
+          <div className="lg:absolute lg:inset-0">
+            <Announcements items={announcements} />
+          </div>
         </div>
       </div>
 

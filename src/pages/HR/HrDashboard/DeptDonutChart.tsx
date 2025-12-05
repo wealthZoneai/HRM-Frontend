@@ -17,7 +17,7 @@ export interface DeptDataItem {
   leads: number;
   productivityData: any[];
   attendanceData: any[];
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 
@@ -50,7 +50,7 @@ export default function DeptDonutChart({ data }: Props) {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 h-full">
         <h3 className="text-xl font-semibold mb-6 text-gray-800">Employee By Department</h3>
 
         <div className="flex flex-col lg:flex-row items-center gap-8">
@@ -71,7 +71,7 @@ export default function DeptDonutChart({ data }: Props) {
                 >
                   {data.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]}
-                    className="outline-none focus:outline-none"
+                      className="outline-none focus:outline-none"
                     />
                   ))}
                 </Pie>

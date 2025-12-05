@@ -8,7 +8,7 @@ type BankAccount = {
   accountNumber: string;
   ifscCode: string;
   branch: string;
-  confirmAccountNumber: string;
+  accountName: string;
 };
 
 // --- Reusable Helper Component (Internal) ---
@@ -36,7 +36,7 @@ const BankDetails = () => {
     accountNumber: '************8852',
     ifscCode: 'UCB0022581',
     branch: '', // Kept empty as seen in the image
-    confirmAccountNumber: '************8852', // Using the same masked number
+    accountName: 'Ravi Teja',
   });
 
   return (
@@ -64,7 +64,7 @@ const BankDetails = () => {
           {/* Left Column */}
           <div className="space-y-4">
             <DetailField label="Bank Name" value={account.bankName} />
-            <DetailField label="Bank IFSC Code" value={account.ifscCode} />
+            <DetailField label="Account Holder Name" value={account.accountName} />
             <DetailField label="Branch Name" value={account.branch} />
           </div>
 
@@ -74,10 +74,7 @@ const BankDetails = () => {
               label="Bank Account Number"
               value={account.accountNumber}
             />
-            <DetailField
-              label="Confirm A/C Number"
-              value={account.confirmAccountNumber}
-            />
+            <DetailField label="Bank IFSC Code" value={account.ifscCode} />
           </div>
 
         </div>

@@ -9,8 +9,6 @@ export function loginUser({ username, password }: ILoginUserBody) {
 
 
 export function CreateEmployes({
-  username,
-  password,
   email,
   emp_id,
   first_name,
@@ -24,11 +22,16 @@ export function CreateEmployes({
   confirm_account_number,
   ifsc_code,
   role,
+  middle_name,
+  personal_email,
+  alternative_number,
+  dob,
+  blood_group,
+  gender,
+  marital_status,
 }: ICreateEmployesBody) {
 
   const body = {
-    username,
-    password,
     email,
     emp_id,
     first_name,
@@ -42,6 +45,13 @@ export function CreateEmployes({
     confirm_account_number,
     ifsc_code,
     role,
+    middle_name,
+    personal_email,
+    alternative_number,
+    dob,
+    blood_group,
+    gender,
+    marital_status,
   };
 
   return server.post(endpoints.createEmployes, body, {
@@ -58,19 +68,19 @@ export function GetAllEmployes() {
 
 //employees
 
-export function ForgotPassword(email:string){
-  const body = {email};
-  return server.post(endpoints.forgotPassword, body, {requiresAuth:false})
+export function ForgotPassword(email: string) {
+  const body = { email };
+  return server.post(endpoints.forgotPassword, body, { requiresAuth: false })
 }
 
-export function OTPVerify({email, otp}:{email:string, otp:string}){
-  const body = {email, otp};
-  return server.post(endpoints.verifyOTP, body, {requiresAuth:false})
+export function OTPVerify({ email, otp }: { email: string, otp: string }) {
+  const body = { email, otp };
+  return server.post(endpoints.verifyOTP, body, { requiresAuth: false })
 }
 
-export function ResetPassword({email, new_password, confirm_password}:{email:string, new_password:string, confirm_password:string}){
-  const body = {email, new_password, confirm_password};
-  return server.post(endpoints.resetPassword, body, {requiresAuth:false})
+export function ResetPassword({ email, new_password, confirm_password }: { email: string, new_password: string, confirm_password: string }) {
+  const body = { email, new_password, confirm_password };
+  return server.post(endpoints.resetPassword, body, { requiresAuth: false })
 }
 
 

@@ -146,6 +146,21 @@ const ProfileDetails = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validation for mandatory fields
+    if (
+      !data.firstName.trim() ||
+      !data.lastName.trim() ||
+      !data.personalMail.trim() ||
+      !data.phone.trim() ||
+      !data.dob.trim() ||
+      !data.gender.trim() ||
+      !data.maritalStatus.trim()
+    ) {
+      alert("Please fill in all mandatory fields marked with *");
+      return;
+    }
+
     setIsEditing(false);
   };
 
@@ -172,7 +187,7 @@ const ProfileDetails = () => {
           {isEditing ? (
             <>
               <EditLineField
-                label="First Name"
+                label="First Name *"
                 name="firstName"
                 value={data.firstName}
                 onChange={handleChange}
@@ -184,7 +199,7 @@ const ProfileDetails = () => {
                 onChange={handleChange}
               />
               <EditLineField
-                label="Last Name"
+                label="Last Name *"
                 name="lastName"
                 value={data.lastName}
                 onChange={handleChange}
@@ -198,14 +213,14 @@ const ProfileDetails = () => {
                 <p className="text-gray-900 py-1 border-b border-gray-200">{data.employeeId}</p>
               </div>
               <EditLineField
-                label="Personal mail ID"
+                label="Personal mail ID *"
                 name="personalMail"
                 value={data.personalMail}
                 onChange={handleChange}
                 type="email"
               />
               <EditLineField
-                label="Phone number"
+                label="Phone number *"
                 name="phone"
                 value={data.phone}
                 onChange={handleChange}
@@ -217,7 +232,7 @@ const ProfileDetails = () => {
                 onChange={handleChange}
               />
               <EditLineField
-                label="Date of Birth"
+                label="Date of Birth *"
                 name="dob"
                 value={data.dob}
                 onChange={handleChange}
@@ -231,7 +246,7 @@ const ProfileDetails = () => {
               />
 
               <CustomSelect
-                label="Gender"
+                label="Gender *"
                 name="gender"
                 value={data.gender}
                 options={["Male", "Female", "Other"]}
@@ -239,7 +254,7 @@ const ProfileDetails = () => {
               />
 
               <CustomSelect
-                label="Marital Status"
+                label="Marital Status *"
                 name="maritalStatus"
                 value={data.maritalStatus}
                 options={["Single", "Married", "Divorced", "Widowed"]}

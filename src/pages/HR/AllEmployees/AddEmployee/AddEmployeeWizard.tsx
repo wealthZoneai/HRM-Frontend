@@ -63,8 +63,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
 
       case 1: // ACCOUNT (KIN)
         return (
-          k.username?.trim() &&
-          k.password?.trim() &&
+
           k.email?.trim() &&
           k.employeeId?.trim() &&
           k.startDate?.trim() &&
@@ -160,8 +159,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
     const b = state.bankAccounts[0]; // only 1 account
 
     return {
-      username: k.username,
-      password: k.password,
+
       email: k.email,
       emp_id: k.employeeId,
 
@@ -179,6 +177,15 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
       ifsc_code: b.ifscCode,
 
       role: k.role,
+
+      // Personal Info
+      middle_name: p.middleName,
+      personal_email: p.personalEmail,
+      alternative_number: p.alternativeNumber,
+      dob: p.dob,
+      blood_group: p.bloodGroup,
+      gender: p.gender,
+      marital_status: p.maritalStatus,
     };
   };
 
@@ -191,7 +198,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
 
     try {
       const response = await CreateEmployes(payload);
-      
+
       console.log("API Response:", response.data);
       alert("Employee created successfully!");
       navigate('/hr/employees')
