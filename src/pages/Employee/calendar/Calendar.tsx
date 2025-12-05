@@ -122,7 +122,7 @@ export default function Calendar() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="max-w-6xl mx-auto p-2 sm:p-4 space-y-4">
       <div className="flex flex-col gap-1">
         <h2 className="text-xl md:text-md  font-bold text-gray-900 tracking-tight">
           Calendar
@@ -133,7 +133,7 @@ export default function Calendar() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-gray-100">
+        <div className="p-3 sm:p-4 border-b border-gray-100">
           <CalendarHeader
             month={month}
             year={year}
@@ -145,7 +145,7 @@ export default function Calendar() {
           />
         </div>
 
-        <div className="p-4 sm:p-6 bg-gray-50/30">
+        <div className="p-2 sm:p-4 bg-gray-50/30">
           <CalendarGrid month={month} year={year} events={events} />
         </div>
       </div>

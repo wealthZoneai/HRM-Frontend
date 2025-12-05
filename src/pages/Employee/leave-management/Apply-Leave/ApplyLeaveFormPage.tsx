@@ -50,6 +50,30 @@ export default function ApplyLeaveFormPage() {
     navigate("/employee/leave-management/success");
   };
 
+  const durationDays = (() => {
+    if (!form.from || !form.to) return 0;
+    const start = new Date(form.from);
+    const end = new Date(form.to);
+    if (end < start) return 0;
+    const diff = end.getTime() - start.getTime();
+    return Math.round(diff / (1000 * 3600 * 24)) + 1;
+  })();
+
+  const isDocumentRequired =
+    form.type === "Sick Leave" ||
+    form.type === "Maternity Leave" ||
+    form.type === "Paternity Leave";
+
+  const isFormValid =
+    form.type !== "" &&
+    form.from !== "" &&
+    form.to !== "" &&
+    form.reason !== "" &&
+    durationDays > 0 &&
+    (!isDocumentRequired || form.document !== null);
+
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="p-3 sm:p-6 md:p-8 max-w-4xl mx-auto">
       {/* === Page Header === */}
@@ -126,6 +150,7 @@ export default function ApplyLeaveFormPage() {
               id="from"
               type="date"
               name="from"
+              min={today}
               onChange={handleChange}
               className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
                          focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
@@ -145,6 +170,7 @@ export default function ApplyLeaveFormPage() {
               id="to"
               type="date"
               name="to"
+              min={form.from || today}
               onChange={handleChange}
               className="block w-full py-2 sm:py-2.5 px-3 sm:px-3.5 rounded-lg border border-slate-300 text-sm
                          focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none
@@ -225,7 +251,7 @@ export default function ApplyLeaveFormPage() {
           </div>
 
           {/* --- Document Upload (Conditional) --- */}
-          {(form.type === "Sick Leave" || form.type === "Maternity Leave") && (
+          {isDocumentRequired && (
             <div className="md:col-span-2">
               <label
                 htmlFor="document"
@@ -248,7 +274,7 @@ export default function ApplyLeaveFormPage() {
                   cursor-pointer"
               />
               <p className="text-xs text-slate-500 mt-1">
-                Please upload relevant medical documents (PDF, JPG, PNG).
+                Please upload relevant documents (e.g. medical certificate, birth certificate) (PDF, JPG, PNG).
               </p>
             </div>
           )}
@@ -257,8 +283,10 @@ export default function ApplyLeaveFormPage() {
           <div className="md:col-span-2 flex justify-end mt-3 sm:mt-4">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base
-                           font-medium shadow-sm hover:bg-blue-700 transition-colors w-full sm:w-auto"
+              disabled={!isFormValid}
+              className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium shadow-sm transition-colors w-full sm:w-auto
+                ${!isFormValid ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}
+              `}
             >
               Submit For Leave
             </button>

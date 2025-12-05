@@ -9,6 +9,7 @@ type TaskProps = {
   status: "none" | "completed" | "inProgress" | "notStarted";
   assignedTo: string;
   assignedBy: string;
+  assignedDate?: string; // Added assignedDate prop
   subtasks: Subtask[];
   employees: string[];
   onAddSubtask: (subtaskTitle: string, assignedTo: string) => void;
@@ -21,6 +22,7 @@ export default function TaskItem({
   status,
   assignedTo,
   assignedBy,
+  assignedDate, // Destructured assignedDate
   subtasks,
   employees,
   onAddSubtask,
@@ -127,6 +129,10 @@ export default function TaskItem({
             <span className="text-gray-400">•</span>
             <span className="text-gray-600">
               By: <span className="font-medium text-gray-800">{assignedBy}</span>
+            </span>
+            <span className="text-gray-400">•</span>
+            <span className="text-gray-600">
+              Assigned: <span className="font-medium text-gray-800">{assignedDate || "N/A"}</span>
             </span>
             <span className="text-gray-400">•</span>
             <span

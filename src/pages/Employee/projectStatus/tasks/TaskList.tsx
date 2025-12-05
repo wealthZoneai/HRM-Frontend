@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { tasks as initialTasks, employees, type Task, type Subtask } from "./taskData";
 import TaskItem from "./TaskItem";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,11 +8,20 @@ import { X, MessageSquare, Inbox, Filter, Plus, } from "lucide-react";
 const CURRENT_EMPLOYEE = "John Doe";
 
 export default function TaskList() {
-  const [taskList, setTaskList] = useState<Task[]>(initialTasks);
+  const [taskList, setTaskList] = useState<Task[]>(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : initialTasks;
+  });
+
   const [showChallenges, setShowChallenges] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false); // State for Add Task modal
   const [challengeInput, setChallengeInput] = useState("");
   const [selectedTask, setSelectedTask] = useState("");
+
+  // Save tasks to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+  }, [taskList]);
 
   // Filter states
   const [selectedEmployee, setSelectedEmployee] = useState<string>("All"); // Employee filter
@@ -25,6 +34,7 @@ export default function TaskList() {
     priority: "Medium",
     due: "",
     assignedTo: CURRENT_EMPLOYEE,
+    assignedDate: new Date().toISOString().split('T')[0], // Default to today
   });
 
   // Status options
@@ -109,7 +119,7 @@ export default function TaskList() {
       status: "notStarted",
       assignedBy: CURRENT_EMPLOYEE, // Created by current user
       assignedTo: newTask.assignedTo,
-      assignedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      assignedDate: newTask.assignedDate, // Use the date from the form
       subtasks: [],
     };
 
@@ -120,6 +130,7 @@ export default function TaskList() {
       priority: "Medium",
       due: "",
       assignedTo: CURRENT_EMPLOYEE,
+      assignedDate: new Date().toISOString().split('T')[0],
     });
   };
 
@@ -224,6 +235,7 @@ export default function TaskList() {
               status={task.status as any}
               assignedTo={task.assignedTo}
               assignedBy={task.assignedBy}
+              assignedDate={task.assignedDate}
               subtasks={task.subtasks}
               employees={employees}
               onAddSubtask={(subtaskTitle, assignedTo) => handleAddSubtask(index, subtaskTitle, assignedTo)}
@@ -286,6 +298,7 @@ export default function TaskList() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
                     <input
                       type="date"
+                      min={new Date().toISOString().split('T')[0]}
                       value={newTask.due}
                       onChange={(e) => setNewTask({ ...newTask, due: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -293,19 +306,31 @@ export default function TaskList() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Assign To</label>
-                  <select
-                    value={newTask.assignedTo}
-                    onChange={(e) => setNewTask({ ...newTask, assignedTo: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  >
-                    {employees.map((emp) => (
-                      <option key={emp} value={emp}>
-                        {emp}
-                      </option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Assign To</label>
+                    <select
+                      value={newTask.assignedTo}
+                      onChange={(e) => setNewTask({ ...newTask, assignedTo: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    >
+                      {employees.map((emp) => (
+                        <option key={emp} value={emp}>
+                          {emp}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Assigned Date</label>
+                    <input
+                      type="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      value={newTask.assignedDate}
+                      onChange={(e) => setNewTask({ ...newTask, assignedDate: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">

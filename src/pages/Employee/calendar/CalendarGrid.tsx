@@ -10,7 +10,7 @@ interface Props {
 
 export default function CalendarGrid({ month, year, events }: Props) {
   const daysInMonth = getDaysInMonth(year, month);
-  const startDay = getFirstDayOfMonth(year, month); // 0 = Sunday
+  const startDay = (getFirstDayOfMonth(year, month) + 6) % 7; // Adjust for Monday start
 
   const today = new Date();
   const todayKey = formatDate(today.getFullYear(), today.getMonth(), today.getDate());
@@ -26,7 +26,7 @@ export default function CalendarGrid({ month, year, events }: Props) {
     <div>
       {/* Day of the Week Headers */}
       <div className="grid grid-cols-7 mb-2">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
           <div key={d} className="text-xs font-semibold text-gray-400 uppercase tracking-wider text-center py-2">
             <span className="hidden sm:block">{d}</span>
             <span className="sm:hidden">{d.charAt(0)}</span>
@@ -39,14 +39,12 @@ export default function CalendarGrid({ month, year, events }: Props) {
         {grid.map((day, i) => {
           const dateKey = day ? formatDate(year, month, day) : null;
           const dayEvents = events.filter((e) => e.date === dateKey);
-          const isWeekend = i % 7 === 0 || i % 7 === 6;
 
           return (
             <CalendarDayCell
               key={i}
               day={day}
               isToday={dateKey === todayKey}
-              isWeekend={isWeekend}
               events={dayEvents}
             />
           );
