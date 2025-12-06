@@ -38,8 +38,8 @@ const Login: React.FC = () => {
       return;
     }
 
-    navigate('/hr/dashboard')
-    // navigate('/employee/dashboard')
+    // navigate('/hr/dashboard')
+    navigate('/employee/dashboard')
     // try {
     //   const response = await loginUser({ username, password });
     //   console.log(response)

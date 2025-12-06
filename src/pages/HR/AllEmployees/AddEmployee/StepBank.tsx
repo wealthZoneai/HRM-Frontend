@@ -134,6 +134,7 @@ const StepBank: React.FC = () => {
           </Field>
 
           {/* ACCOUNT NUMBER */}
+          {/* ACCOUNT NUMBER */}
           <Field label="Account Number *" error={errors.accountNumber}>
             <input
               value={bank.accountNumber || ""}
@@ -142,8 +143,9 @@ const StepBank: React.FC = () => {
                 validateField("accountNumber", e.target.value)
               }
               disabled={!bank.bankName}
+              placeholder={!bank.bankName ? "Select Bank Name first" : "Enter Account Number"}
               className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500 ${!bank.bankName ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              focus:outline-none focus:ring-2 focus:ring-blue-500 ${!bank.bankName ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`}
             />
           </Field>
 
@@ -161,8 +163,9 @@ const StepBank: React.FC = () => {
                 validateField("confirmAccountNumber", e.target.value)
               }
               disabled={!bank.bankName}
+              placeholder={!bank.bankName ? "Select Bank Name first" : "Confirm Account Number"}
               className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500 ${!bank.bankName ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              focus:outline-none focus:ring-2 focus:ring-blue-500 ${!bank.bankName ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`}
             />
           </Field>
 
