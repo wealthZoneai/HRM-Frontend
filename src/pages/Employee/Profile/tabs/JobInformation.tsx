@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 const DUMMY_JOB_DATA = {
   jobTitle: 'Senior Product Manager',
   department: 'Product',
-  manager: 'Jane Foster',
+  teamLead: 'Jane Foster',
   employmentType: 'Full time',
   startDate: '2025-10-26',
   location: 'Head Office',
@@ -205,9 +205,9 @@ const JobInformation = () => {
                 <option value="Finance">Finance</option>
               </EditSelectField>
               <EditField
-                label="Manager"
-                name="manager"
-                value={formData.manager}
+                label="Team Lead"
+                name="teamLead"
+                value={formData.teamLead}
                 onChange={handleChange}
               />
               <EditSelectField
@@ -252,7 +252,7 @@ const JobInformation = () => {
             <>
               <DisplayField label="Job Title" value={formData.jobTitle} />
               <DisplayField label="Department" value={formData.department} />
-              <DisplayField label="Manager" value={formData.manager} />
+              <DisplayField label="Team Lead" value={formData.teamLead} />
               <DisplayField
                 label="Employment Type"
                 value={formData.employmentType}

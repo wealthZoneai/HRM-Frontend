@@ -1,29 +1,27 @@
 import { Bell } from "lucide-react";
-import { useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import myPic from "../assets/my_pic.jpg";
-import NotificationPanel from "./NotificationPanel";
 
 interface TopbarProps {
   name: string;
   id: string | number;
 }
 
-
-
 export default function HrTopbar({ name, id }: TopbarProps) {
-  const [openNotif, setOpenNotif] = useState(false);
-  const bellRef = useRef<HTMLButtonElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNotification = () => {
+    // Toggle between notifications page and dashboard
+    if (location.pathname === "/hr/notifications") {
+      navigate(-1);
+    } else {
+      navigate("/hr/notifications");
+    }
+  };
 
   return (
     <>
-      {/* BACKDROP WHEN NOTIFICATION OPEN */}
-      {openNotif && (
-        <div
-          className="fixed inset-0 bg-black/50"
-          onClick={() => setOpenNotif(false)}
-        />
-      )}
-
       <div className="w-full bg-white px-6 py-3 shadow-sm flex items-center justify-between relative">
         {/* LEFT */}
         <div>
@@ -48,20 +46,28 @@ export default function HrTopbar({ name, id }: TopbarProps) {
 
           {/* NOTIFICATION BUTTON */}
           <button
-            ref={bellRef}
-            onClick={() => setOpenNotif(!openNotif)}
+            onClick={handleNotification}
             className="relative p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
           >
-            <Bell size={20} className="text-gray-700" fill={openNotif ? "currentColor" : "none"} />
+            <Bell
+              size={20}
+              className={`text-gray-700 ${location.pathname === "/hr/notifications" ? "text-blue-600" : ""}`}
+              fill={location.pathname === "/hr/notifications" ? "currentColor" : "none"}
+            />
 
             {/* Badge */}
-            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] px-1.5 py-px rounded-full">
+            {/* <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] px-1.5 py-px rounded-full">
               3
-            </span>
+            </span> */}
           </button>
 
           {/* PROFILE */}
-          <div className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-100 cursor-pointer">
+          <div
+            onClick={() => navigate("/hr/profile")}
+            className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-100 cursor-pointer"
+            role="button"
+            tabIndex={0}
+          >
             <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
               <img src={myPic} alt="Profile" className="w-full h-full object-cover" />
             </div>
@@ -71,10 +77,6 @@ export default function HrTopbar({ name, id }: TopbarProps) {
             </div>
           </div>
         </div>
-
-        {/* UNIQUE NOTIFICATION PANEL */}
-
-        <NotificationPanel open={openNotif} anchorRef={bellRef} onClose={() => setOpenNotif(false)} />
       </div>
     </>
   );

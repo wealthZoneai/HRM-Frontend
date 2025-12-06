@@ -10,6 +10,7 @@ import Announcements from "./Announcements";
 import InterviewTable from "./InterviewTable";
 import TimeCard from "../../Employee/dashboard/TimeCard";
 import AttendanceStat from "../../Employee/dashboard/AttendanceStat";
+// import Notifications from "../../Employee/notifications/Notifications";
 
 // const initialDeptData: DeptDataItem[] = [
 //   { name: "React Team", value: 30, color: "#81f172ff" },
@@ -218,7 +219,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "QA Testing Team",
+    name: "QA",
     value: 12,
     interns: 1,
     juniors: 4,
@@ -361,8 +362,8 @@ export default function HRDashboardPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Total Employee Count" value={totalEmployees} subtitle="Employees" icon={<FiUsers size={22} />} />
-        <SummaryCard title="Present Employee  " value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
+        <SummaryCard title="Total Employee Count" value={`${presentEmployees} / ${totalEmployees}`} subtitle="Present / Total" icon={<FiUsers size={22} />} />
+        <SummaryCard title="Working From Office  " value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
         <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />} />
         <SummaryCard title="Absentees" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} />
       </div>

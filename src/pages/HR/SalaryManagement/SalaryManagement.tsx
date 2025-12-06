@@ -9,138 +9,148 @@ interface EmployeeSalaryItem {
     role: string;
     email: string;
     salary: string;
-    resumeDate: string;
 }
 
 const SalaryManagement: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [open, setOpen] = useState(false);
+    const [selectedDept, setSelectedDept] = useState("");
     const [employees] = useState<EmployeeSalaryItem[]>([
         {
             id: "1",
-            name: "Habeeb",
-            dept: "Tech",
-            role: "UI/UX Designer",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            name: "Sarah Jenkins",
+            dept: "React",
+            role: "Senior Frontend Dev",
+            email: "sarah.j@company.com",
+            salary: "140k",
         },
         {
             id: "2",
-            name: "Anuoluwa",
-            dept: "Sales",
-            role: "Sales Team",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            name: "Mike Ross",
+            dept: "React",
+            role: "React Native Eng",
+            email: "m.ross@company.com",
+            salary: "125k",
         },
         {
             id: "3",
-            name: "Mariam",
-            dept: "Tech",
-            role: "UI/UX Designer",
-            email: "b@sujimotiong.com",
-            salary: "300k",
-            resumeDate: "3rd-April-2023",
+            name: "David Kim",
+            dept: "Java",
+            role: "Backend Architect",
+            email: "david.kim@company.com",
+            salary: "155k",
         },
         {
             id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            name: "Emily Chen",
+            dept: "Java",
+            role: "Java Developer",
+            email: "emily.c@company.com",
+            salary: "110k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "5",
+            name: "James Wilson",
+            dept: "Python",
+            role: "Data Scientist",
+            email: "j.wilson@company.com",
+            salary: "145k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "6",
+            name: "Jessica Lee",
+            dept: "Python",
+            role: "Backend Python Dev",
+            email: "jess.lee@company.com",
+            salary: "115k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "7",
+            name: "Robert Taylor",
+            dept: "AWS",
+            role: "Cloud Architect",
+            email: "rob.taylor@company.com",
+            salary: "160k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "8",
+            name: "Lisa Wong",
+            dept: "AWS",
+            role: "DevOps Engineer",
+            email: "lisa.w@company.com",
+            salary: "135k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "9",
+            name: "Alex Martin",
+            dept: "Cyber Security",
+            role: "Security Analyst",
+            email: "alex.m@company.com",
+            salary: "130k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "10",
+            name: "Samantha Green",
+            dept: "Cyber Security",
+            role: "Penetration Tester",
+            email: "sam.g@company.com",
+            salary: "140k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "11",
+            name: "Daniel Brown",
+            dept: "UI/UX",
+            role: "Senior Product Designer",
+            email: "dan.brown@company.com",
+            salary: "135k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "12",
+            name: "Olivia White",
+            dept: "UI/UX",
+            role: "UX Researcher",
+            email: "olivia.w@company.com",
+            salary: "110k",
         },
         {
-            id: "4",
-            name: "Chris",
-            dept: "Comms",
-            role: "Graphics",
-            email: "b@sujimotiong.com",
-            salary: "500k",
-            resumeDate: "3rd-April-2023",
+            id: "13",
+            name: "Kevin Brooks",
+            dept: "UI/UX",
+            role: "UI Designer",
+            email: "kevin.b@company.com",
+            salary: "95k",
+        },
+        {
+            id: "14",
+            name: "Priya Patel",
+            dept: "React",
+            role: "Frontend Engineer",
+            email: "priya.p@company.com",
+            salary: "115k",
+        },
+        {
+            id: "15",
+            name: "Tom Harris",
+            dept: "Java",
+            role: "Senior Java Dev",
+            email: "tom.h@company.com",
+            salary: "145k",
         },
     ]);
 
-    const filteredEmployees = employees.filter((emp) =>
-        [emp.name, emp.email, emp.dept, emp.role]
-            .join(" ")
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-    );
+    // Get unique departments for filter
+    const uniqueDepts = Array.from(new Set(employees.map((e) => e.dept))).sort();
+
+    const filteredEmployees = employees
+        .filter((emp) => {
+            const matchesSearch = [emp.name, emp.email, emp.dept, emp.role]
+                .join(" ")
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+            const matchesDept = selectedDept ? emp.dept === selectedDept : true;
+            return matchesSearch && matchesDept;
+        })
+        .sort((a, b) => a.dept.localeCompare(b.dept)); // Sort by department
 
     return (
         <div className="p-6">
@@ -170,25 +180,35 @@ const SalaryManagement: React.FC = () => {
                     />
                 </div>
 
-                {/* Filter Button */}
-                <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white shadow hover:bg-gray-100 transition border">
-                    <FiFilter size={18} />
-                    <span className="font-medium text-gray-700">Filter</span>
-                </button>
+                {/* Dept Filter */}
+                <div className="relative">
+                    <FiFilter className="absolute left-3 top-3 text-gray-500" size={18} />
+                    <select
+                        value={selectedDept}
+                        onChange={(e) => setSelectedDept(e.target.value)}
+                        className="pl-10 pr-8 py-2.5 bg-white border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium text-gray-700"
+                    >
+                        <option value="">All Departments</option>
+                        {uniqueDepts.map((d) => (
+                            <option key={d} value={d}>
+                                {d}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {/* Table Card */}
             <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100 ">
 
                 {/* Fancy Header Row */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium grid grid-cols-7 py-3 px-4">
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium grid grid-cols-6 py-3 px-4">
                     <div>Name</div>
                     <div>Dept</div>
                     <div>Role</div>
                     <div>Email</div>
-                    <div>Salary</div>
-                    <div>Resumption</div>
-                    <div>Add Salary</div>
+                    <div className="text-right pr-4">Salary</div>
+                    <div className="text-right">Add Salary</div>
                 </div>
 
                 {/* Table Body */}
@@ -196,17 +216,16 @@ const SalaryManagement: React.FC = () => {
                     {filteredEmployees.map((emp) => (
                         <div
                             key={emp.id}
-                            className="grid grid-cols-7 px-4 py-4 text-sm items-center hover:bg-gray-50 transition"
+                            className="grid grid-cols-6 px-4 py-4 text-sm items-center hover:bg-gray-50 transition"
                         >
                             <div className="font-semibold">{emp.name}</div>
                             <div>{emp.dept}</div>
                             <div className="truncate">{emp.role}</div>
                             <div className="truncate">{emp.email}</div>
-                            <div className="text-blue-600 font-semibold">{emp.salary}</div>
-                            <div>{emp.resumeDate}</div>
+                            <div className="text-blue-600 font-semibold text-right pr-4">{emp.salary}</div>
 
                             {/* Button */}
-                            <div>
+                            <div className="flex justify-end">
                                 <button className="px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm shadow"
                                     onClick={() => setOpen(true)}
                                 >

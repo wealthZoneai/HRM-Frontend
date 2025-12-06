@@ -137,6 +137,8 @@ function AppRouters() {
         <Route path="attendance" element={<AttendanceScreen />} />
         <Route path="leave-management" element={<HrLeaveManagement />} />
         <Route path="addEmployeeWizard" element={<AddEmployeeWizard />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* ADMIN ROUTES */}

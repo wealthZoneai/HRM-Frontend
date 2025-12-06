@@ -9,11 +9,13 @@ const TextField = ({
   value,
   onChange,
   type = "text",
+  ...props
 }: {
   label: string;
   value: any;
   onChange: (v: string) => void;
   type?: string;
+  [key: string]: any;
 }) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">{label}</label>
@@ -26,6 +28,7 @@ const TextField = ({
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
         transition-all shadow-sm
       "
+      {...props}
     />
   </div>
 );
@@ -63,6 +66,23 @@ const SelectField = ({
 const StepPersonal: React.FC = () => {
   const { state, dispatch } = useAddEmployee();
   const personal = state.personal;
+
+  // Calculate max date (18 years ago from today)
+  const getMaxDob = () => {
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    return maxDate.toISOString().split('T')[0];
+  };
+
+  const maxDate = getMaxDob();
+
+  const handleDobChange = (v: string) => {
+    if (v && v > maxDate) {
+      alert("Employee must be at least 18 years old.");
+      return;
+    }
+    dispatch({ type: "SET_PERSONAL", payload: { dob: v } });
+  };
 
   return (
     <div className="w-full">
@@ -124,9 +144,8 @@ const StepPersonal: React.FC = () => {
             label="Date of Birth"
             type="date"
             value={personal.dob}
-            onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { dob: v } })
-            }
+            onChange={handleDobChange}
+            max={maxDate}
           />
 
           <TextField

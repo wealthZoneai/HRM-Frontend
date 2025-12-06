@@ -141,13 +141,17 @@ export default function Topbar({ name, id }: TopbarProps) {
               role="button"
               tabIndex={0}
               title="View profile"
-              className="flex items-center gap-3 cursor-pointer select-none"
+              className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-100 cursor-pointer select-none transition-colors"
             >
               <img
                 src={DefaultAvatar}
                 alt="Profile"
-                className="h-10 w-10 rounded-full object-cover shadow-md"
+                className="h-9 w-9 rounded-full object-cover shadow-sm"
               />
+              <div className="hidden sm:flex flex-col leading-tight text-left">
+                <span className="text-sm font-semibold text-gray-800">{formattedName}</span>
+                <span className="text-xs text-gray-500">ID {id}</span>
+              </div>
             </div>
 
             {/* Logout trigger */}

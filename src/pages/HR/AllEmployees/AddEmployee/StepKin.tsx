@@ -43,15 +43,14 @@ const StepKin: React.FC = () => {
       FORM VALIDATION STATE
   -------------------------- */
   const [errors, setErrors] = useState({
-    username: "",
-    password: "",
     email: "",
     employeeId: "",
+    startDate: "",
     jobTitle: "",
     department: "",
     employmentType: "",
-    role: "",
-    startDate: "",
+    location: "",
+    teamLead: "",
   });
 
   /* --------------------------
@@ -61,10 +60,8 @@ const StepKin: React.FC = () => {
     let errorMsg = "";
 
     switch (field) {
-
-
       case "email":
-        if (!value.trim()) errorMsg = "Email is required";
+        if (!value.trim()) errorMsg = "Work Email is required";
         else if (!/^\S+@\S+\.\S+$/.test(value))
           errorMsg = "Enter a valid email address";
         break;
@@ -75,6 +72,14 @@ const StepKin: React.FC = () => {
 
       case "startDate":
         if (!value.trim()) errorMsg = "Start date is required";
+        break;
+
+      case "jobTitle":
+        if (!value.trim()) errorMsg = "Job Title is required";
+        break;
+
+      case "location":
+        if (!value.trim()) errorMsg = "Location is required";
         break;
 
       default:
@@ -96,15 +101,89 @@ const StepKin: React.FC = () => {
     <div className="w-full">
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
         <h3 className="text-lg font-semibold text-gray-800 mb-6">
-          Employee Account Details
+          Job Information
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-
-          {/* EMAIL */}
+          {/* JOB TITLE */}
           <InputField
-            label="Email *"
+            label="Job Title *"
+            value={kin.jobTitle}
+            error={errors.jobTitle}
+            onChange={(v) => updateField("jobTitle", v)}
+          />
+
+          {/* DEPARTMENT */}
+          <div className="flex flex-col gap-1">
+            <label className="text-gray-700 font-medium text-sm">Department *</label>
+            <select
+              value={kin.department || ""}
+              onChange={(e) => updateField("department", e.target.value)}
+              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Department</option>
+              <option value="Product">Product</option>
+              <option value="Software">IT & Software</option>
+              <option value="Design">Design</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Sales">Sales</option>
+              <option value="HR">Human Resources</option>
+              <option value="Finance">Finance</option>
+            </select>
+          </div>
+
+          {/* TEAM LEAD */}
+          <InputField
+            label="Team Lead"
+            value={kin.teamLead}
+            error={errors.teamLead}
+            onChange={(v) => updateField("teamLead", v)}
+          />
+
+          {/* EMPLOYMENT TYPE */}
+          <div className="flex flex-col gap-1">
+            <label className="text-gray-700 font-medium text-sm">Employment Type *</label>
+            <select
+              value={kin.employmentType || ""}
+              onChange={(e) => updateField("employmentType", e.target.value)}
+              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Type</option>
+              <option value="Full time">Full time</option>
+              <option value="Part time">Part time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+            </select>
+          </div>
+
+          {/* START DATE */}
+          <InputField
+            type="date"
+            label="Start Date *"
+            value={kin.startDate}
+            error={errors.startDate}
+            onChange={(v) => updateField("startDate", v)}
+          />
+
+          {/* LOCATION */}
+          <div className="flex flex-col gap-1">
+            <label className="text-gray-700 font-medium text-sm">Location *</label>
+            <select
+              value={kin.location || ""}
+              onChange={(e) => updateField("location", e.target.value)}
+              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Location</option>
+              <option value="Head Office">Head Office</option>
+              <option value="Branch Office">Branch Office</option>
+              <option value="Remote">Remote</option>
+            </select>
+          </div>
+
+          {/* WORK EMAIL */}
+          <InputField
+            label="Work Email *"
             value={kin.email}
             error={errors.email}
             onChange={(v) => updateField("email", v)}
@@ -118,43 +197,23 @@ const StepKin: React.FC = () => {
             onChange={(v) => updateField("employeeId", v)}
           />
 
-          {/* JOB TITLE */}
-          <InputField
-            label="Job Title"
-            value={kin.jobTitle}
-            onChange={(v) => updateField("jobTitle", v)}
-          />
+          {/* SYSTEM ROLE (HIDDEN or OPTIONAL?) - Keeping it out as per request, but can be added if needed */}
 
-          {/* DEPARTMENT */}
-          <InputField
-            label="Department"
-            value={kin.department}
-            onChange={(v) => updateField("department", v)}
-          />
-
-          {/* EMPLOYMENT TYPE */}
-          <InputField
-            label="Employment Type"
-            value={kin.employmentType}
-            onChange={(v) => updateField("employmentType", v)}
-          />
-
-          {/* ROLE */}
-          <InputField
-            label="Role"
-            value={kin.role}
-            onChange={(v) => updateField("role", v)}
-          />
-
-          {/* START DATE */}
-          <InputField
-            type="date"
-            label="Start Date *"
-            value={kin.startDate}
-            error={errors.startDate}
-            onChange={(v) => updateField("startDate", v)}
-          />
         </div>
+
+        {/* JOB DESCRIPTION */}
+        <div className="mt-6">
+          <div className="flex flex-col gap-1">
+            <label className="text-gray-700 font-medium text-sm">Job Description</label>
+            <textarea
+              value={kin.jobDescription || ""}
+              onChange={(e) => updateField("jobDescription", e.target.value)}
+              rows={4}
+              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
       </div>
     </div>
   );

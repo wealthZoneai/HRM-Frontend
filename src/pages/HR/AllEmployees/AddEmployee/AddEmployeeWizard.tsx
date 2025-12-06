@@ -38,7 +38,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
   ============================================================ */
   const steps = [
     { key: "personal", label: "Personal Info", comp: <StepPersonal /> },
-    { key: "kin", label: "Account Setup", comp: <StepKin /> },
+    { key: "kin", label: "Job Information", comp: <StepKin /> },
     { key: "bank", label: "Bank Details", comp: <StepBank /> },
     { key: "docs", label: "Documents", comp: <StepDocs /> },
   ];
@@ -61,16 +61,15 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
           p.gender?.trim()
         );
 
-      case 1: // ACCOUNT (KIN)
+      case 1: // JOB INFO (KIN)
         return (
-
           k.email?.trim() &&
           k.employeeId?.trim() &&
           k.startDate?.trim() &&
           k.jobTitle?.trim() &&
           k.department?.trim() &&
           k.employmentType?.trim() &&
-          k.role?.trim()
+          k.location?.trim()
         );
 
       case 2: // BANK
@@ -171,6 +170,11 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
       employment_type: k.employmentType,
       start_date: k.startDate,
       phone_number: p.phone,
+
+      // New Job Info Fields
+      manager: k.teamLead,
+      location: k.location,
+      job_description: k.jobDescription,
 
       account_number: b.accountNumber,
       confirm_account_number: b.confirmAccountNumber,

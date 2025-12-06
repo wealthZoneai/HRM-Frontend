@@ -35,6 +35,9 @@ export interface NextOfKin {
   phone?: string;
   relation?: string;
   address?: string;
+  teamLead?: string;
+  location?: string;
+  jobDescription?: string;
 }
 
 export interface BankAccount {
