@@ -351,6 +351,11 @@ export default function HRDashboardPage() {
     setInterviews(prev => prev.map(it => it.id === id ? { ...it, status: "Completed" } : it));
   }
 
+  function handleReschedule(id: string, date: string) {
+    setInterviews(prev => prev.map(it => it.id === id ? { ...it, schedule: date, status: "Rescheduled" } : it));
+    // Optional: You might want to call an API here to persist the change
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Top Section: Time & Attendance */}
@@ -384,7 +389,11 @@ export default function HRDashboardPage() {
       {/* bottom: charts + interview table */}
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <InterviewTable items={interviews} onToggleComplete={markInterviewComplete} />
+          <InterviewTable
+            items={interviews}
+            onToggleComplete={markInterviewComplete}
+            onReschedule={handleReschedule}
+          />
         </div>
       </div>
     </div>

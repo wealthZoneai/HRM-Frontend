@@ -140,8 +140,7 @@ export default function EmployeeScreen() {
 
         {filteredEmployees.length === 0 && (
           <p className="text-gray-500 text-center col-span-full">
-            No employees found matching your search.
-          </p>
+No data found.          </p>
         )}
       </div>
 

@@ -4,12 +4,14 @@ import LeaveNotificationPopup from "./LeaveNotificationPopup";
 import LeaveTable, { type LeaveRow } from "./LeaveTable";
 import LeaveViewModal from "./LeaveViewModal";
 import LeaveDeclineModal from "./LeaveDeclineModal";
+import HrApplyLeaveModal from "./HrApplyLeaveModal";
 import { FiAlertTriangle, FiClock, FiUsers, FiUserX } from "react-icons/fi";
 
 const HrLeaveManagement = () => {
     const [openNotification, setOpenNotification] = useState(false);
     const [viewModal, setViewModal] = useState(false);
     const [declineModal, setDeclineModal] = useState(false);
+    const [applyModal, setApplyModal] = useState(false);
 
     const [_, setSelectedRow] = useState<LeaveRow | null>(null);
 
@@ -195,20 +197,25 @@ const HrLeaveManagement = () => {
                 onSelect={handleSelectNotification}
             />
 
+            <HrApplyLeaveModal
+                isOpen={applyModal}
+                onClose={() => setApplyModal(false)}
+            />
+
 
             {/* New Leave Request Button */}
             <div className="flex justify-end mb-4">
                 <button
-                    onClick={() => setOpenNotification(true)}
+                    onClick={() => setApplyModal(true)}
                     className="
                         flex items-center gap-2 px-4 py-2
-                        bg-blue-50 text-blue-700 
+                        bg-blue-600 text-white 
                         rounded-full font-medium 
                         border border-blue-200
-                        hover:bg-blue-100 transition
+                        hover:bg-blue-500 transition
                         "
                 >
-                    🔔 New Leave Request
+                    Apply For Leave
                 </button>
             </div>
 

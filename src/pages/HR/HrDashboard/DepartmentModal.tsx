@@ -30,7 +30,6 @@ const HEADCOUNT_DATA = [
 ];
 
 const KEY_METRICS = [
-    { label: "Attrition Rate", value: "3.2%", color: "text-red-600", description: "YTD Departures" },
     { label: "Avg Tenure", value: "4.1 yrs", color: "text-green-600", description: "Average Employee Duration" },
     { label: "Open Roles", value: "7", color: "text-yellow-600", description: "Current Vacancies" },
     { label: "Avg Salary", value: "$85K", color: "text-blue-600", description: "Mean Annual Compensation" },
@@ -56,7 +55,7 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[999] px-3">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-999 px-3">
 
       {/* MODAL CONTAINER (RESPONSIVE FIX) */}
       <div
@@ -73,7 +72,7 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 text-gray-500 hover:text-black z-10 p-2"
+            className="absolute bg-white rounded-2xl right-3 top-3 sm:right-4 sm:top-4 text-gray-500 hover:text-black z-10 p-2"
           >
             <span className="text-xl font-medium">✕</span>
           </button>

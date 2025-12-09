@@ -35,6 +35,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
   const navItems = [
     { name: "Dashboard", icon: <FiHome size={22} />, path: "/hr/dashboard" },
     { name: "Employees", icon: <FiUsers size={22} />, path: "/hr/employees" },
+    { name: "Calendar", icon: <FiCalendar size={22} />, path: "/hr/calendar" },
     { name: "Leave", icon: <FiCalendar size={22} />, path: "/hr/leave-management" },
     { name: "Attendence", icon: <FiClock size={22} />, path: "/hr/attendance" },
     { name: "Salary", icon: <FiDollarSign size={22} />, path: "/hr/salary" },

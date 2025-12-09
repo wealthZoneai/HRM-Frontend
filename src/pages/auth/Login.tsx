@@ -38,7 +38,7 @@ const Login: React.FC = () => {
     }
 
     // navigate('/hr/dashboard')
-    navigate('/employee/dashboard')
+    // navigate('/employee/dashboard')
     try {
       const response = await loginUser({ username, password });
       console.log(response)

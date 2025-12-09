@@ -132,6 +132,7 @@ function AppRouters() {
         <Route path="dashboard" element={<HRHomeDashboard />} />
         <Route path="Holidays" element={<HolidayCard />} />
         <Route path="Employees" element={<EmployeeScreen />} />
+        <Route path="calendar" element={<Calendar />} />
         <Route path="Announcements" element={<AnnouncementsScreen />} />
         <Route path="salary" element={<SalaryManagement />} />
         <Route path="attendance" element={<AttendanceScreen />} />

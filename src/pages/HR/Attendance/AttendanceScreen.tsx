@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { FiSearch, FiCalendar } from "react-icons/fi";
 
 type Status = "Present" | "Absent" | "On Leave";
@@ -12,42 +12,67 @@ interface DailyViewItem {
   checkIn: string;
   checkOut: string;
   status: Status;
-  department: string;
+  department: string; // Added to dailyData
 }
 
 interface MonthlySummaryItem {
   id: string;
   employee: string;
   avatar: string;
+  department: string; // <-- New property for filtering
   totalDays: number;
   present: number;
   absent: number;
   onLeave: number;
+  month: string;
 }
 
-interface AttendanceRecord extends DailyViewItem {}
+interface AttendanceRecord extends DailyViewItem { }
 
-// --- DYNAMIC DATA (Same as before) ---
+// --- DEPARTMENTS LIST ---
+const DEPARTMENTS = [
+  "All Department",
+  "AWS",
+  "Cyber Security",
+  "Java",
+  "Python",
+  "QA",
+  "React",
+  "UI/UX",
+];
+
+// --- MONTHS LIST (For Filter Dropdown) ---
+const MONTHS = [
+  { label: "March 2025", value: "2025-03" },
+  { label: "February 2025", value: "2025-02" },
+  { label: "January 2025", value: "2025-01" },
+];
+
+
+// --- DYNAMIC DATA (Updated to use your departments) ---
 const dailyData: DailyViewItem[] = [
-  { id: "1", employee: "Clement Mendie", empId: "EMP01", avatar: "https://i.pravatar.cc/40?img=1", checkIn: "09:00 AM", checkOut: "05:00 PM", status: "Present", department: "UI/UX" },
-  { id: "2", employee: "Alice Johnson", empId: "EMP02", avatar: "https://i.pravatar.cc/40?img=2", checkIn: "-", checkOut: "-", status: "Absent", department: "Java Backend" },
-  { id: "3", employee: "Chris Evans", empId: "EMP03", avatar: "https://i.pravatar.cc/40?img=3", checkIn: "09:30 AM", checkOut: "—", status: "On Leave", department: "Marketing" },
-  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
-  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
-  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
-  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
-  { id: "4", employee: "Diana Prince", empId: "EMP04", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
+  { id: "1", employee: "Clement Mendie", empId: "EMP001", avatar: "https://i.pravatar.cc/40?img=1", checkIn: "09:00 AM", checkOut: "05:00 PM", status: "Present", department: "UI/UX" },
+  { id: "2", employee: "Alice Johnson", empId: "EMP002", avatar: "https://i.pravatar.cc/40?img=2", checkIn: "-", checkOut: "-", status: "Absent", department: "Java" },
+  { id: "3", employee: "Chris Evans", empId: "EMP003", avatar: "https://i.pravatar.cc/40?img=3", checkIn: "09:30 AM", checkOut: "—", status: "On Leave", department: "Python" },
+  { id: "4", employee: "Diana Prince", empId: "EMP004", avatar: "https://i.pravatar.cc/40?img=4", checkIn: "08:45 AM", checkOut: "05:15 PM", status: "Present", department: "UI/UX" },
+  { id: "5", employee: "Ethan Hunt", empId: "EMP005", avatar: "https://i.pravatar.cc/40?img=5", checkIn: "09:10 AM", checkOut: "05:05 PM", status: "Present", department: "AWS" },
+  { id: "6", employee: "Fiona Glenn", empId: "EMP006", avatar: "https://i.pravatar.cc/40?img=6", checkIn: "09:05 AM", checkOut: "-", status: "Present", department: "Cyber Security" },
+  { id: "7", employee: "George Blake", empId: "EMP007", avatar: "https://i.pravatar.cc/40?img=7", checkIn: "-", checkOut: "-", status: "Absent", department: "React" },
+  { id: "8", employee: "Holly Tate", empId: "EMP008", avatar: "https://i.pravatar.cc/40?img=8", checkIn: "08:50 AM", checkOut: "05:10 PM", status: "Present", department: "QA" },
 ];
 
 const monthlyData: MonthlySummaryItem[] = [
-  { id: "1", employee: "Clement Mendie", avatar: "https://i.pravatar.cc/40?img=1", totalDays: 22, present: 20, absent: 1, onLeave: 1, },
-  { id: "2", employee: "Alice Johnson", avatar: "https://i.pravatar.cc/40?img=2", totalDays: 22, present: 18, absent: 3, onLeave: 1, },
-  { id: "3", employee: "Chris Evans", avatar: "https://i.pravatar.cc/40?img=3", totalDays: 22, present: 15, absent: 5, onLeave: 2, },
-  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
-  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
-  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
-  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
-  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", totalDays: 22, present: 22, absent: 0, onLeave: 0, },
+  // March Data
+  { id: "1", employee: "Clement Mendie", avatar: "https://i.pravatar.cc/40?img=1", department: "UI/UX", totalDays: 22, present: 20, absent: 1, onLeave: 1, month: "2025-03" },
+  { id: "2", employee: "Alice Johnson", avatar: "https://i.pravatar.cc/40?img=2", department: "Java", totalDays: 22, present: 18, absent: 3, onLeave: 1, month: "2025-03" },
+  { id: "3", employee: "Chris Evans", avatar: "https://i.pravatar.cc/40?img=3", department: "Python", totalDays: 22, present: 15, absent: 5, onLeave: 2, month: "2025-03" },
+  { id: "4", employee: "Diana Prince", avatar: "https://i.pravatar.cc/40?img=4", department: "UI/UX", totalDays: 22, present: 22, absent: 0, onLeave: 0, month: "2025-03" },
+  { id: "5", employee: "Ethan Hunt", avatar: "https://i.pravatar.cc/40?img=5", department: "AWS", totalDays: 22, present: 21, absent: 0, onLeave: 1, month: "2025-03" },
+  { id: "6", employee: "Fiona Glenn", avatar: "https://i.pravatar.cc/40?img=6", department: "Cyber Security", totalDays: 22, present: 19, absent: 2, onLeave: 1, month: "2025-03" },
+  // February Data (Different stats/departments to show filtering)
+  { id: "7", employee: "George Blake", avatar: "https://i.pravatar.cc/40?img=7", department: "React", totalDays: 20, present: 10, absent: 5, onLeave: 5, month: "2025-02" },
+  { id: "8", employee: "Holly Tate", avatar: "https://i.pravatar.cc/40?img=8", department: "QA", totalDays: 20, present: 20, absent: 0, onLeave: 0, month: "2025-02" },
+  { id: "9", employee: "Clement Mendie", avatar: "https://i.pravatar.cc/40?img=1", department: "UI/UX", totalDays: 20, present: 15, absent: 3, onLeave: 2, month: "2025-02" },
 ];
 
 const recordData: AttendanceRecord[] = [
@@ -55,29 +80,29 @@ const recordData: AttendanceRecord[] = [
 ];
 
 // --- STYLING CONSTANTS ---
-
 const badge = {
   Present: "bg-green-100 text-green-700 font-medium",
   Absent: "bg-red-100 text-red-700 font-medium",
   "On Leave": "bg-yellow-100 text-yellow-700 font-medium",
 };
 
-
 // --- MAIN COMPONENT ---
-
 const AttendanceScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"daily" | "monthly" | "records">("daily");
   const [search, setSearch] = useState("");
+
+  // --- STATE FOR MONTHLY SUMMARY FILTERS ---
+  const [selectedDepartment, setSelectedDepartment] = useState(DEPARTMENTS[0]); // "All Department"
+  const [selectedMonth, setSelectedMonth] = useState(MONTHS[0].value); // "2025-03"
 
 
   const TabButton: React.FC<{ k: string, label: string }> = ({ k, label }) => (
     <button
       onClick={() => setActiveTab(k as any)}
-      className={`pb-3 text-base transition-colors ${
-        activeTab === k
+      className={`pb-3 text-base transition-colors ${activeTab === k
           ? "border-b-2 border-blue-600 font-bold text-blue-600"
           : "text-gray-600 hover:text-gray-800"
-      }`}
+        }`}
     >
       {label}
     </button>
@@ -87,10 +112,10 @@ const AttendanceScreen: React.FC = () => {
 
   const renderDailyView = () => (
     <div className="space-y-6">
-      {/* 1. Daily Attendance Table (DESIGN IMPROVEMENT APPLIED HERE) */}
+      {/* 1. Daily Attendance Table */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <h3 className="text-xl font-semibold text-gray-800 p-6 pb-0">Today's Log ({new Date().toLocaleDateString()})</h3>
-       <div className="overflow-x-auto md:max-h-none">
+        <div className="overflow-x-auto md:max-h-none">
           <table className="w-full text-sm min-w-[600px] mt-4">
             <thead className="text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
               <tr>
@@ -102,8 +127,8 @@ const AttendanceScreen: React.FC = () => {
             </thead>
             <tbody>
               {dailyData.map((d, index) => (
-                <tr 
-                  key={d.id} 
+                <tr
+                  key={d.id}
                   className={`border-b border-gray-100 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50/50`}
                 >
                   <td className="py-3 px-6 flex items-center gap-3">
@@ -133,33 +158,56 @@ const AttendanceScreen: React.FC = () => {
     </div>
   );
 
+  // --- FILTERING LOGIC FOR MONTHLY SUMMARY ---
+  const filteredMonthlyData = useMemo(() => {
+    return monthlyData.filter(item => {
+      const isMonthMatch = item.month === selectedMonth;
+      const isDepartmentMatch = selectedDepartment === "All Department" || item.department === selectedDepartment;
+
+      return isMonthMatch && isDepartmentMatch;
+    });
+  }, [selectedDepartment, selectedMonth]);
+
+
   const renderMonthlySummary = () => (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 overflow-hidden">
       <h3 className="text-xl font-semibold text-gray-800 mb-4">Monthly Summary Overview</h3>
 
-      {/* Filters Row */}
+      {/* Filters Row (NOW DYNAMIC) */}
       <div className="flex flex-wrap gap-4 mb-6">
-        <select className="border border-gray-300 px-3 py-2 rounded-lg text-gray-700 bg-white shadow-sm">
-          <option>All Department</option>
-          <option>UI/UX</option>
-          <option>Java Backend</option>
+        {/* Department Filter */}
+        <select
+          className="border border-gray-300 px-3 py-2 rounded-lg text-gray-700 bg-white shadow-sm"
+          value={selectedDepartment}
+          onChange={(e) => setSelectedDepartment(e.target.value)}
+        >
+          {DEPARTMENTS.map(dept => (
+            <option key={dept} value={dept}>{dept}</option>
+          ))}
         </select>
 
+        {/* Month/Calendar Filter */}
         <div className="relative">
-          <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <select className="border border-gray-300 pl-10 pr-3 py-2 rounded-lg text-gray-700 bg-white shadow-sm appearance-none">
-            <option>March 2025</option>
-            <option>February 2025</option>
+          <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <select
+            className="border border-gray-300 pl-10 pr-3 py-2 rounded-lg text-gray-700 bg-white shadow-sm appearance-none"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+          >
+            {MONTHS.map(month => (
+              <option key={month.value} value={month.value}>{month.label}</option>
+            ))}
           </select>
         </div>
       </div>
 
-      {/* Monthly Summary Table (DESIGN IMPROVEMENT APPLIED HERE) */}
+      {/* Monthly Summary Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[700px]">
           <thead className="text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
             <tr>
               <th className="py-3 px-6 text-left">Employee</th>
+              <th className="py-3 px-6">Department</th> {/* Added Department Column */}
               <th className="py-3 px-6">Total Days</th>
               <th className="py-3 px-6">Present (%)</th>
               <th className="py-3 px-6">Absent (%)</th>
@@ -168,38 +216,47 @@ const AttendanceScreen: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {monthlyData.map((m, index) => {
-              const presentPct = ((m.present / m.totalDays) * 100).toFixed(1);
-              const absentPct = ((m.absent / m.totalDays) * 100).toFixed(1);
-              const onLeavePct = ((m.onLeave / m.totalDays) * 100).toFixed(1);
+            {filteredMonthlyData.length > 0 ? (
+              filteredMonthlyData.map((m, index) => {
+                const presentPct = ((m.present / m.totalDays) * 100).toFixed(1);
+                const absentPct = ((m.absent / m.totalDays) * 100).toFixed(1);
+                const onLeavePct = ((m.onLeave / m.totalDays) * 100).toFixed(1);
 
-              return (
-                <tr 
-                  key={m.id} 
-                  className={`border-b border-gray-100 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50/50`}
-                >
-                  <td className="py-3 px-6 flex items-center gap-3 font-medium text-gray-800">
-                    <img src={m.avatar} alt={m.employee} className="w-9 h-9 rounded-full object-cover" />
-                    {m.employee}
-                  </td>
-                  <td className="text-center font-bold text-gray-700">{m.totalDays}</td>
-                  <td className="text-center text-green-600 font-bold">
-                    {m.present} <span className="text-xs font-normal text-gray-500">({presentPct}%)</span>
-                  </td>
-                  <td className="text-center text-red-600 font-bold">
-                    {m.absent} <span className="text-xs font-normal text-gray-500">({absentPct}%)</span>
-                  </td>
-                  <td className="text-center text-yellow-600 font-bold">
-                    {m.onLeave} <span className="text-xs font-normal text-gray-500">({onLeavePct}%)</span>
-                  </td>
-                  <td className="text-center">
-                    <button className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition">
-                      View Log
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+                return (
+                  <tr
+                    key={m.id + m.month} // Use id and month for a more unique key
+                    className={`border-b border-gray-100 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50/50`}
+                  >
+                    <td className="py-3 px-6 flex items-center gap-3 font-medium text-gray-800">
+                      <img src={m.avatar} alt={m.employee} className="w-9 h-9 rounded-full object-cover" />
+                      {m.employee}
+                    </td>
+                    <td className="text-center text-gray-600">{m.department}</td> {/* Display Department */}
+                    <td className="text-center font-bold text-gray-700">{m.totalDays}</td>
+                    <td className="text-center text-green-600 font-bold">
+                      {m.present} <span className="text-xs font-normal text-gray-500">({presentPct}%)</span>
+                    </td>
+                    <td className="text-center text-red-600 font-bold">
+                      {m.absent} <span className="text-xs font-normal text-gray-500">({absentPct}%)</span>
+                    </td>
+                    <td className="text-center text-yellow-600 font-bold">
+                      {m.onLeave} <span className="text-xs font-normal text-gray-500">({onLeavePct}%)</span>
+                    </td>
+                    <td className="text-center">
+                      <button className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition">
+                        View Log
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={7} className="text-center py-8 text-lg text-gray-500">
+                  No attendance data found for the selected filters.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -208,7 +265,7 @@ const AttendanceScreen: React.FC = () => {
 
   const renderAttendanceRecords = () => (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-      
+
       {/* Header and Filters */}
       <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
         <h3 className="text-xl font-semibold text-gray-800">Full Attendance Records</h3>
@@ -238,7 +295,7 @@ const AttendanceScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Attendance Records Table (DESIGN IMPROVEMENT APPLIED HERE) */}
+      {/* Attendance Records Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[800px]">
           <thead className="text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
@@ -253,8 +310,8 @@ const AttendanceScreen: React.FC = () => {
           </thead>
           <tbody>
             {recordData.filter(r => r.employee.toLowerCase().includes(search.toLowerCase())).map((r, index) => (
-              <tr 
-                key={r.id} 
+              <tr
+                key={r.id}
                 className={`border-b border-gray-100 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50/50`}
               >
                 <td className="py-3 px-6 flex items-center gap-3 font-medium text-gray-800">
