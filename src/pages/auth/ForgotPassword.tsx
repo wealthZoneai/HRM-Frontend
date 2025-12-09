@@ -5,7 +5,7 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import Logo from "../../assets/logo_svg.svg";
 import { useNavigate } from "react-router-dom";
-import { showSuccess, showWarning } from "../../utils/toast";
+import { showSuccess, showWarning, showError } from "../../utils/toast";
 import { ForgotPassword as ForgotPasswordApi } from "../../Services/apiHelpers";
 
 const ForgotPassword: React.FC = () => {
@@ -22,8 +22,9 @@ const ForgotPassword: React.FC = () => {
     }
 
     //Basic email validation
+    const trimmedEmail = email.trim(); // Trim whitespace
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(trimmedEmail)) {
       showWarning("Please enter a valid email address");
       return;
     }
@@ -31,17 +32,17 @@ const ForgotPassword: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await ForgotPasswordApi(email);
+      const response = await ForgotPasswordApi(trimmedEmail);
 
       if (response.status === 200 || response.status === 201) {
         showSuccess("OTP sent successfully");
-        navigate('/otpverify', {state:{email}});
+        navigate('/otpverify', { state: { email: trimmedEmail } });
       }
     } catch (err: any) {
       console.error("Forgot password error: ", err);
 
       const errorMessage = err.response?.data?.email?.[0] || err.response?.data?.detail || "Failed to send OTP. Please try again.";
-      showWarning(errorMessage);
+      showError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -146,7 +147,7 @@ const ForgotPassword: React.FC = () => {
 
             {/* SUBMIT */}
             <button
-            disabled={isLoading}
+              disabled={isLoading}
               type="submit"
               className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition shadow-sm"
             // onClick={handleOTP}

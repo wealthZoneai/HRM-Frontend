@@ -8,7 +8,7 @@ import { OTPVerify, ForgotPassword as ResendOTP } from "../../Services/apiHelper
 import { showSuccess, showError, showWarning } from "../../utils/toast";
 
 const OTPVerification: React.FC = () => {
-  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,8 +39,8 @@ const OTPVerification: React.FC = () => {
     if (e) e.preventDefault();
 
     const otpString = otp.join("");
-    if (otpString.length !== 4) {
-      showWarning("Please enter the complete 4-digit OTP");
+    if (otpString.length !== 6) {
+      showWarning("Please enter the complete 6-digit OTP");
       return;
     }
 
@@ -74,7 +74,7 @@ const OTPVerification: React.FC = () => {
     setOtp(newOtp);
 
     // Move to next input automatically
-    if (value && index < 3) {
+    if (value && index < 5) {
       const next = document.getElementById(`otp-${index + 1}`);
       next?.focus();
     }
@@ -159,7 +159,7 @@ const OTPVerification: React.FC = () => {
           <form onSubmit={(e) => handleOTP(e)} className="space-y-6 text-center">
             <h2 className="text-2xl font-bold text-white mb-1">Verify OTP</h2>
             <p className="text-white text-sm opacity-80 mb-8">
-              Enter the 4-digit OTP we sent to your registered email.
+              Enter the 6-digit OTP we sent to your registered email.
             </p>
 
             {/* OTP INPUTS */}
@@ -187,8 +187,8 @@ const OTPVerification: React.FC = () => {
               type="submit"
               disabled={isLoading}
               className={`w-full py-3 mt-4 text-white font-bold rounded-md transition shadow-sm ${isLoading
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
                 }`}
             >
               {isLoading ? "Verifying..." : "Verify OTP"}

@@ -106,7 +106,7 @@ export default function Topbar({ name, id }: TopbarProps) {
         <h1 className="text-md font-bold text-gray-800 tracking-tight">
           Hello, {formattedName}
         </h1>
-        <p className="text-xs text-gray-500 font-medium">Employee ID: {id}</p>
+        {/* <p className="text-xs text-gray-500 font-medium">Employee ID: {id}</p> */}
       </div>
 
       {/* MIDDLE SECTION - Hidden on mobile */}

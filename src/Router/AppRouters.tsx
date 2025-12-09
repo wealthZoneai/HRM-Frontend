@@ -26,7 +26,7 @@ import HrLeaveManagement from "../pages/HR/Leave/LeaveManagement";
 import AddEmployeeWizard from "../pages/HR/AllEmployees/AddEmployee/AddEmployeeWizard";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import OTPVerification from "../pages/auth/OTPVerification";
-import ResetPassword from "../pages/auth/RestPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 import HRLayout from "../pages/HR/HRLayout";
 import LeadStatus from "../pages/Team Lead/LeadStatus";
 // import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
