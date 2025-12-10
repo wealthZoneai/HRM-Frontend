@@ -43,6 +43,15 @@ const DEPARTMENTS = [
 
 // --- MONTHS LIST (For Filter Dropdown) ---
 const MONTHS = [
+  { label: "December 2025", value: "2025-12" },
+  { label: "November 2025", value: "2025-11" },
+  { label: "October 2025", value: "2025-10" },
+  { label: "September 2025", value: "2025-09" },
+  { label: "August 2025", value: "2025-08" },
+  { label: "July 2025", value: "2025-07" },
+  { label: "June 2025", value: "2025-06" },
+  { label: "May 2025", value: "2025-05" },
+  { label: "April 2025", value: "2025-04" },
   { label: "March 2025", value: "2025-03" },
   { label: "February 2025", value: "2025-02" },
   { label: "January 2025", value: "2025-01" },
@@ -100,8 +109,8 @@ const AttendanceScreen: React.FC = () => {
     <button
       onClick={() => setActiveTab(k as any)}
       className={`pb-3 text-base transition-colors ${activeTab === k
-          ? "border-b-2 border-blue-600 font-bold text-blue-600"
-          : "text-gray-600 hover:text-gray-800"
+        ? "border-b-2 border-blue-600 font-bold text-blue-600"
+        : "text-gray-600 hover:text-gray-800"
         }`}
     >
       {label}

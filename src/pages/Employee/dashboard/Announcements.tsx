@@ -9,6 +9,7 @@ const ANNOUNCEMENTS = [
     day: "Mon",
     date: "08",
     month: "Oct",
+    year: "2024",
     event: "Marketing Strategy",
     time: "10:00 AM",
     description:
@@ -21,6 +22,7 @@ const ANNOUNCEMENTS = [
     day: "Tue",
     date: "09",
     month: "Oct",
+    year: "2024",
     event: "Design System Review",
     time: "11:00 AM",
     description:
@@ -33,6 +35,7 @@ const ANNOUNCEMENTS = [
     day: "Wed",
     date: "10",
     month: "Oct",
+    year: "2024",
     event: "Engineering Sync",
     time: "12:30 PM",
     description:
@@ -45,6 +48,7 @@ const ANNOUNCEMENTS = [
     day: "Thu",
     date: "11",
     month: "Oct",
+    year: "2024",
     event: "Client Demo: Alpha",
     time: "04:00 PM",
     description:
@@ -103,6 +107,7 @@ interface Announcement {
   day: string;
   date: string;
   month: string;
+  year: string;
   event: string;
   time: string;
   description: string;
@@ -191,7 +196,7 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
                     {selected.date}
                   </span>
                   <span className="text-xs uppercase tracking-widest text-stone-500 font-bold">
-                    {selected.month}
+                    {selected.month}, {selected.year}
                   </span>
                 </div>
                 <button
@@ -229,7 +234,7 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
                           Date & Time
                         </p>
                         <p className="text-sm text-stone-500">
-                          {selected.day}, {selected.month} {selected.date} at{" "}
+                          {selected.day}, {selected.month} {selected.date}, {selected.year} at{" "}
                           {selected.time}
                         </p>
                       </div>

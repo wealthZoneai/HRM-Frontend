@@ -5,7 +5,7 @@ import LeaveTable, { type LeaveRow } from "./LeaveTable";
 import LeaveViewModal from "./LeaveViewModal";
 import LeaveDeclineModal from "./LeaveDeclineModal";
 import HrApplyLeaveModal from "./HrApplyLeaveModal";
-import { FiAlertTriangle, FiClock, FiUsers, FiUserX } from "react-icons/fi";
+import {  FiClock, FiUsers, FiUserX } from "react-icons/fi";
 
 const HrLeaveManagement = () => {
     const [openNotification, setOpenNotification] = useState(false);
@@ -172,17 +172,17 @@ const HrLeaveManagement = () => {
             color: "bg-red-500",
         },
         {
-            title: "Pending Leave",
+            title: "Leave Request",
             value: "6",
             icon: <FiClock size={22} className="text-white" />,
             color: "bg-yellow-500",
         },
-        {
-            title: "Declined",
-            value: "2",
-            icon: <FiAlertTriangle size={22} className="text-white" />,
-            color: "bg-gray-600",
-        },
+        // {
+        //     title: "Declined",
+        //     value: "2",
+        //     icon: <FiAlertTriangle size={22} className="text-white" />,
+        //     color: "bg-gray-600",
+        // },
     ];
 
 

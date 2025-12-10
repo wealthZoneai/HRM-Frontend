@@ -32,11 +32,30 @@ const Announcements: React.FC<Props> = ({ items }) => {
   );
 };
 
+// ... (imports)
+
+// ... (Announcements component)
+
 function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => void }) {
-  // Try to parse "Mar 25" -> Month: Mar, Date: 25
+  // Parsing for the large date block (Month/Day)
   const parts = item.date.split(" ");
+  
+  // Example: item.date is "Mar 25 2024"
+  // parts[0] is "Mar" (month)
+  // parts[1] is "25" (day)
+  // parts[2] is "2024" (year)
+
   const month = parts.length > 0 ? parts[0] : "";
   const day = parts.length > 1 ? parts[1] : item.date;
+
+  // Re-format the full date for the summary/modal display to include the comma
+  // If the date is simple "Mar 25", it remains "Mar 25"
+  // If the date is "Mar 25 2024", it becomes "Mar 25, 2024"
+  let displayDate = item.date;
+  if (parts.length >= 3 && !item.date.includes(',')) {
+      displayDate = `${parts[0]} ${parts[1]}, ${parts[2]}`;
+  }
+
 
   return (
     <motion.div
@@ -46,7 +65,7 @@ function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => vo
       animate={{ opacity: 1, y: 0 }}
       className="group flex items-center gap-3 p-3 rounded-md hover:bg-gray-50 cursor-pointer transition-all duration-300"
     >
-      {/* Date Component */}
+      {/* Date Component (Month/Day only) */}
       <div className="flex flex-col items-center justify-center w-12 min-w-12">
         <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase group-hover:text-blue-500 transition-colors">
           {month}
@@ -65,7 +84,8 @@ function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => vo
           {item.title}
         </p>
         <p className="text-xs text-gray-400 mt-0.5 truncate">
-          {item.summary}
+          {/* Using the re-formatted date here if needed, or just the summary */}
+          {item.summary || displayDate} 
         </p>
       </div>
 
@@ -77,7 +97,24 @@ function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => vo
   );
 }
 
+// ... (DetailModal component)
+
+// ... (ListItem component)
+
 function DetailModal({ selected, onClose }: { selected: AnnouncementItem | null; onClose: () => void }) {
+  // Re-format the date for the Detail Modal display
+  let modalDate = "";
+  if (selected) {
+    const parts = selected.date.split(" ");
+    if (parts.length >= 3 && !selected.date.includes(',')) {
+      // Assuming format is "Oct 08 2024"
+      modalDate = `${parts[0]} ${parts[1]}, ${parts[2]}`;
+    } else {
+      // Use original date if it's already correct or not in the full format
+      modalDate = selected.date;
+    }
+  }
+
   return (
     <AnimatePresence>
       {selected && (
@@ -97,8 +134,9 @@ function DetailModal({ selected, onClose }: { selected: AnnouncementItem | null;
               {/* Modal Header */}
               <div className="h-20 bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-between px-6 relative">
                 <div className="flex flex-col">
+                  {/* Updated date format with comma in the header */}
                   <span className="text-3xl font-bold text-gray-400 opacity-50">
-                    {selected.date}
+                    {modalDate} 
                   </span>
                 </div>
                 <button
@@ -132,7 +170,8 @@ function DetailModal({ selected, onClose }: { selected: AnnouncementItem | null;
                           Date
                         </p>
                         <p className="text-sm text-gray-500">
-                          {selected.date}
+                          {/* Updated date format with comma in the details */}
+                          {modalDate}
                         </p>
                       </div>
                     </div>
@@ -148,3 +187,5 @@ function DetailModal({ selected, onClose }: { selected: AnnouncementItem | null;
 }
 
 export default Announcements;
+
+
