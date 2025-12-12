@@ -10,15 +10,15 @@ import Logo from "../../assets/logo_svg.svg";
 import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
-
-import { showWarning, showLoginError, showLoginSuccess } from "../../utils/toast";
-import { loginUser } from "../../Services/apiHelpers";
-import { setUserData } from "../../store/slice/userData";
-import { useDispatch } from "react-redux";
+// showLoginError, showLoginSuccess
+import { showWarning,  } from "../../utils/toast";
+// import { loginUser } from "../../Services/apiHelpers";
+// import { setUserData } from "../../store/slice/userData";
+// import { useDispatch } from "react-redux";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
