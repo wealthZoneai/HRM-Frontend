@@ -40,7 +40,7 @@ type AllDocumentsState = Record<string, DocumentState>;
 const documents: DocumentType[] = [
     {
         id: "aadhar",
-        label: "Aadhar Card",
+        label: "Aadhaar Card",
         requiresBack: true
     },
     {

@@ -56,7 +56,7 @@ export interface Documents {
 }
 
 export interface AddEmployeeState {
-  personal: PersonalInfo;
+  contact: PersonalInfo;
   kin: NextOfKin;
   bankAccounts: BankAccount[]; // allow multiple
   documents: Documents;
@@ -67,7 +67,7 @@ export interface AddEmployeeState {
 }
 
 const initialState: AddEmployeeState = {
-  personal: {},
+  contact: {},
   kin: {},
   bankAccounts: [{}, {}], // default two
   documents: {},
@@ -92,7 +92,7 @@ type Action =
 function reducer(state: AddEmployeeState, action: Action): AddEmployeeState {
   switch (action.type) {
     case "SET_PERSONAL":
-      return { ...state, personal: { ...state.personal, ...action.payload } };
+      return { ...state, contact: { ...state.contact, ...action.payload } };
     case "SET_KIN":
       return { ...state, kin: { ...state.kin, ...action.payload } };
     case "SET_BANK": {

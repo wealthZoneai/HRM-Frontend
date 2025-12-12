@@ -8,7 +8,7 @@ const endpoints = {
 
     // hr endpoints
 
-    createEmployes: 'api/create-employee/',
+    createEmployes: 'api/hr/create-employee/',
     getAllEmployes: 'api/employee-list/',
 
 
@@ -16,7 +16,7 @@ const endpoints = {
     forgotPassword: 'api/forgot-password/',
     verifyOTP: 'api/verify-otp/',
     resetPassword: 'api/reset-password/',
-    refresh : 'api/refresh/'
+    refresh: 'api/refresh/'
 
 }
 

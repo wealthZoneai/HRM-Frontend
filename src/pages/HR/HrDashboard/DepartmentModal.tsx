@@ -8,10 +8,10 @@ import {
   CartesianGrid,
   LineChart,
   Line,
-  PieChart, 
+  PieChart,
   Pie,
   Cell,
-  Tooltip, 
+  Tooltip,
   Legend,
 } from "recharts";
 
@@ -23,16 +23,15 @@ interface Props {
 
 // --- Mock Data Structures (REQUIRED FOR NEW CHARTS/METRICS) ---
 const HEADCOUNT_DATA = [
-    { name: 'Interns', value: 10, color: '#A5B4FC' }, // Indigo-200
-    { name: 'Juniors', value: 45, color: '#4F46E5' }, // Indigo-600
-    { name: 'Seniors', value: 30, color: '#1E40AF' }, // Blue-800
-    { name: 'Leads', value: 5, color: '#DC2626' },    // Red-600
+  { name: 'Juniors', value: 45, color: '#4F46E5' }, // Indigo-600
+  { name: 'Seniors', value: 30, color: '#1E40AF' }, // Blue-800
+  { name: 'Leads', value: 5, color: '#DC2626' },    // Red-600
 ];
 
 const KEY_METRICS = [
-    { label: "Avg Tenure", value: "4.1 yrs", color: "text-green-600", description: "Average Employee Duration" },
-    { label: "Open Roles", value: "7", color: "text-yellow-600", description: "Current Vacancies" },
-    { label: "Avg Salary", value: "$85K", color: "text-blue-600", description: "Mean Annual Compensation" },
+  { label: "Avg Tenure", value: "4.1 yrs", color: "text-green-600", description: "Average Employee Duration" },
+  { label: "Open Roles", value: "7", color: "text-yellow-600", description: "Current Vacancies" },
+  { label: "Avg Salary", value: "$85K", color: "text-blue-600", description: "Mean Annual Compensation" },
 ];
 
 
@@ -134,7 +133,7 @@ export default function DepartmentModal({ open, onClose, dept }: Props) {
                     >
                       {HEADCOUNT_DATA.map((entry, index) => (
                         <Cell key={index} fill={entry.color}
-                        className="outline-none focus:outline-none"
+                          className="outline-none focus:outline-none"
                         />
                       ))}
                     </Pie>

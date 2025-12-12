@@ -65,7 +65,7 @@ const SelectField = ({
 =================== */
 const StepPersonal: React.FC = () => {
   const { state, dispatch } = useAddEmployee();
-  const personal = state.personal;
+  const personal = state.contact;
 
   // Calculate max date (18 years ago from today)
   const getMaxDob = () => {

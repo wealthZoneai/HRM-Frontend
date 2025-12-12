@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, X, Calendar, Bell, Info, Clock } from "lucide-react";
+import { MapPin, X, Calendar, Bell, Info, Clock, AlertCircle } from "lucide-react";
 
 // --- Mock Data ---
-const ANNOUNCEMENTS = [
+const ANNOUNCEMENTS: Announcement[] = [
   {
     id: 1,
     day: "Mon",
@@ -16,6 +16,7 @@ const ANNOUNCEMENTS = [
       "Quarterly review of campaign performance and brainstorming session for the upcoming holiday season strategies.",
     location: "Executive Conference Room",
     type: "Strategy",
+    priority: "High",
   },
   {
     id: 2,
@@ -29,6 +30,7 @@ const ANNOUNCEMENTS = [
       "Critique session for the new mobile design prototypes. Please bring your updated Figma files.",
     location: "Design Studio / Figma Live",
     type: "Design",
+    priority: "Medium",
   },
   {
     id: 3,
@@ -42,6 +44,7 @@ const ANNOUNCEMENTS = [
       "Full stack team sync to discuss API architecture changes and workflow division for the Q4 sprint.",
     location: "Zoom Meeting Link",
     type: "Dev",
+    priority: "High",
   },
   {
     id: 4,
@@ -55,6 +58,7 @@ const ANNOUNCEMENTS = [
       "Monthly product demo review with the Alpha Corp stakeholders. Casual business attire required.",
     location: "Conference Room A",
     type: "Client",
+    priority: "Low",
   },
 ];
 
@@ -113,6 +117,7 @@ interface Announcement {
   description: string;
   location: string;
   type: string;
+  priority: "High" | "Medium" | "Low";
 }
 
 interface ListItemProps {
@@ -120,7 +125,23 @@ interface ListItemProps {
   onClick: () => void;
 }
 
+// Helper to get priority color styles
+const getPriorityStyles = (priority: string) => {
+  switch (priority) {
+    case "High":
+      return "bg-red-50 text-red-600 border-red-100";
+    case "Medium":
+      return "bg-amber-50 text-amber-600 border-amber-100";
+    case "Low":
+      return "bg-slate-50 text-slate-500 border-slate-100";
+    default:
+      return "bg-stone-50 text-stone-500 border-stone-100";
+  }
+};
+
 function ListItem({ item, onClick }: ListItemProps) {
+  const priorityStyle = getPriorityStyles(item.priority);
+
   return (
     <motion.li
       layoutId={`card-${item.id}`}
@@ -144,9 +165,16 @@ function ListItem({ item, onClick }: ListItemProps) {
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
-          {item.event}
-        </h3>
+        <div className="flex justify-between items-start">
+          <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
+            {item.event}
+          </h3>
+          {/* Mobile Priority Badge (or if you want it always visible on right) */}
+          <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border ${priorityStyle} whitespace-nowrap`}>
+            {item.priority}
+          </span>
+        </div>
+
         <div className="flex items-center gap-3 mt-1 text-sm text-stone-500">
           <span className="flex items-center gap-1 group-hover:text-blue-800/70 transition-colors">
             <Clock size={14} className="text-stone-400" />
@@ -156,11 +184,15 @@ function ListItem({ item, onClick }: ListItemProps) {
           <span className="hidden sm:flex items-center gap-1 truncate group-hover:text-blue-800/70 transition-colors">
             {item.type}
           </span>
+          {/* Very Small Screen Priority Fallback */}
+          <span className={`sm:hidden inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border ${priorityStyle}`}>
+            {item.priority}
+          </span>
         </div>
       </div>
 
       {/* Action Icon */}
-      <div className="text-stone-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300">
+      <div className="text-stone-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 pl-2">
         <Info size={20} />
       </div>
     </motion.li>
@@ -173,6 +205,9 @@ interface DetailModalProps {
 }
 
 function DetailModal({ selected, onClose }: DetailModalProps) {
+  if (!selected) return null;
+  const priorityStyle = getPriorityStyles(selected.priority);
+
   return (
     <AnimatePresence>
       {selected && (
@@ -214,9 +249,14 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-xs font-bold uppercase tracking-wider text-blue-800 mb-3">
-                    {selected.type}
-                  </span>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-xs font-bold uppercase tracking-wider text-blue-800">
+                      {selected.type}
+                    </span>
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${priorityStyle}`}>
+                      {selected.priority} Priority
+                    </span>
+                  </div>
 
                   <h2 className="text-2xl font-bold text-stone-900 mb-4 leading-tight">
                     {selected.event}
@@ -252,13 +292,6 @@ function DetailModal({ selected, onClose }: DetailModalProps) {
                       </div>
                     </div>
                   </div>
-
-                  {/* <button 
-                    onClick={onClose}
-                    className="w-full mt-8 bg-blue-900 text-white py-3 rounded-xl font-medium hover:bg-blue-800 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20"
-                  >
-                    Acknowledge
-                  </button> */}
                 </motion.div>
               </div>
             </motion.div>

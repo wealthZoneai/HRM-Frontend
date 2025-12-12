@@ -385,7 +385,7 @@ export default function HRDashboardPage() {
           </div>
         </div>
       </div>
-
+      
       {/* bottom: charts + interview table */}
       <div className="grid grid-cols-1 gap-6">
         <div>

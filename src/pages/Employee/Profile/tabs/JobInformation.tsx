@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { X, Check, } from 'lucide-react';
+import { X, Check, Pencil } from 'lucide-react';
 import { motion } from 'framer-motion';
+import UploadModal from '../UploadModal';
 // import axios from 'axios'; // Import axios for API call (Commented out as requested)
 
 // --- Helper Data and Components ---
@@ -21,6 +22,8 @@ const DUMMY_JOB_DATA = {
   idCardBack: '/id-card-back.png',
   jobDescription: `The Senior Product Manager is responsible for leading the product lifecycle from conception to launch, focusing on market needs, strategy, and execution. This role involves close collaboration with engineering, design, and marketing teams to deliver exceptional user value and achieve business objectives. Key responsibilities include defining roadmaps, analyzing metrics, and driving feature development.`,
 };
+
+// ... (existing helper functions and components remain unchanged)
 
 // Helper function to format the date for display
 function formatDateForDisplay(dateStr: string) {
@@ -48,8 +51,8 @@ const DisplayField = ({ label, value }: { label: string; value: string }) => (
 // Base Tailwind class for enhanced input/select styling (better focus UI)
 const INPUT_CLASS =
   'block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
-const TEXTAREA_CLASS =
-  'block w-full rounded-lg border border-slate-300 p-3 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
+// const TEXTAREA_CLASS =
+  // 'block w-full rounded-lg border border-slate-300 p-3 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
 
 const EditField = ({
   label,
@@ -122,6 +125,7 @@ const JobInformation = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(DUMMY_JOB_DATA);
   const [originalData, setOriginalData] = useState(DUMMY_JOB_DATA);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   // In a real application, you would fetch data here
   useEffect(() => {
@@ -134,15 +138,15 @@ const JobInformation = () => {
     setOriginalData(DUMMY_JOB_DATA);
   }, []);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,6 +162,18 @@ const JobInformation = () => {
     setIsEditing(false);
   };
 
+  const handleSaveImages = (frontImage: string, backImage: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      idCardFront: frontImage,
+      idCardBack: backImage,
+    }));
+    setIsUploadModalOpen(false);
+    // Note: If you want these changes to be part of the "Save Changes" flow, 
+    // keep them in formData state. If they should verify immediately, call API here.
+    // For now, we update local state which will be submitted with handleSubmit.
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -165,145 +181,80 @@ const JobInformation = () => {
       transition={{ duration: 0.5 }}
       className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl max-w-4xl mx-auto"
     >
+      {/* ... (Component Header and Form Fields remain same) ... */}
+      {/* For brevity, I'm omitting the middle part which is largely unchanged, 
+          but I will include the full return block to ensure correctness if replacing the whole file 
+          or careful partial replacement. 
+          Given "replace_file_content" works best with context, I will target the imports and the ID Card section specifically if possible, 
+          but here I am replacing large chunks or the whole file logic to be safe. 
+          Actually, let's just do targeted replacements in the next tool steps or one large replacement if safer.
+          Let's try to replace the whole file content to be safe as requested by "ReplacementContent" containing potentially modified imports and logic.
+      */}
+
       {/* --- Component Header --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
         <h2 className="text-base sm:text-xl font-semibold text-slate-800">Job Information</h2>
 
-        {/* {!isEditing && (
+        {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+            className="px-3 sm:px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs sm:text-sm flex items-center gap-2 w-full sm:w-auto justify-center"
           >
-            Edit Information
+            Edit <Pencil size={16} />
           </button>
-        )} */}
+        )}
       </div>
 
       {/* --- Form --- */}
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-sm">
-          {isEditing ? (
-            <>
-              <EditField
-                label="Job Title"
-                name="jobTitle"
-                value={formData.jobTitle}
-                onChange={handleChange}
-              />
-              <EditSelectField
-                label="Department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-              >
-                <option value="Product">Product</option>
-                <option value="Software">IT & Software</option>
-                <option value="Design">Design</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Sales">Sales</option>
-                <option value="HR">Human Resources</option>
-                <option value="Finance">Finance</option>
-              </EditSelectField>
-              <EditField
-                label="Team Lead"
-                name="teamLead"
-                value={formData.teamLead}
-                onChange={handleChange}
-              />
-              <EditSelectField
-                label="Employment Type"
-                name="employmentType"
-                value={formData.employmentType}
-                onChange={handleChange}
-              >
-                <option value="Full time">Full time</option>
-                <option value="Part time">Part time</option>
-                <option value="Contract">Contract</option>
-                <option value="Internship">Internship</option>
-              </EditSelectField>
-              <EditField
-                label="Start Date"
-                name="startDate"
-                type="date"
-                value={formData.startDate}
-                onChange={handleChange}
-              />
-              <EditSelectField
-                label="Location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-              >
-                <option value="Head Office">Head Office</option>
-                <option value="Branch Office">Branch Office</option>
-                <option value="Remote">Remote</option>
-              </EditSelectField>
-              <EditField
-                label="Work Email"
-                name="workEmail"
-                type="email"
-                value={formData.workEmail}
-                onChange={handleChange}
-              />
-              {/* Employee ID is displayed read-only even in edit mode */}
-              <DisplayField label="Employee ID" value={formData.employeeId} />
-            </>
-          ) : (
-            <>
-              <DisplayField label="Job Title" value={formData.jobTitle} />
-              <DisplayField label="Department" value={formData.department} />
-              <DisplayField label="Team Lead" value={formData.teamLead} />
-              <DisplayField
-                label="Employment Type"
-                value={formData.employmentType}
-              />
-              <DisplayField
-                label="Start Date"
-                value={formatDateForDisplay(formData.startDate)}
-              />
-              <DisplayField label="Location" value={formData.location} />
-              <DisplayField label="Work Email" value={formData.workEmail} />
-              <DisplayField label="Employee ID" value={formData.employeeId} />
-            </>
-          )}
+          {/* All fields are read-only even in edit mode, as per requirements */}
+          <DisplayField label="Job Title" value={formData.jobTitle} />
+          <DisplayField label="Department" value={formData.department} />
+          <DisplayField label="Team Lead" value={formData.teamLead} />
+          <DisplayField
+            label="Employment Type"
+            value={formData.employmentType}
+          />
+          <DisplayField
+            label="Start Date"
+            value={formatDateForDisplay(formData.startDate)}
+          />
+          <DisplayField label="Location" value={formData.location} />
+          <DisplayField label="Work Email" value={formData.workEmail} />
+          <DisplayField label="Employee ID" value={formData.employeeId} />
         </div>
 
         {/* --- Job Description Section --- */}
         <div className="mt-6 pt-6 border-t border-slate-200">
-          {isEditing ? (
-            <div>
-              <label
-                htmlFor="jobDescription"
-                className="block text-sm font-medium text-slate-700 mb-1"
-              >
-                Job Description
-              </label>
-              <textarea
-                id="jobDescription"
-                name="jobDescription"
-                value={formData.jobDescription}
-                onChange={handleChange}
-                rows={5}
-                className={TEXTAREA_CLASS}
-              />
-            </div>
-          ) : (
-            <div>
-              <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider">
-                Job Description
-              </label>
-              <p className="mt-1 text-sm sm:text-base text-slate-700 whitespace-pre-line">
-                {formData.jobDescription}
-              </p>
-            </div>
-          )}
+          <div>
+            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider">
+              Job Description
+            </label>
+            <p className="mt-1 text-sm sm:text-base text-slate-700 whitespace-pre-line">
+              {formData.jobDescription}
+            </p>
+          </div>
         </div>
 
         {/* --- ID Card Photo Section --- */}
         <div className="mt-6 pt-6 border-t border-slate-200">
-          <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
-            ID Card Photos
-          </label>
+          <div className="flex items-center gap-2 mb-3">
+            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider">
+              ID Card
+            </label>
+            {isEditing && (
+              <button
+                type="button"
+                onClick={() => setIsUploadModalOpen(true)}
+                className="p-1 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                title="Edit ID Card Photos"
+              >
+                <Pencil size={14} />
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-6">
             {/* Front Side */}
             <div className="flex flex-col gap-2">
@@ -352,6 +303,16 @@ const JobInformation = () => {
           </div>
         )}
       </form>
+
+      {/* --- Upload Modal --- */}
+      {isUploadModalOpen && (
+        <UploadModal
+          docKey="idcard"
+          docLabel="ID Card"
+          onClose={() => setIsUploadModalOpen(false)}
+          onSave={handleSaveImages}
+        />
+      )}
     </motion.div>
   );
 };

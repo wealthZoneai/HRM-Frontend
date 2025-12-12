@@ -12,7 +12,9 @@ import { useNavigate } from "react-router-dom";
 const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
   const { state, dispatch } = useAddEmployee();
   const navigate = useNavigate();
+  console.log(state)
 
+  console.log(editData);
   /* ===========================================================
       LOAD EDIT MODE DATA
   ============================================================ */
@@ -23,7 +25,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
         payload: {
           editId: editData.id,
           data: {
-            personal: { ...editData.personal },
+            contact: { ...editData.personal },
             kin: { ...editData.kin },
             bankAccounts: editData.bankAccounts || [{}],
             documents: {},
@@ -47,7 +49,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
       STEP VALIDATION LOGIC
   ============================================================ */
   const validateStep = () => {
-    const p = state.personal;
+    const p = state.contact;
     const k = state.kin;
     const b = state.bankAccounts[0] || {};
     // const d = state.documents;
@@ -153,43 +155,42 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
   };
 
   const convertToApiPayload = (state: any) => {
-    const p = state.personal;
     const k = state.kin;
     const b = state.bankAccounts[0]; // only 1 account
 
     return {
-
-      email: k.email,
-      emp_id: k.employeeId,
-
-      first_name: p.firstName,
-      last_name: p.lastName,
-
-      job_title: k.jobTitle,
-      department: k.department,
-      employment_type: k.employmentType,
-      start_date: k.startDate,
-      phone_number: p.phone,
-
-      // New Job Info Fields
-      manager: k.teamLead,
-      location: k.location,
-      job_description: k.jobDescription,
-
-      account_number: b.accountNumber,
-      confirm_account_number: b.confirmAccountNumber,
-      ifsc_code: b.ifscCode,
-
-      role: k.role,
-
-      // Personal Info
-      middle_name: p.middleName,
-      personal_email: p.personalEmail,
-      alternative_number: p.alternativeNumber,
-      dob: p.dob,
-      blood_group: p.bloodGroup,
-      gender: p.gender,
-      marital_status: p.maritalStatus,
+      contact: {
+        first_name: state.contact.firstName, // USER changed state.personal to state.contact in prev steps
+        last_name: state.contact.lastName,
+        middle_name: state.contact.middleName,
+        personal_email: state.contact.personalEmail,
+        phone_number: state.contact.phone,
+        alternative_number: state.contact.alternativeNumber,
+        dob: state.contact.dob,
+        blood_group: state.contact.bloodGroup,
+        gender: state.contact.gender,
+        marital_status: state.contact.maritalStatus,
+      },
+      job: {
+        email: k.email,
+        emp_id: k.employeeId,
+        job_title: k.jobTitle,
+        department: k.department,
+        employment_type: k.employmentType,
+        start_date: k.startDate,
+        role: k.role,
+        manager: k.teamLead,
+        location: k.location,
+        job_description: k.jobDescription,
+      },
+      bank: {
+        bank_name: b.bankName,
+        account_number: b.accountNumber,
+        confirm_account_number: b.confirmAccountNumber,
+        ifsc_code: b.ifscCode,
+        branch: b.branchName, // Mapped from branchName
+        account_holder_name: b.accountName,
+      },
     };
   };
 

@@ -9,7 +9,7 @@ interface Announcement {
   title: string;
   description: string;
   category: string; // e.g., "Events", "Policy", "Company"
-  priority: 'High Priority' | 'Medium Priority' | 'Low Priority';
+  priority: 'High' | 'Medium' | 'Low';
 }
 
 // Dummy data for announcements
@@ -20,7 +20,7 @@ const DUMMY_ANNOUNCEMENTS: Announcement[] = [
     title: 'Team Building Event - Join Us',
     description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
     category: 'Events',
-    priority: 'High Priority',
+    priority: 'High',
   },
   {
     id: '2',
@@ -28,7 +28,7 @@ const DUMMY_ANNOUNCEMENTS: Announcement[] = [
     title: 'Remote work policy Update',
     description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
     category: 'Policy',
-    priority: 'Medium Priority',
+    priority: 'Medium',
   },
   {
     id: '3',
@@ -36,7 +36,7 @@ const DUMMY_ANNOUNCEMENTS: Announcement[] = [
     title: 'Quarterly Town Hall Meeting',
     description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
     category: 'Company',
-    priority: 'High Priority',
+    priority: 'High',
   },
   {
     id: '4',
@@ -44,7 +44,7 @@ const DUMMY_ANNOUNCEMENTS: Announcement[] = [
     title: 'New Employee Benefits Program',
     description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
     category: 'Benefits',
-    priority: 'Medium Priority',
+    priority: 'Medium',
   },
   {
     id: '5',
@@ -52,7 +52,7 @@ const DUMMY_ANNOUNCEMENTS: Announcement[] = [
     title: 'Office Maintenance Notice',
     description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
     category: 'Facility',
-    priority: 'Low Priority',
+    priority: 'Low',
   },
 ];
 
@@ -85,9 +85,9 @@ const getTagColors = (category: string, priority: string) => {
 
   // Priority Colors
   switch (priority) {
-    case 'High Priority': priorityClasses = 'bg-red-100 text-red-700'; break;
-    case 'Medium Priority': priorityClasses = 'bg-yellow-100 text-yellow-700'; break;
-    case 'Low Priority': priorityClasses = 'bg-gray-200 text-gray-700'; break; // Changed to gray for 'Low' as per image
+    case 'High': priorityClasses = 'bg-red-100 text-red-700'; break;
+    case 'Medium': priorityClasses = 'bg-yellow-100 text-yellow-700'; break;
+    case 'Low': priorityClasses = 'bg-gray-200 text-gray-700'; break;
     default: priorityClasses = 'bg-gray-200 text-gray-700';
   }
 
