@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, X, Calendar, Bell, Info, Clock, AlertCircle } from "lucide-react";
+import { MapPin, X, Calendar, Bell, Info, Clock } from "lucide-react";
 
 // --- Mock Data ---
 const ANNOUNCEMENTS: Announcement[] = [

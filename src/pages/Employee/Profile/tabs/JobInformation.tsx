@@ -49,77 +49,11 @@ const DisplayField = ({ label, value }: { label: string; value: string }) => (
 );
 
 // Base Tailwind class for enhanced input/select styling (better focus UI)
-const INPUT_CLASS =
-  'block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
+
 // const TEXTAREA_CLASS =
-  // 'block w-full rounded-lg border border-slate-300 p-3 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
+// 'block w-full rounded-lg border border-slate-300 p-3 text-slate-800 shadow-sm transition duration-150 ease-in-out focus:ring-4 focus:ring-blue-100 focus:border-blue-600 sm:text-sm';
 
-const EditField = ({
-  label,
-  name,
-  value,
-  onChange,
-  type = 'text',
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => void;
-  type?: string;
-}) => (
-  <div>
-    <label
-      htmlFor={name}
-      className="block text-sm font-medium text-slate-700 mb-1"
-    >
-      {label}
-    </label>
-    <input
-      type={type}
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={INPUT_CLASS}
-    />
-  </div>
-);
 
-const EditSelectField = ({
-  label,
-  name,
-  value,
-  onChange,
-  children,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => void;
-  children: React.ReactNode;
-}) => (
-  <div>
-    <label
-      htmlFor={name}
-      className="block text-sm font-medium text-slate-700 mb-1"
-    >
-      {label}
-    </label>
-    <select
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={INPUT_CLASS}
-    >
-      {children}
-    </select>
-  </div>
-);
 
 const JobInformation = () => {
   const [isEditing, setIsEditing] = useState(false);

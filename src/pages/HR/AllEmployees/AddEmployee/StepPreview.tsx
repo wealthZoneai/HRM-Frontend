@@ -18,9 +18,9 @@ const StepPreview: React.FC = () => {
       const form = new FormData();
 
       // Personal
-      Object.entries(state.personal).forEach(([k, v]) => {
+      Object.entries(state.contact).forEach(([k, v]) => {
         if (v !== undefined && v !== null)
-          form.append(`personal[${k}]`, String(v));
+          form.append(`contact[${k}]`, String(v));
       });
 
       // Kin
@@ -83,7 +83,7 @@ const StepPreview: React.FC = () => {
               Personal Information
             </h4>
             <pre className="p-3 text-xs bg-white border rounded-lg shadow-sm text-gray-700 overflow-x-auto">
-{JSON.stringify(state.personal, null, 2)}
+              {JSON.stringify(state.contact, null, 2)}
             </pre>
           </div>
 
@@ -93,7 +93,7 @@ const StepPreview: React.FC = () => {
               Next of Kin
             </h4>
             <pre className="p-3 text-xs bg-white border rounded-lg shadow-sm text-gray-700 overflow-x-auto">
-{JSON.stringify(state.kin, null, 2)}
+              {JSON.stringify(state.kin, null, 2)}
             </pre>
           </div>
 
@@ -103,7 +103,7 @@ const StepPreview: React.FC = () => {
               Bank Accounts
             </h4>
             <pre className="p-3 text-xs bg-white border rounded-lg shadow-sm text-gray-700 overflow-x-auto">
-{JSON.stringify(state.bankAccounts, null, 2)}
+              {JSON.stringify(state.bankAccounts, null, 2)}
             </pre>
           </div>
 
@@ -148,8 +148,8 @@ const StepPreview: React.FC = () => {
             {loading
               ? "Processing..."
               : state.editMode
-              ? "Update Employee"
-              : "Add Employee"}
+                ? "Update Employee"
+                : "Add Employee"}
           </button>
 
           {/* Error */}
