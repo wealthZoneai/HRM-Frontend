@@ -95,25 +95,31 @@ const StepPersonal: React.FC = () => {
           <TextField
             label="First Name *"
             value={personal.firstName}
-            onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { firstName: v } })
-            }
+            onChange={(v) => {
+              if (/^[^0-9]*$/.test(v)) {
+                dispatch({ type: "SET_PERSONAL", payload: { firstName: v } });
+              }
+            }}
           />
 
           <TextField
             label="Middle Name"
             value={personal.middleName}
-            onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { middleName: v } })
-            }
+            onChange={(v) => {
+              if (/^[^0-9]*$/.test(v)) {
+                dispatch({ type: "SET_PERSONAL", payload: { middleName: v } });
+              }
+            }}
           />
 
           <TextField
             label="Last Name *"
             value={personal.lastName}
-            onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { lastName: v } })
-            }
+            onChange={(v) => {
+              if (/^[^0-9]*$/.test(v)) {
+                dispatch({ type: "SET_PERSONAL", payload: { lastName: v } });
+              }
+            }}
           />
 
           <TextField

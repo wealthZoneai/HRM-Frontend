@@ -116,7 +116,11 @@ const StepBank: React.FC = () => {
           <Field label="Account Holder Name *" error={errors.accountName}>
             <input
               value={bank.accountName || ""}
-              onChange={(e) => setBankField("accountName", e.target.value)}
+              onChange={(e) => {
+                if (/^[^0-9]*$/.test(e.target.value)) {
+                  setBankField("accountName", e.target.value);
+                }
+              }}
               onBlur={(e) => validateField("accountName", e.target.value)}
               className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm
               focus:outline-none focus:ring-2 focus:ring-blue-500"

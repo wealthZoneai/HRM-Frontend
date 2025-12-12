@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { FiSearch, FiCalendar } from "react-icons/fi";
+import { FiSearch, FiCalendar, FiX, FiClock, FiDownload } from "react-icons/fi";
 
 type Status = "Present" | "Absent" | "On Leave";
 
@@ -27,11 +27,13 @@ interface MonthlySummaryItem {
   month: string;
 }
 
-interface AttendanceRecord extends DailyViewItem { }
+interface AttendanceRecord extends DailyViewItem {
+  date: string; // YYYY-MM-DD
+}
 
 // --- DEPARTMENTS LIST ---
 const DEPARTMENTS = [
-  "All Department",
+  "Teams",
   "AWS",
   "Cyber Security",
   "Java",
@@ -84,15 +86,145 @@ const monthlyData: MonthlySummaryItem[] = [
   { id: "9", employee: "Clement Mendie", avatar: "https://i.pravatar.cc/40?img=1", department: "UI/UX", totalDays: 20, present: 15, absent: 3, onLeave: 2, month: "2025-02" },
 ];
 
-const recordData: AttendanceRecord[] = [
-  ...dailyData.map(d => ({ ...d, department: d.department + " Department" })),
-];
+// --- MOCK RECORD DATA GENERATOR ---
+const generateMockRecords = (): AttendanceRecord[] => {
+  const records: AttendanceRecord[] = [];
+  const employees = dailyData;
+
+  // Generate for last 30 days
+  for (let i = 0; i < 30; i++) {
+    const date = new Date("2025-03-31");
+    date.setDate(date.getDate() - i);
+    const dateString = date.toISOString().split('T')[0];
+
+    employees.forEach(emp => {
+      // Randomize status slightly
+      const rand = Math.random();
+      let status: Status = "Present";
+      let checkIn = "09:00 AM";
+      let checkOut = "05:00 PM";
+
+      if (rand > 0.8) {
+        status = "Absent";
+        checkIn = "-";
+        checkOut = "-";
+      } else if (rand > 0.7) {
+        status = "On Leave";
+        checkIn = "—";
+        checkOut = "—";
+      }
+
+      records.push({
+        ...emp,
+        id: `${emp.id}-${dateString}`,
+        department: emp.department + " Department",
+        date: dateString,
+        status,
+        checkIn,
+        checkOut
+      });
+    });
+  }
+  return records;
+};
+
+const recordData: AttendanceRecord[] = generateMockRecords();
 
 // --- STYLING CONSTANTS ---
 const badge = {
   Present: "bg-green-100 text-green-700 font-medium",
   Absent: "bg-red-100 text-red-700 font-medium",
   "On Leave": "bg-yellow-100 text-yellow-700 font-medium",
+};
+
+// --- VIEW LOG MODAL COMPONENT ---
+interface LogEntry {
+  date: string;
+  loginTime: string;
+  logoutTime: string;
+  duration: string;
+  status: Status;
+}
+
+const ViewLogModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  employeeName: string;
+  month: string;
+}> = ({ isOpen, onClose, employeeName, month }) => {
+  if (!isOpen) return null;
+
+  // Mock logs data generation based on month
+  const logs: LogEntry[] = Array.from({ length: 10 }).map((_, i) => ({
+    date: `${month}-${String(i + 1).padStart(2, "0")}`,
+    loginTime: "09:00 AM",
+    logoutTime: "06:00 PM",
+    duration: "9h 00m",
+    status: i % 5 === 0 ? "Absent" : "Present",
+  }));
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+
+        {/* Header */}
+        <div className="bg-blue-600 p-4 flex justify-between items-center text-white">
+          <div>
+            <h3 className="text-lg font-bold">Attendance Log</h3>
+            <p className="text-blue-100 text-sm">{employeeName} • {month}</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-colors">
+            <FiX size={20} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-0 max-h-[60vh] overflow-y-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-50 text-gray-500 uppercase font-medium border-b border-gray-100 sticky top-0">
+              <tr>
+                <th className="px-6 py-3">Date</th>
+                <th className="px-6 py-3">Login</th>
+                <th className="px-6 py-3">Logout</th>
+                <th className="px-6 py-3">Duration</th>
+                <th className="px-6 py-3">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {logs.map((log, idx) => (
+                <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
+                  <td className="px-6 py-3 font-medium text-gray-700">{log.date}</td>
+                  <td className="px-6 py-3 text-gray-600">{log.loginTime}</td>
+                  <td className="px-6 py-3 text-gray-600">{log.logoutTime}</td>
+                  <td className="px-6 py-3 text-gray-600 flex items-center gap-1">
+                    <FiClock size={14} className="text-blue-500" /> {log.duration}
+                  </td>
+                  <td className="px-6 py-3">
+                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${log.status === "Present" ? "bg-green-100 text-green-700" :
+                      log.status === "Absent" ? "bg-red-100 text-red-700" :
+                        "bg-yellow-100 text-yellow-700"
+                      }`}>
+                      {log.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-100 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // --- MAIN COMPONENT ---
@@ -103,6 +235,47 @@ const AttendanceScreen: React.FC = () => {
   // --- STATE FOR MONTHLY SUMMARY FILTERS ---
   const [selectedDepartment, setSelectedDepartment] = useState(DEPARTMENTS[0]); // "All Department"
   const [selectedMonth, setSelectedMonth] = useState(MONTHS[0].value); // "2025-03"
+
+  // --- ATTENDANCE RECORDS DATE FILTERS ---
+  const [fromDate, setFromDate] = useState("2025-03-01");
+  const [toDate, setToDate] = useState("2025-03-31");
+
+  // --- VIEW LOG MODAL STATE ---
+  const [isLogOpen, setIsLogOpen] = useState(false);
+  const [selectedLogEmployee, setSelectedLogEmployee] = useState<{ name: string, month: string } | null>(null);
+
+  const handleViewLog = (employee: string, month: string) => {
+    setSelectedLogEmployee({ name: employee, month });
+    setIsLogOpen(true);
+  };
+
+  const handleDownload = (data: AttendanceRecord[]) => {
+    const csvContent = [
+      ["Employee", "Employee ID", "Department", "Date", "Check In", "Check Out", "Status"],
+      ...data.map(item => [
+        item.employee,
+        item.empId,
+        item.department,
+        item.date,
+        item.checkIn,
+        item.checkOut,
+        item.status
+      ])
+    ]
+      .map(e => e.join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `attendance_records_${fromDate}_to_${toDate}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
 
   const TabButton: React.FC<{ k: string, label: string }> = ({ k, label }) => (
@@ -171,7 +344,7 @@ const AttendanceScreen: React.FC = () => {
   const filteredMonthlyData = useMemo(() => {
     return monthlyData.filter(item => {
       const isMonthMatch = item.month === selectedMonth;
-      const isDepartmentMatch = selectedDepartment === "All Department" || item.department === selectedDepartment;
+      const isDepartmentMatch = selectedDepartment === "Teams" || item.department === selectedDepartment;
 
       return isMonthMatch && isDepartmentMatch;
     });
@@ -252,7 +425,10 @@ const AttendanceScreen: React.FC = () => {
                       {m.onLeave} <span className="text-xs font-normal text-gray-500">({onLeavePct}%)</span>
                     </td>
                     <td className="text-center">
-                      <button className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition">
+                      <button
+                        onClick={() => handleViewLog(m.employee, m.month)}
+                        className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition"
+                      >
                         View Log
                       </button>
                     </td>
@@ -272,77 +448,129 @@ const AttendanceScreen: React.FC = () => {
     </div>
   );
 
-  const renderAttendanceRecords = () => (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+  const renderAttendanceRecords = () => {
+    // Filter records by date range and search
+    const filteredRecords = recordData.filter(r => {
+      const matchesSearch = r.employee.toLowerCase().includes(search.toLowerCase());
 
-      {/* Header and Filters */}
-      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-        <h3 className="text-xl font-semibold text-gray-800">Full Attendance Records</h3>
+      // Date filtering
+      const recDate = new Date(r.date);
+      const start = fromDate ? new Date(fromDate) : null;
+      const end = toDate ? new Date(toDate) : null;
 
-        <div className="flex flex-wrap gap-3">
-          {/* Search */}
-          <div className="relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search Employee"
-              className="pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+      const isAfterStart = !start || recDate >= start;
+      const isBeforeEnd = !end || recDate <= end;
 
-          {/* Date Range Filter (Enhanced) */}
-          <div className="relative">
-            <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="date"
-              defaultValue="2025-05-03" // Mock date
-              className="pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
-            />
+      return matchesSearch && isAfterStart && isBeforeEnd;
+    });
+
+    return (
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+
+        {/* Header and Filters */}
+        {/* Header and Filters */}
+        <div className="flex flex-col gap-4 mb-6">
+          <h3 className="text-xl font-semibold text-gray-800">Full Attendance Records</h3>
+
+          <div className="flex flex-wrap justify-between items-center gap-4">
+            {/* Left Side: Search */}
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search Employee"
+                className="pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
+            {/* Right Side: Date Range & Download */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Date Range Filter */}
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold uppercase">From</span>
+                  <input
+                    type="date"
+                    max={new Date().toISOString().split("T")[0]}
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                    className="pl-12 pr-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
+                  />
+                </div>
+                <div className="relative">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold uppercase">To</span>
+                  <input
+                    type="date"
+                    max={new Date().toISOString().split("T")[0]}
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                    className="pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none"
+                  />
+                </div>
+              </div>
+
+              {/* Download Button */}
+              <button
+                onClick={() => handleDownload(filteredRecords)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium"
+              >
+                <FiDownload /> Download
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Attendance Records Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[800px]">
-          <thead className="text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
-            <tr>
-              <th className="py-3 px-6 text-left">Employee</th>
-              <th className="py-3 px-6">Employee ID</th>
-              <th className="py-3 px-6">Department</th>
-              <th className="py-3 px-6">Check In</th>
-              <th className="py-3 px-6">Check Out</th>
-              <th className="py-3 px-6">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recordData.filter(r => r.employee.toLowerCase().includes(search.toLowerCase())).map((r, index) => (
-              <tr
-                key={r.id}
-                className={`border-b border-gray-100 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50/50`}
-              >
-                <td className="py-3 px-6 flex items-center gap-3 font-medium text-gray-800">
-                  <img src={r.avatar} alt={r.employee} className="w-9 h-9 rounded-full object-cover" />
-                  {r.employee}
-                </td>
-                <td className="text-center text-gray-600">{r.empId}</td>
-                <td className="text-center text-gray-600">{r.department}</td>
-                <td className="text-center font-bold text-gray-700">{r.checkIn}</td>
-                <td className="text-center font-bold text-gray-700">{r.checkOut}</td>
-                <td className="text-center">
-                  <span className={`px-3 py-1 rounded-full text-xs ${badge[r.status]}`}>
-                    {r.status}
-                  </span>
-                </td>
+        {/* Attendance Records Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[800px]">
+            <thead className="text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
+              <tr>
+                <th className="py-3 px-6 text-left">Employee</th>
+                <th className="py-3 px-6">Employee ID</th>
+                <th className="py-3 px-6">Department</th>
+                <th className="py-3 px-6">Date</th>
+                <th className="py-3 px-6">Check In</th>
+                <th className="py-3 px-6">Check Out</th>
+                <th className="py-3 px-6">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredRecords.map((r, index) => (
+                <tr
+                  key={r.id}
+                  className={`border-b border-gray-100 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50/50`}
+                >
+                  <td className="py-3 px-6 flex items-center gap-3 font-medium text-gray-800">
+                    <img src={r.avatar} alt={r.employee} className="w-9 h-9 rounded-full object-cover" />
+                    {r.employee}
+                  </td>
+                  <td className="text-center text-gray-600">{r.empId}</td>
+                  <td className="text-center text-gray-600">{r.department}</td>
+                  <td className="text-center text-gray-600 font-medium">{r.date}</td>
+                  <td className="text-center font-bold text-gray-700">{r.checkIn}</td>
+                  <td className="text-center font-bold text-gray-700">{r.checkOut}</td>
+                  <td className="text-center">
+                    <span className={`px-3 py-1 rounded-full text-xs ${badge[r.status]}`}>
+                      {r.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+              {filteredRecords.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="text-center py-8 text-gray-500">
+                    No records found for the selected date range.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
@@ -363,6 +591,14 @@ const AttendanceScreen: React.FC = () => {
         {activeTab === "monthly" && renderMonthlySummary()}
         {activeTab === "records" && renderAttendanceRecords()}
       </div>
+
+      {/* VIEW LOG MODAL */}
+      <ViewLogModal
+        isOpen={isLogOpen}
+        onClose={() => setIsLogOpen(false)}
+        employeeName={selectedLogEmployee?.name || ""}
+        month={selectedLogEmployee?.month || ""}
+      />
 
     </div>
   );

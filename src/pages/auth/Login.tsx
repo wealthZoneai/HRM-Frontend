@@ -10,7 +10,7 @@ import Logo from "../../assets/logo_svg.svg";
 import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
-// showLoginError, showLoginSuccess
+
 import { showWarning,  } from "../../utils/toast";
 // import { loginUser } from "../../Services/apiHelpers";
 // import { setUserData } from "../../store/slice/userData";
@@ -38,8 +38,8 @@ const Login: React.FC = () => {
       return;
     }
 
-    navigate('/hr/dashboard')
-    // navigate('/employee/dashboard')
+    // navigate('/hr/dashboard')
+    navigate('/employee/dashboard')
     // try {
     //   const response = await loginUser({ username, password });
     //   console.log(response)

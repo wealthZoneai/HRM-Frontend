@@ -31,56 +31,64 @@ const initialAnnouncements: AnnouncementItem[] = [
     title: "Quarterly Strategy Meeting",
     date: "Oct 08 2024",
     summary: "Review of Q3 performance and strategic planning for Q4 objectives with all department heads.",
-    color: "bg-purple-100 text-purple-700"
+    color: "bg-purple-100 text-purple-700",
+    priority: "High"
   },
   {
     id: "2",
     title: "New Health Insurance Policy",
     date: "Oct 12 2024",
     summary: "Open enrollment for the new health insurance plan begins next week. Please review the updated benefits guide.",
-    color: "bg-blue-100 text-blue-700"
+    color: "bg-blue-100 text-blue-700",
+    priority: "High"
   },
   {
     id: "3",
     title: "Diwali Celebration",
     date: "Oct 25 2024",
     summary: "Office-wide Diwali celebration starts at 4 PM. Traditional wear is encouraged! Snacks and sweets will be provided.",
-    color: "bg-orange-100 text-orange-700"
+    color: "bg-orange-100 text-orange-700",
+    priority: "Medium"
   },
   {
     id: "4",
     title: "IT Security Audit",
     date: "Oct 28 2024",
     summary: "Mandatory security audit for all workstations. Please ensure your systems are updated and passwords are changed.",
-    color: "bg-red-100 text-red-700"
+    color: "bg-red-100 text-red-700",
+    priority: "High"
   },
   {
     id: "5",
     title: "Employee Training: Soft Skills",
     date: "Nov 02 2024",
     summary: "Workshop on effective communication and leadership skills. Required for all team leads and managers.",
-    color: "bg-green-100 text-green-700"
+    color: "bg-green-100 text-green-700",
+    priority: "Medium"
   },
   {
     id: "6",
     title: "Annual Performance Reviews",
     date: "Nov 15 2024",
     summary: "Performance review cycle begins. Managers, please schedule 1:1s with your team members by the end of the month.",
-    color: "bg-indigo-100 text-indigo-700"
+    color: "bg-indigo-100 text-indigo-700",
+    priority: "High"
   },
   {
     id: "7",
     title: "Office Renovation Notice",
     date: "Nov 20 2024",
     summary: "The 2nd-floor cafeteria will be closed for renovations. Temporary refreshments will be available in the lobby.",
-    color: "bg-yellow-100 text-yellow-700"
+    color: "bg-yellow-100 text-yellow-700",
+    priority: "Low"
   },
   {
     id: "8",
     title: "Holiday Schedule Update",
     date: "Dec 01 2024",
     summary: "The updated holiday calendar for next year is now available on the portal. Please plan your leaves accordingly.",
-    color: "bg-teal-100 text-teal-700"
+    color: "bg-teal-100 text-teal-700",
+    priority: "Medium"
   }
 ];
 
@@ -370,7 +378,7 @@ export default function HRDashboardPage() {
         <SummaryCard title="Total Employee Count" value={`${presentEmployees} / ${totalEmployees}`} subtitle="Present / Total" icon={<FiUsers size={22} />} />
         <SummaryCard title="Working From Office  " value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
         <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />} />
-        <SummaryCard title="Absentees" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} />
+        <SummaryCard title="On Leave" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} />
       </div>
 
       {/* middle section: chart + announcements */}
@@ -385,7 +393,7 @@ export default function HRDashboardPage() {
           </div>
         </div>
       </div>
-      
+      H
       {/* bottom: charts + interview table */}
       <div className="grid grid-cols-1 gap-6">
         <div>

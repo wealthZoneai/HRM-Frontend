@@ -59,8 +59,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
         return (
           p.firstName?.trim() &&
           p.lastName?.trim() &&
-          p.phone?.trim() &&
-          p.gender?.trim()
+          p.phone?.trim()
         );
 
       case 1: // JOB INFO (KIN)
