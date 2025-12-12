@@ -38,34 +38,34 @@ const Login: React.FC = () => {
       return;
     }
 
-    // navigate('/hr/dashboard')
+    navigate('/hr/dashboard')
     // navigate('/employee/dashboard')
-    try {
-      const response = await loginUser({ username, password });
-      console.log(response)
-      if (response.status === 200) {
-        localStorage.setItem("access", response.data.access);
-        localStorage.setItem("refresh", response.data.refresh);
-        if (response.data.role === "admin" || response.data.role === "hr") {
-          navigate(`/hr/dashboard`);
-        } else if (response.data.role === "employee" || response.data.role === "intern" || response.data.role === "tl") {
-          navigate(`/employee/dashboard`);
-        }
-        dispatch(setUserData({
-          token: response.data.access,
-          role: response.data.role,
-          userName: response.data.username
-        }));
+    // try {
+    //   const response = await loginUser({ username, password });
+    //   console.log(response)
+    //   if (response.status === 200) {
+    //     localStorage.setItem("access", response.data.access);
+    //     localStorage.setItem("refresh", response.data.refresh);
+    //     if (response.data.role === "admin" || response.data.role === "hr") {
+    //       navigate(`/hr/dashboard`);
+    //     } else if (response.data.role === "employee" || response.data.role === "intern" || response.data.role === "tl") {
+    //       navigate(`/employee/dashboard`);
+    //     }
+    //     dispatch(setUserData({
+    //       token: response.data.access,
+    //       role: response.data.role,
+    //       userName: response.data.username
+    //     }));
 
-        // Show success toast with username
-        showLoginSuccess(response.data.username);
+    //     // Show success toast with username
+    //     showLoginSuccess(response.data.username);
 
-      }
+    //   }
 
-    } catch (error) {
-      console.error(error);
-      showLoginError("Invalid credentials. Please check your email and password.");
-    }
+    // } catch (error) {
+    //   console.error(error);
+    //   showLoginError("Invalid credentials. Please check your email and password.");
+    // }
   };
 
 
