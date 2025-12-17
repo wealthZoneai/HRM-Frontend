@@ -88,8 +88,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   //   navigate("/login");
   // };
 
+  // Get username from local storage & format it
+  const rawName = localStorage.getItem("userName") || "Raviteja";
+  const firstName = rawName.split(".")[0];
+  const formattedUserName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+
   const currentUser = {
-    name: "Raviteja",
+    name: formattedUserName,
     id: "WZG-AI-0029"
   };
 

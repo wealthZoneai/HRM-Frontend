@@ -9,30 +9,28 @@ interface Syllabus {
   file: string;
 }
 interface ICreateEmployesBody {
+  emp_id?: string;
+  work_email?: string;
   contact: {
     first_name: string;
     last_name: string;
     middle_name?: string;
-    personal_email: string; // marked optional in previous but required in error message? Error says "This field is required."
+    personal_email: string;
     phone_number: string;
-    alternative_number?: string;
+    alternate_number?: string;
     dob?: string;
     gender?: string;
-    blood_group?: string; // Not in error message, keep as optional
+    blood_group?: string;
     marital_status?: string;
+    profile_photo?: File | null;
   };
   job: {
     job_title: string;
     department: string;
     employment_type: string;
     start_date: string;
-    emp_id: string; // "emp_id" was top level, assuming it goes to job or stays top? Error message didn't list it in nested. Wait, user error validaton didn't show emp_id. It might be required top level or in job. Let's assume nested in job or check if user provided error covers all. 
-    // Actually, typically emp_id is job related. I will place it in job for now, or keep top level if unsure. 
-    // Re-reading error: it shows keys "contact", "job", "bank". It does NOT show "emp_id" at root. It likely belongs in "job" or the backend generates it (but the form has it).
-    // Let's assume it's in `job` based on context.
-    email: string; // Work email.
-    role: string;
-    manager?: string;
+    team_lead?: string;
+    role?: string;
     location?: string;
     job_description?: string;
   };
@@ -41,7 +39,7 @@ interface ICreateEmployesBody {
     account_number: string;
     confirm_account_number: string;
     ifsc_code: string;
-    branch: string; // Mapped from branchName
-    account_holder_name?: string; // Error didn't mention it but validaton might.
+    branch: string;
+    account_holder_name?: string;
   };
 }

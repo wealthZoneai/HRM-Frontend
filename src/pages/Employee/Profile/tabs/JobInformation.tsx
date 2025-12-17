@@ -9,19 +9,7 @@ import UploadModal from '../UploadModal';
 /**
  * Mock data to simulate the response from an external API call.
  */
-const DUMMY_JOB_DATA = {
-  jobTitle: 'Senior Product Manager',
-  department: 'Product',
-  teamLead: 'Jane Foster',
-  employmentType: 'Full time',
-  startDate: '2025-10-26',
-  location: 'Head Office',
-  workEmail: 'jane.foster@company.com',
-  employeeId: 'EMP-1002',
-  idCardFront: '/id-card-front.png',
-  idCardBack: '/id-card-back.png',
-  jobDescription: `The Senior Product Manager is responsible for leading the product lifecycle from conception to launch, focusing on market needs, strategy, and execution. This role involves close collaboration with engineering, design, and marketing teams to deliver exceptional user value and achieve business objectives. Key responsibilities include defining roadmaps, analyzing metrics, and driving feature development.`,
-};
+
 
 // ... (existing helper functions and components remain unchanged)
 
@@ -55,22 +43,44 @@ const DisplayField = ({ label, value }: { label: string; value: string }) => (
 
 
 
-const JobInformation = () => {
+const JobInformation = ({ data }: { data?: any }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(DUMMY_JOB_DATA);
-  const [originalData, setOriginalData] = useState(DUMMY_JOB_DATA);
+  const [formData, setFormData] = useState({
+    jobTitle: '',
+    department: '',
+    teamLead: '',
+    employmentType: '',
+    startDate: '',
+    location: '',
+    workEmail: '',
+    employeeId: '',
+    idCardFront: '',
+    idCardBack: '',
+    jobDescription: '',
+  });
+  const [originalData, setOriginalData] = useState(formData);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
-  // In a real application, you would fetch data here
   useEffect(() => {
-    // Simulate API call
-    // axios.get('/api/job-data').then(response => {
-    //   setFormData(response.data);
-    //   setOriginalData(response.data);
-    // });
-    setFormData(DUMMY_JOB_DATA);
-    setOriginalData(DUMMY_JOB_DATA);
-  }, []);
+    if (data) {
+      const jobData = data.job || data;
+      const mappedData = {
+        jobTitle: jobData.job_title || '',
+        department: jobData.department || '',
+        teamLead: jobData.team_lead || '',
+        employmentType: jobData.employment_type || '',
+        startDate: jobData.start_date || '',
+        location: jobData.location || '',
+        workEmail: data.work_email || jobData.work_email || '',
+        employeeId: data.emp_id || jobData.emp_id || '',
+        idCardFront: data.protected_id_image_url ? `http://127.0.0.1:8000${data.protected_id_image_url}` : '',
+        idCardBack: data.protected_id_image_url ? `http://127.0.0.1:8000${data.protected_id_image_url}` : '',
+        jobDescription: jobData.job_description || '',
+      };
+      setFormData(mappedData);
+      setOriginalData(mappedData);
+    }
+  }, [data]);
 
   // const handleChange = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

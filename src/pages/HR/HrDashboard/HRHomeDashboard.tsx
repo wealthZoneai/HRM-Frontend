@@ -351,9 +351,10 @@ export default function HRDashboardPage() {
 
   // derived metrics
   const totalEmployees = useMemo(() => deptData.reduce((s, d) => s + d.value, 0), [deptData]);
-  const presentEmployees = Math.max(0, Math.round(totalEmployees * 0.9)); // sample
+  const wfoEmployees = Math.max(0, Math.round(totalEmployees * 0.9)); // sample
   const wfh = Math.round(totalEmployees * 0.06);
-  const absentees = totalEmployees - presentEmployees - wfh;
+  const totalPresent = wfoEmployees + wfh;
+  const absentees = totalEmployees - totalPresent;
 
   function markInterviewComplete(id: string) {
     setInterviews(prev => prev.map(it => it.id === id ? { ...it, status: "Completed" } : it));
@@ -375,8 +376,8 @@ export default function HRDashboardPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Total Employee Count" value={`${presentEmployees} / ${totalEmployees}`} subtitle="Present / Total" icon={<FiUsers size={22} />} />
-        <SummaryCard title="Working From Office  " value={presentEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
+        <SummaryCard title="Total Employee Count" value={`${totalPresent} / ${totalEmployees}`} subtitle="Present / Total" icon={<FiUsers size={22} />} />
+        <SummaryCard title="Working From Office  " value={wfoEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
         <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />} />
         <SummaryCard title="On Leave" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} />
       </div>
@@ -393,7 +394,7 @@ export default function HRDashboardPage() {
           </div>
         </div>
       </div>
-      H
+
       {/* bottom: charts + interview table */}
       <div className="grid grid-cols-1 gap-6">
         <div>

@@ -22,15 +22,34 @@ export default function Payroll() {
     "July", "August", "September", "October", "November", "December"
   ];
 
+  const [isDownloadSuccessOpen, setIsDownloadSuccessOpen] = useState(false);
+
   const handleDownload = () => {
     // Logic for downloading the payslip would go here
     console.log(`Downloading payslip for ${months[selectedMonth]} ${selectedYear}`);
+
+    // Close the download form modal
     setIsDownloadModalOpen(false);
+
+    // Show success message
+    setIsDownloadSuccessOpen(true);
+
+    // Auto-close success message after 2 seconds
+    setTimeout(() => {
+      setIsDownloadSuccessOpen(false);
+    }, 2000);
   };
 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   const handleQuerySubmit = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmSubmission = () => {
     // Logic for submitting the query would go here
     console.log(`Query submitted - Subject: ${querySubject}, Description: ${queryDescription}`);
+    setIsConfirmModalOpen(false);
     setIsQueryModalOpen(false);
     setQuerySubject("");
     setQueryDescription("");
@@ -51,7 +70,7 @@ export default function Payroll() {
             className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 text-sm rounded-xl font-medium shadow-lg shadow-orange-200 hover:bg-orange-700 hover:shadow-orange-300 transition-all flex-1 sm:flex-initial justify-center"
           >
             <MessageCircleQuestion size={16} />
-            Raise Query
+            Raise a Query
           </button>
 
           <button
@@ -81,7 +100,21 @@ export default function Payroll() {
         </div>
       </div>
 
-      {/* Download Modal */}
+      {/* Success Modal for Download */}
+      {isDownloadSuccessOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-transparent pointer-events-none">
+          <div className="bg-green-600 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 pointer-events-auto">
+            <div className="bg-white/20 p-1 rounded-full">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span className="font-medium">Payslip Downloaded Successfully</span>
+          </div>
+        </div>
+      )}
+
+      {/* Download Modal - wrapped in condition to unmount when closed */}
       {isDownloadModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -139,7 +172,7 @@ export default function Payroll() {
                 className="w-full bg-blue-600 text-white font-medium py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
               >
                 <Download size={18} />
-                Download Summary
+                Download Payslip
               </button>
             </div>
           </div>
@@ -149,7 +182,7 @@ export default function Payroll() {
       {/* Query Modal */}
       {isQueryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 relative">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center">
               <h3 className="text-xl font-bold text-gray-900">Raise Salary Query</h3>
               <button
@@ -196,6 +229,30 @@ export default function Payroll() {
                 Submit Query
               </button>
             </div>
+
+            {/* Confirmation Modal */}
+            {isConfirmModalOpen && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-[2px] rounded-2xl">
+                <div className="bg-white rounded-xl shadow-2xl p-6 w-[90%] max-w-sm border border-gray-100 animate-in fade-in zoom-in duration-200">
+                  <h4 className="text-lg font-bold text-gray-900 mb-2">Confirm Submission</h4>
+                  <p className="text-sm text-gray-600 mb-6">Are you sure you want to submit this query?</p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setIsConfirmModalOpen(false)}
+                      className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmSubmission}
+                      className="flex-1 px-4 py-2 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

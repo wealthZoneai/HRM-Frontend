@@ -20,6 +20,15 @@ export default function HrTopbar({ name, id }: TopbarProps) {
     }
   };
 
+  const handleProfile = () => {
+    if (location.pathname === "/hr/profile") {
+      navigate(-1)
+    }
+    else {
+      navigate("/hr/profile")
+    }
+  };
+
   return (
     <>
       <div className="w-full bg-white px-6 py-3 shadow-sm flex items-center justify-between relative">
@@ -63,7 +72,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
 
           {/* PROFILE */}
           <div
-            onClick={() => navigate("/hr/profile")}
+            onClick={handleProfile}
             className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-100 cursor-pointer"
             role="button"
             tabIndex={0}

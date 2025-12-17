@@ -14,6 +14,7 @@ type TaskProps = {
   employees: string[];
   onAddSubtask: (subtaskTitle: string, assignedTo: string) => void;
   onToggleSubtask: (subtaskId: string) => void;
+  onStatusChange: (status: string) => void;
 };
 
 export default function TaskItem({
@@ -27,6 +28,7 @@ export default function TaskItem({
   employees,
   onAddSubtask,
   onToggleSubtask,
+  onStatusChange,
 }: TaskProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showSubtaskInput, setShowSubtaskInput] = useState(false);
@@ -95,25 +97,45 @@ export default function TaskItem({
             </span>
           )}
 
-          {/* Status Badge */}
-          <span
-            className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${status === "completed"
-              ? "bg-green-100 text-green-700"
-              : status === "inProgress"
-                ? "bg-yellow-100 text-yellow-700"
-                : status === "notStarted"
-                  ? "bg-red-100 text-red-700"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-          >
-            {status === "completed"
-              ? "Completed"
-              : status === "inProgress"
-                ? "In Progress"
-                : status === "notStarted"
-                  ? "Not Started"
-                  : "None"}
-          </span>
+          {/* Status Badge or Dropdown */}
+          {totalSubtasks === 0 ? (
+            <select
+              value={status}
+              onClick={(e) => e.stopPropagation()} // Prevent accordion toggle
+              onChange={(e) => onStatusChange(e.target.value)}
+              className={`px-2 py-1 text-xs font-medium rounded-md border-0 ring-1 ring-inset focus:ring-2 focus:ring-inset focus:ring-blue-600 cursor-pointer ${status === "completed"
+                  ? "bg-green-100 text-green-700 ring-green-600/20"
+                  : status === "inProgress"
+                    ? "bg-yellow-100 text-yellow-700 ring-yellow-600/20"
+                    : status === "notStarted"
+                      ? "bg-red-100 text-red-700 ring-red-600/20"
+                      : "bg-gray-100 text-gray-700 ring-gray-500/10"
+                }`}
+            >
+              <option value="notStarted">Not Started</option>
+              <option value="inProgress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          ) : (
+            <span
+              className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${status === "completed"
+                  ? "bg-green-100 text-green-700"
+                  : status === "inProgress"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : status === "notStarted"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-gray-100 text-gray-700"
+                }`}
+            >
+              {status === "completed"
+                ? "Completed"
+                : status === "inProgress"
+                  ? "In Progress"
+                  : status === "notStarted"
+                    ? "Not Started"
+                    : "None"}
+            </span>
+          )}
         </div>
       </div>
 

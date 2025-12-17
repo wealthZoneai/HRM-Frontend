@@ -103,8 +103,11 @@ export default function Topbar({ name, id }: TopbarProps) {
     <div className="w-full flex flex-col lg:flex-row justify-between items-center py-4 px-4 sm:px-6 bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40 gap-3 lg:gap-0 backdrop-blur-md">
       {/* LEFT SIDE - Centered on mobile */}
       <div className="flex flex-col leading-tight text-center lg:text-left order-2 lg:order-1 w-full lg:w-auto">
-        <h1 className="text-md font-bold text-gray-800 tracking-tight">
+        <h1 className="text-md font-bold text-gray-800 tracking-tight flex items-center gap-2 justify-center lg:justify-start">
           Hello, {formattedName}
+          <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wide">
+            {localStorage.getItem("role") || "Employee"}
+          </span>
         </h1>
         {/* <p className="text-xs text-gray-500 font-medium">Employee ID: {id}</p> */}
       </div>

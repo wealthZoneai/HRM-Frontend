@@ -6,16 +6,17 @@ const endpoints = {
     login: 'api/login/',
     register: 'api/auth/candidateSignup',
 
-    // hr endpoints
+    //hr endpoints
 
     createEmployes: 'api/hr/create-employee/',
-    getAllEmployes: 'api/employee-list/',
+    employees: 'api/employees/',
 
 
-    // employee endpoints
+    //employee endpoints
     forgotPassword: 'api/forgot-password/',
     verifyOTP: 'api/verify-otp/',
     resetPassword: 'api/reset-password/',
+    myProfile: 'api/my-profile/',
     refresh: 'api/refresh/'
 
 }

@@ -1,4 +1,4 @@
-import { Calendar, Activity, Baby, Heart } from "lucide-react";
+import { Calendar, Activity } from "lucide-react";
 
 export default function LeaveBalances() {
   const balances = [
@@ -19,24 +19,6 @@ export default function LeaveBalances() {
       color: "text-emerald-600",
       bg: "bg-emerald-50",
       border: "border-emerald-100",
-    },
-    {
-      label: "Maternity Leave",
-      days: 90,
-      total: 180,
-      icon: Baby,
-      color: "text-pink-600",
-      bg: "bg-pink-50",
-      border: "border-pink-100",
-    },
-    {
-      label: "Paternity Leave",
-      days: 5,
-      total: 15,
-      icon: Heart,
-      color: "text-purple-600",
-      bg: "bg-purple-50",
-      border: "border-purple-100",
     },
   ];
 

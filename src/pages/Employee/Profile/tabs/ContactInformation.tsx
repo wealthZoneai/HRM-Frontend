@@ -1,70 +1,70 @@
-import { useState, } from "react";
+import { useState, useEffect } from "react";
 import { Pencil, X, Check, } from "lucide-react";
 
 // Existing component for display mode
 const UnderlineField = ({ label, value }: { label: string; value: string }) => (
-  <div className="space-y-1">
-    <p className="text-sm font-medium text-gray-700">{label}</p>
-    <p className="text-gray-900">{value}</p>
-    <div className="w-full h-px bg-gray-300" />
-  </div>
+    <div className="space-y-1">
+        <p className="text-sm font-medium text-gray-700">{label}</p>
+        <p className="text-gray-900">{value}</p>
+        <div className="w-full h-px bg-gray-300" />
+    </div>
 );
 
 // Modified EditLineField to accept an optional prefix (e.g., for currency or dates)
 const EditLineField = ({
-  label,
-  name,
-  value,
-  onChange,
-  type = "text",
-  prefix, // New prop for prefix
+    label,
+    name,
+    value,
+    onChange,
+    type = "text",
+    prefix, // New prop for prefix
 }: {
-  label: string;
-  name: string;
-  value: string;
-  type?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  prefix?: string; // Optional prefix
+    label: string;
+    name: string;
+    value: string;
+    type?: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    prefix?: string; // Optional prefix
 }) => (
-  <div className="space-y-1">
-    <label className="text-sm font-medium text-gray-700">{label}</label>
-    <div className="flex items-center border-b border-gray-300 focus-within:border-blue-500 transition-colors">
-      {prefix && (
-        <span className="text-gray-500 pr-2 py-1 text-base">
-          {prefix}
-        </span>
-      )}
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full py-1 text-gray-900 focus:outline-none bg-transparent"
-      />
-    </div>
-  </div>
+    <div className="space-y-1">
+        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <div className="flex items-center border-b border-gray-300 focus-within:border-blue-500 transition-colors">
+            {prefix && (
+                <span className="text-gray-500 pr-2 py-1 text-base">
+                    {prefix}
+                </span>
+            )}
+            <input
+                type={type}
+                name={name}
+                value={value}
+                onChange={onChange}
+                className="w-full py-1 text-gray-900 focus:outline-none bg-transparent"
+            />
+        </div>
+    </div>
 );
 
 // New component for Phone Number with India Country Code logic
 const PhoneNumberField = ({
-  label,
-  name,
-  value,
-  onChange,
+    label,
+    name,
+    value,
+    onChange,
 }: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    label: string;
+    name: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => (
-  <EditLineField
-    label={label}
-    name={name}
-    value={value}
-    onChange={onChange}
-    type="tel" // Use tel type for mobile input keyboards
-    prefix="+91" // India Country Code
-  />
+    <EditLineField
+        label={label}
+        name={name}
+        value={value}
+        onChange={onChange}
+        type="tel" // Use tel type for mobile input keyboards
+        prefix="+91" // India Country Code
+    />
 );
 
 
@@ -140,181 +140,257 @@ const PhoneNumberField = ({
 // };
 
 
-const ProfileDetails = () => {
-  const [isEditing, setIsEditing] = useState(false);
+const ProfileDetails = ({ allowFullEdit = false, data }: { allowFullEdit?: boolean; data?: any }) => {
+    const [isEditing, setIsEditing] = useState(false);
 
-  const [data, setData] = useState({
-    employeeId: "WZ-101",
-    firstName: "Ravi",
-    middleName: "lorem ipsum",
-    lastName: "Teja",
-    workMail: "Ravitejawealthzonegroupai@gmail.com",
-    personalMail: "raviteja@gmail.com",
-    phone: "1234567890",
-    alternativeNumber: "0987654321",
-    dob: "2002-11-10",
-    bloodGroup: "O +ve",
-    gender: "Male",
-    maritalStatus: "Single",
-  });
+    const [dataState, setData] = useState({
+        employeeId: "",
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        workMail: "",
+        personalMail: "",
+        phone: "",
+        alternativeNumber: "",
+        dob: "",
+        bloodGroup: "",
+        gender: "",
+        maritalStatus: "",
+    });
 
-  const [backup, setBackup] = useState(data);
+    useEffect(() => {
+        if (data) {
+            const contactData = data.contact || data;
+            const newState = {
+                employeeId: data.emp_id || contactData.emp_id || "",
+                firstName: contactData.first_name || data.user?.first_name || "",
+                middleName: contactData.middle_name || "",
+                lastName: contactData.last_name || data.user?.last_name || "",
+                workMail: data.work_email || data.user?.email || "",
+                personalMail: contactData.personal_email || "",
+                phone: contactData.phone_number || "",
+                alternativeNumber: contactData.alternate_number || "",
+                dob: contactData.dob || "",
+                bloodGroup: contactData.blood_group || "",
+                gender: contactData.gender || "",
+                maritalStatus: contactData.marital_status || "",
+            };
+            setData(newState);
+            setBackup(newState);
+        }
+    }, [data]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
 
-    // ONLY apply validation/limits to the editable phone fields
-    if (name === "alternativeNumber") {
-      // Allow only numbers and max length 10
-      if (/^\d{0,10}$/.test(value)) {
-        setData((prev) => ({ ...prev, [name]: value }));
-      }
-      return; 
-    }
-    
-    setData((prev) => ({ ...prev, [name]: value }));
-  };
 
-//   const handleSelectChange = (name: string, value: string) => {
-//     setData((prev) => ({ ...prev, [name]: value }));
-//   };
+    const [backup, setBackup] = useState(dataState);
 
-  const handleEdit = () => {
-    setBackup(data);
-    setIsEditing(true);
-  };
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
 
-  const handleCancel = () => {
-    setData(backup);
-    setIsEditing(false);
-  };
+        // ONLY apply validation/limits to the editable phone fields
+        if (name === "alternativeNumber" || (allowFullEdit && name === "phone")) {
+            // Allow only numbers and max length 10
+            if (/^\d{0,10}$/.test(value)) {
+                setData((prev) => ({ ...prev, [name]: value }));
+            }
+            return;
+        }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+        setData((prev) => ({ ...prev, [name]: value }));
+    };
 
-    // Only validate the fields that are actually being edited/updated (Alternative Number)
-    
-    // Check for EXACT 10 digits for the OPTIONAL alternative number, IF it is provided
-    if (data.alternativeNumber.trim() && data.alternativeNumber.length !== 10) {
-        alert("Alternative number must be exactly 10 digits if provided.");
-        return;
-    }
-    
-    // Middle Name and Blood Group have no special validation (just text inputs)
-    
-    // If all validation passes
-    setIsEditing(false);
-    console.log("Data saved:", data); 
-  };
+    //   const handleSelectChange = (name: string, value: string) => {
+    //     setData((prev) => ({ ...prev, [name]: value }));
+    //   };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+    const handleEdit = () => {
+        setBackup(data);
+        setIsEditing(true);
+    };
 
-      {/* PERSONAL INFORMATION */}
-      <div className=" rounded-lg sm:rounded-xl p-4 sm:p-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
-          <h2 className="text-base sm:text-lg font-semibold">Personal Information</h2>
+    const handleCancel = () => {
+        setData(backup);
+        setIsEditing(false);
+    };
 
-          {!isEditing && (
-            <button
-              type="button"
-              onClick={handleEdit}
-              className="px-3 sm:px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs sm:text-sm flex items-center gap-2 w-full sm:w-auto justify-center"
-            >
-              Edit <Pencil size={16} />
-            </button>
-          )}
-        </div>
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {isEditing ? (
-            <>
-              {/* READ-ONLY FIELDS */}
-              <UnderlineField label="First Name" value={data.firstName} />
-              
-              {/* EDITABLE FIELD: Middle Name */}
-              <EditLineField
-                label="Middle Name"
-                name="middleName"
-                value={data.middleName}
-                onChange={handleChange}
-              />
-              
-              {/* READ-ONLY FIELDS */}
-              <UnderlineField label="Last Name" value={data.lastName} />
-              <UnderlineField label="Work mail" value={data.workMail} />
-              <UnderlineField label="Employee ID" value={data.employeeId} />
-              <UnderlineField label="Personal mail ID" value={data.personalMail} />
-              <UnderlineField label="Phone number" value={data.phone ? `+91 ${data.phone}` : "N/A"} />
+        // Only validate the fields that are actually being edited/updated (Alternative Number)
 
-              {/* EDITABLE FIELD: Alternative Number */}
-              <PhoneNumberField
-                label="Alternative Number (10 Digits)"
-                name="alternativeNumber"
-                value={data.alternativeNumber}
-                onChange={handleChange}
-              />
+        // Check for EXACT 10 digits for the OPTIONAL alternative number, IF it is provided
+        if (data.alternativeNumber.trim() && data.alternativeNumber.length !== 10) {
+            alert("Alternative number must be exactly 10 digits if provided.");
+            return;
+        }
 
-              {/* READ-ONLY FIELDS */}
-              <UnderlineField label="Date of Birth" value={data.dob} />
-              
-              {/* EDITABLE FIELD: Blood Group */}
-              <EditLineField
-                label="Blood Group"
-                name="bloodGroup"
-                value={data.bloodGroup}
-                onChange={handleChange}
-              />
+        if (allowFullEdit && data.phone.trim() && data.phone.length !== 10) {
+            alert("Phone number must be exactly 10 digits.");
+            return;
+        }
 
-              {/* READ-ONLY FIELDS */}
-              <UnderlineField label="Gender" value={data.gender} />
-              <UnderlineField label="Marital Status" value={data.maritalStatus} />
-            </>
-          ) : (
-            <>
-              {/* VIEW MODE: All fields are UnderlineField */}
-              <UnderlineField label="First Name" value={data.firstName} />
-              <UnderlineField label="Middle Name" value={data.middleName || "N/A"} />
-              <UnderlineField label="Last Name" value={data.lastName} />
-              <UnderlineField label="Work mail" value={data.workMail} />
-              <UnderlineField label="Employee ID" value={data.employeeId} />
-              <UnderlineField label="Personal mail ID" value={data.personalMail} />
-              
-              <UnderlineField label="Phone number" value={data.phone ? `+91 ${data.phone}` : "N/A"} />
-              <UnderlineField label="Alternative Number" value={data.alternativeNumber ? `+91 ${data.alternativeNumber}` : "N/A"} />
-              
-              <UnderlineField label="Date of Birth" value={data.dob} />
-              <UnderlineField label="Blood Group" value={data.bloodGroup || "N/A"} />
-              <UnderlineField label="Gender" value={data.gender} />
-              <UnderlineField label="Marital Status" value={data.maritalStatus} />
-            </>
-          )}
-        </div>
-      </div>
+        // Middle Name and Blood Group have no special validation (just text inputs)
 
-      {/* GLOBAL SAVE/CANCEL */}
-      {isEditing && (
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-4 sm:pt-6 border-t">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 flex items-center justify-center gap-2 text-sm sm:text-base"
-          >
-            <X size={16} /> Cancel
-          </button>
+        // If all validation passes
+        setIsEditing(false);
+        console.log("Data saved:", data);
+    };
 
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white flex items-center justify-center gap-2 text-sm sm:text-base"
-          >
-            <Check size={16} /> Save Changes
-          </button>
-        </div>
-      )}
-    </form>
-  );
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+
+            {/* PERSONAL INFORMATION */}
+            <div className=" rounded-lg sm:rounded-xl p-4 sm:p-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
+                    <h2 className="text-base sm:text-lg font-semibold">Personal Information</h2>
+
+                    {!isEditing && (
+                        <button
+                            type="button"
+                            onClick={handleEdit}
+                            className="px-3 sm:px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs sm:text-sm flex items-center gap-2 w-full sm:w-auto justify-center"
+                        >
+                            Edit <Pencil size={16} />
+                        </button>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    {isEditing ? (
+                        <>
+                            {/* FIRST NAME */}
+                            {allowFullEdit ? (
+                                <EditLineField label="First Name" name="firstName" value={data.firstName} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="First Name" value={data.firstName} />
+                            )}
+
+                            {/* MIDDLE NAME (Always Editable) */}
+                            <EditLineField
+                                label="Middle Name"
+                                name="middleName"
+                                value={data.middleName}
+                                onChange={handleChange}
+                            />
+
+                            {/* LAST NAME */}
+                            {allowFullEdit ? (
+                                <EditLineField label="Last Name" name="lastName" value={data.lastName} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Last Name" value={data.lastName} />
+                            )}
+
+                            {/* WORK MAIL */}
+                            {allowFullEdit ? (
+                                <EditLineField label="Work mail" name="workMail" value={data.workMail} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Work mail" value={data.workMail} />
+                            )}
+
+                            {/* EMPLOYEE ID */}
+                            {allowFullEdit ? (
+                                <EditLineField label="Employee ID" name="employeeId" value={data.employeeId} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Employee ID" value={data.employeeId} />
+                            )}
+
+                            {/* PERSONAL MAIL */}
+                            {allowFullEdit ? (
+                                <EditLineField label="Personal mail ID" name="personalMail" value={data.personalMail} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Personal mail ID" value={data.personalMail} />
+                            )}
+
+                            {/* PHONE NUMBER */}
+                            {allowFullEdit ? (
+                                <PhoneNumberField label="Phone number (10 Digits)" name="phone" value={data.phone} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Phone number" value={data.phone ? `+91 ${data.phone}` : "N/A"} />
+                            )}
+
+                            {/* ALTERNATIVE NUMBER (Always Editable) */}
+                            <PhoneNumberField
+                                label="Alternative Number (10 Digits)"
+                                name="alternativeNumber"
+                                value={data.alternativeNumber}
+                                onChange={handleChange}
+                            />
+
+                            {/* DATE OF BIRTH */}
+                            {allowFullEdit ? (
+                                <EditLineField label="Date of Birth" name="dob" value={data.dob} type="date" onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Date of Birth" value={data.dob} />
+                            )}
+
+                            {/* BLOOD GROUP (Always Editable) */}
+                            <EditLineField
+                                label="Blood Group"
+                                name="bloodGroup"
+                                value={data.bloodGroup}
+                                onChange={handleChange}
+                            />
+
+                            {/* GENDER */}
+                            {allowFullEdit ? (
+                                <EditLineField label="Gender" name="gender" value={data.gender} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Gender" value={data.gender} />
+                            )}
+
+                            {/* MARITAL STATUS */}
+                            {allowFullEdit ? (
+                                <EditLineField label="Marital Status" name="maritalStatus" value={data.maritalStatus} onChange={handleChange} />
+                            ) : (
+                                <UnderlineField label="Marital Status" value={data.maritalStatus} />
+                            )}
+
+                        </>
+                    ) : (
+                        <>
+                            {/* VIEW MODE: All fields are UnderlineField */}
+                            <UnderlineField label="First Name" value={dataState.firstName} />
+                            <UnderlineField label="Middle Name" value={dataState.middleName || "N/A"} />
+                            <UnderlineField label="Last Name" value={dataState.lastName} />
+                            <UnderlineField label="Work mail" value={dataState.workMail} />
+                            <UnderlineField label="Employee ID" value={dataState.employeeId} />
+                            <UnderlineField label="Personal mail ID" value={dataState.personalMail} />
+
+                            <UnderlineField label="Phone number" value={dataState.phone ? `+91 ${dataState.phone}` : "N/A"} />
+                            <UnderlineField label="Alternative Number" value={dataState.alternativeNumber ? `+91 ${dataState.alternativeNumber}` : "N/A"} />
+
+                            <UnderlineField label="Date of Birth" value={dataState.dob} />
+                            <UnderlineField label="Blood Group" value={dataState.bloodGroup || "N/A"} />
+                            <UnderlineField label="Gender" value={dataState.gender} />
+                            <UnderlineField label="Marital Status" value={dataState.maritalStatus} />
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* GLOBAL SAVE/CANCEL */}
+            {isEditing && (
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-4 sm:pt-6 border-t">
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 flex items-center justify-center gap-2 text-sm sm:text-base"
+                    >
+                        <X size={16} /> Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        className="px-4 py-2 rounded-lg bg-blue-600 text-white flex items-center justify-center gap-2 text-sm sm:text-base"
+                    >
+                        <Check size={16} /> Save Changes
+                    </button>
+                </div>
+            )}
+        </form>
+    );
 };
 
 export default ProfileDetails;

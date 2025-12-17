@@ -12,6 +12,7 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
         type: "",
         from: "",
         to: "",
+        empId: "", // New field for employee ID
         id: "HR-001",
         role: "HR",
         reason: "",
@@ -64,7 +65,16 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
         return Math.round(diff / (1000 * 3600 * 24)) + 1;
     })();
 
+    // Document is required for:
+    // 1. Sick leave longer than 4 days
+    // 2. Maternity/Paternity leave (always required)
     const isDocumentRequired =
+        (form.type === "Sick Leave" && durationDays > 4) ||
+        form.type === "Maternity Leave" ||
+        form.type === "Paternity Leave";
+
+    // Show document upload for any sick leave, but only require it for >4 days
+    const showDocumentUpload = 
         form.type === "Sick Leave" ||
         form.type === "Maternity Leave" ||
         form.type === "Paternity Leave";
@@ -73,6 +83,7 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
         form.type !== "" &&
         form.from !== "" &&
         form.to !== "" &&
+        form.empId !== "" &&
         form.reason !== "" &&
         durationDays > 0 &&
         (!isDocumentRequired || form.document !== null);
@@ -123,6 +134,20 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
                             />
                         </div>
 
+                        {/* Employee ID */}
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Employee ID <span className="text-red-500">*</span></label>
+                            <input
+                                type="text"
+                                name="empId"
+                                value={form.empId}
+                                onChange={handleChange}
+                                placeholder="Enter employee ID"
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
+                                required
+                            />
+                        </div>
+
                         {/* Leave Type */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Leave Type <span className="text-red-500">*</span></label>
@@ -137,7 +162,6 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
                                 <option value="Sick Leave">Sick Leave</option>
                                 <option value="Maternity Leave">Maternity Leave</option>
                                 <option value="Paternity Leave">Paternity Leave</option>
-                                <option value="Unpaid Leave">Unpaid Leave</option>
                             </select>
                         </div>
 
@@ -190,21 +214,35 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
                         </div>
 
                         {/* Document Upload */}
-                        {isDocumentRequired && (
+                        {showDocumentUpload && (
                             <div className="md:col-span-2">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Document <span className="text-red-500">*</span></label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Upload Document 
+                                    {isDocumentRequired && <span className="text-red-500">*</span>}
+                                    {form.type === "Sick Leave" && !isDocumentRequired && (
+                                        <span className="text-xs text-gray-500 ml-1">(Optional for 4 days or less)</span>
+                                    )}
+                                </label>
                                 <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-gray-50 transition cursor-pointer relative">
                                     <input
                                         type="file"
                                         name="document"
                                         accept=".pdf,.jpg,.jpeg,.png"
                                         onChange={handleFileChange}
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
-                                        required
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        required={isDocumentRequired}
                                     />
-                                    <FiUploadCloud size={32} className="text-blue-500 mb-2" />
-                                    <p className="text-sm font-medium text-gray-700">{form.document ? form.document.name : "Click to upload file"}</p>
-                                    <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG (Max 5MB)</p>
+                                    <FiUploadCloud className="w-8 h-8 text-blue-500 mb-2" />
+                                    <p className="text-sm font-medium text-gray-700">
+                                        {form.document ? form.document.name : "Click to upload or drag and drop"}
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {isDocumentRequired 
+                                            ? "Document is required for this leave type" 
+                                            : form.type === "Sick Leave"
+                                                ? "Document is optional (recommended)"
+                                                : "Document is required"}
+                                    </p>
                                 </div>
                             </div>
                         )}

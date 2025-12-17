@@ -59,10 +59,19 @@ export default function ApplyLeaveFormPage() {
     return Math.round(diff / (1000 * 3600 * 24)) + 1;
   })();
 
-  const isDocumentRequired =
-    form.type === "Sick Leave" ||
+  // Document is required for:
+  // 1. Sick leave longer than 4 days
+  // 2. Maternity/Paternity leave (always required)
+  const isDocumentRequired = 
+    (form.type === "Sick Leave" && durationDays > 4) ||
     form.type === "Maternity Leave" ||
     form.type === "Paternity Leave";
+
+  // Show document upload for any sick leave, but only require it for >4 days
+  // const showDocumentUpload = 
+  //   form.type === "Sick Leave" ||
+  //   form.type === "Maternity Leave" ||
+  //   form.type === "Paternity Leave";
 
   const isFormValid =
     form.type !== "" &&

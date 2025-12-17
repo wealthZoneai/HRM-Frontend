@@ -109,6 +109,24 @@ export default function TaskList() {
     setTaskList(updated);
   };
 
+  const handleStatusChange = (taskIndex: number, newStatus: string) => {
+    const updated = [...taskList];
+    // Find the correct task in the main list
+    const taskToUpdate = filteredTasks[taskIndex];
+    if (!taskToUpdate) return;
+
+    const actualIndex = taskList.indexOf(taskToUpdate);
+
+    if (actualIndex === -1) return;
+
+    updated[actualIndex] = {
+      ...updated[actualIndex],
+      status: newStatus as any
+    };
+
+    setTaskList(updated);
+  };
+
   const handleCreateTask = () => {
     if (!newTask.title || !newTask.due) return;
 
@@ -240,6 +258,7 @@ export default function TaskList() {
               employees={employees}
               onAddSubtask={(subtaskTitle, assignedTo) => handleAddSubtask(index, subtaskTitle, assignedTo)}
               onToggleSubtask={(subtaskId) => handleToggleSubtask(index, subtaskId)}
+              onStatusChange={(newStatus) => handleStatusChange(index, newStatus)}
             />
           ))
         )}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 // --- Types ---
@@ -29,15 +29,29 @@ const DetailField = ({ label, value }: { label: string; value: string }) => (
 );
 
 // --- Main Component ---
-const BankDetails = () => {
+const BankDetails = ({ data }: { data?: any }) => {
   // State is now set to the static content from the reference image
-  const [account] = useState<BankAccount>({
-    bankName: 'UCO BANK',
-    accountNumber: '************8852',
-    ifscCode: 'UCB0022581',
-    branch: '', // Kept empty as seen in the image
-    accountName: 'Ravi Teja',
+  const [account, setAccount] = useState<BankAccount>({
+    bankName: '',
+    accountNumber: '',
+    ifscCode: '',
+    branch: '',
+    accountName: '',
   });
+
+  useEffect(() => {
+    if (data) {
+      // Handle nested bank object or flat structure
+      const bankData = data.bank || data;
+      setAccount({
+        bankName: bankData.bank_name || '',
+        accountNumber: bankData.account_number || '',
+        ifscCode: bankData.ifsc_code || '',
+        branch: bankData.branch || '',
+        accountName: bankData.account_holder_name || '',
+      });
+    }
+  }, [data]);
 
   return (
     <motion.div

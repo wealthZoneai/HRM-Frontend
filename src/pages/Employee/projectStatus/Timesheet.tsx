@@ -8,7 +8,7 @@ interface TimesheetEntry {
     startTime: string;
     endTime: string;
     totalHours: string;
-    remarks: string;
+    status: string;
 }
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -24,7 +24,7 @@ export default function Timesheet() {
             startTime: "",
             endTime: "",
             totalHours: "",
-            remarks: "",
+            status: "In Progress",
         }))
     );
 
@@ -35,9 +35,36 @@ export default function Timesheet() {
         // You might want to fetch ID as well if available
     }, []);
 
+    const calculateDuration = (start: string, end: string): string => {
+        if (!start || !end) return "";
+        const [startHours, startMinutes] = start.split(":").map(Number);
+        const [endHours, endMinutes] = end.split(":").map(Number);
+
+        let durationHours = endHours - startHours;
+        let durationMinutes = endMinutes - startMinutes;
+
+        if (durationMinutes < 0) {
+            durationHours -= 1;
+            durationMinutes += 60;
+        }
+
+        if (durationHours < 0) return "";
+
+        const total = durationHours + durationMinutes / 60;
+        return total.toFixed(2);
+    };
+
     const handleInputChange = (index: number, field: keyof TimesheetEntry, value: string) => {
         const newEntries = [...entries];
-        newEntries[index] = { ...newEntries[index], [field]: value };
+        const entry = { ...newEntries[index], [field]: value };
+
+        if (field === "startTime" || field === "endTime") {
+            const start = field === "startTime" ? value : entry.startTime;
+            const end = field === "endTime" ? value : entry.endTime;
+            entry.totalHours = calculateDuration(start, end);
+        }
+
+        newEntries[index] = entry;
         setEntries(newEntries);
     };
 
@@ -106,7 +133,7 @@ export default function Timesheet() {
                             <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider w-28">Start Time</th>
                             <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider w-28">End Time</th>
                             <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider w-24">Hours</th>
-                            <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider w-40">Remarks</th>
+                            <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider w-40">Status</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -158,13 +185,14 @@ export default function Timesheet() {
                                     />
                                 </td>
                                 <td className="px-4 py-3">
-                                    <input
-                                        type="text"
-                                        value={entry.remarks}
-                                        onChange={(e) => handleInputChange(index, "remarks", e.target.value)}
-                                        className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                        placeholder="Status..."
-                                    />
+                                    <select
+                                        value={entry.status}
+                                        onChange={(e) => handleInputChange(index, "status", e.target.value)}
+                                        className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                                    >
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
                                 </td>
                             </tr>
                         ))}
@@ -183,7 +211,7 @@ export default function Timesheet() {
                         }`}
                 >
                     <Send size={18} />
-                    {isSubmissionAllowed() ? "Submit Timesheet" : "Submit on Saturday > 1 PM"}
+                    {isSubmissionAllowed() ? "Submit" : "Submit"}
                 </button>
             </div>
         </div>

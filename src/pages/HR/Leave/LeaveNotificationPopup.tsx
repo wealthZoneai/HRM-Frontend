@@ -1,11 +1,12 @@
 import React from "react";
 import { FiBell, FiX } from "react-icons/fi";
 
-interface NotificationItem {
+export interface NotificationItem {
   id: string;
   name: string;
   avatar: string;
   message: string;
+  isRead?: boolean;
 }
 
 interface Props {
@@ -88,8 +89,15 @@ const LeaveNotificationPopup: React.FC<Props> = ({
               />
 
               <div className="flex-1">
-                <p className="font-medium text-gray-800">{n.name}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
+                <p className={`font-medium ${!n.isRead ? "text-gray-900 font-bold" : "text-gray-800"}`}>
+                  {n.name}
+                  {!n.isRead && (
+                    <span className="inline-block w-2 h-2 ml-2 bg-blue-600 rounded-full align-middle"></span>
+                  )}
+                </p>
+                <p className={`text-xs mt-0.5 ${!n.isRead ? "text-gray-700 font-medium" : "text-gray-500"}`}>
+                  {n.message}
+                </p>
               </div>
             </div>
           ))}
@@ -102,7 +110,7 @@ const LeaveNotificationPopup: React.FC<Props> = ({
           </button>
         </div>
 
-        
+
       </div>
     </>
   );

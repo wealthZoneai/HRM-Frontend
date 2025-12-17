@@ -16,8 +16,17 @@ export default function NotificationCard({ item, onClick }: NotificationCardProp
       <div className="flex gap-2 sm:gap-3 flex-1 min-w-0">
         <FiInfo className="text-blue-500 mt-0.5 sm:mt-1 shrink-0" size={16} />
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm sm:text-base">{item.title}</p>
-          <p className="text-gray-500 text-xs sm:text-sm wrap-break-words">{item.message}</p>
+          <div className="flex items-center gap-2">
+            <p className={`font-semibold text-sm sm:text-base ${item.isUnread ? "text-gray-900" : "text-gray-600"}`}>
+              {item.title}
+            </p>
+            {item.isUnread && (
+              <span className="w-2 h-2 bg-blue-600 rounded-full shrink-0 animate-pulse" />
+            )}
+          </div>
+          <p className={`text-xs sm:text-sm wrap-break-words mt-0.5 ${item.isUnread ? "text-gray-800 font-medium" : "text-gray-500"}`}>
+            {item.message}
+          </p>
         </div>
       </div>
 

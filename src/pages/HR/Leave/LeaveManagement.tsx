@@ -1,17 +1,18 @@
 import { useState } from "react";
 import LeaveDashboardCards from "./LeaveDashboardCards";
-import LeaveNotificationPopup from "./LeaveNotificationPopup";
+import LeaveNotificationPopup, { type NotificationItem } from "./LeaveNotificationPopup";
 import LeaveTable, { type LeaveRow } from "./LeaveTable";
 import LeaveViewModal from "./LeaveViewModal";
 import LeaveDeclineModal from "./LeaveDeclineModal";
 import HrApplyLeaveModal from "./HrApplyLeaveModal";
-import {  FiClock, FiUsers, FiUserX } from "react-icons/fi";
+import { FiClock, FiUsers, FiUserX } from "react-icons/fi";
 
 const HrLeaveManagement = () => {
     const [openNotification, setOpenNotification] = useState(false);
     const [viewModal, setViewModal] = useState(false);
     const [declineModal, setDeclineModal] = useState(false);
     const [applyModal, setApplyModal] = useState(false);
+    const [filterStatus, setFilterStatus] = useState<"All" | "Pending">("All");
 
     const [_, setSelectedRow] = useState<LeaveRow | null>(null);
 
@@ -129,16 +130,28 @@ const HrLeaveManagement = () => {
         },
     ];
 
-    const notifications = [
+    // Filter rows based on status
+    const filteredRows = filterStatus === "All"
+        ? leaveRows
+        : leaveRows.filter(row => row.status === "Pending");
+
+    const [notifications, setNotifications] = useState<NotificationItem[]>([
         {
             id: "1",
             name: "Habeeb",
             avatar: "https://i.pravatar.cc/40",
             message: "requested for 16 days medical leave.",
+            isRead: false,
         },
-    ];
+    ]);
 
-    const handleSelectNotification = () => {
+    const handleSelectNotification = (notification: NotificationItem) => {
+        console.log("Selected notification:", notification);
+        const updatedNotifications = notifications.map((n) =>
+            n.id === notification.id ? { ...n, isRead: true } : n
+        );
+        console.log("Updated notifications:", updatedNotifications);
+        setNotifications(updatedNotifications);
         setSelectedRow(leaveRows[0]);
         setViewModal(true);
         setOpenNotification(false);
@@ -176,6 +189,7 @@ const HrLeaveManagement = () => {
             value: "6",
             icon: <FiClock size={22} className="text-white" />,
             color: "bg-yellow-500",
+            onClick: () => setFilterStatus("Pending"),
         },
         // {
         //     title: "Declined",
@@ -222,7 +236,7 @@ const HrLeaveManagement = () => {
 
             {/* Dashboard Cards */}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-5 ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-5 ">
                 {summaryCardData.map((card, index) => (
                     <LeaveDashboardCards key={index} {...card} />
                 ))}
@@ -230,7 +244,20 @@ const HrLeaveManagement = () => {
 
 
             {/* Table */}
-            <LeaveTable data={leaveRows} onView={() => setViewModal(true)} />
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">
+                    {filterStatus === "All" ? "All Leave Requests" : "Pending Requests"}
+                </h2>
+                {filterStatus !== "All" && (
+                    <button
+                        onClick={() => setFilterStatus("All")}
+                        className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                        Show All
+                    </button>
+                )}
+            </div>
+            <LeaveTable data={filteredRows} onView={() => setViewModal(true)} />
 
             <LeaveViewModal
                 isOpen={viewModal}

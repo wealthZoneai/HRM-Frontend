@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import {
@@ -25,9 +25,17 @@ export default function HRLayout({ children }: HRLayoutProps) {
   const location = useLocation();
   const [openLogout, setOpenLogout] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to top on route change
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
+    }
+  }, [location.pathname]);
 
   const currentUser = {
-    name: "Raviteja",
+    name: localStorage.getItem("userName") || "Raviteja",
     id: "WZG-AI-0029",
   };
 
@@ -135,7 +143,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
         <HrTopbar name={currentUser.name} id={currentUser.id} />
 
         {/* CONTENT AREA SCROLLS ONLY */}
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto">{children}</main>
       </div>
 
       <LogoutModal

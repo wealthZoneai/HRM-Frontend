@@ -13,15 +13,15 @@ const tabs = [
   // { full: "PF Details", short: "PF" }
 ];
 
-const ProfileTabs = () => {
+const ProfileTabs = ({ data }: { data?: any }) => {
   const [active, setActive] = useState(0);
 
   const renderTab = () => {
     switch (active) {
-      case 0: return <ContactInformation />;
-      case 1: return <JobInformation />;
-      case 2: return <BankDetails />;
-      case 3: return <Identification />;
+      case 0: return <ContactInformation data={data} />;
+      case 1: return <JobInformation data={data} />;
+      case 2: return <BankDetails data={data} />; // Assuming BankDetails will also be updated
+      case 3: return <Identification data={data} />;
       case 4: return <PFDetails />;
       default: return null;
     }

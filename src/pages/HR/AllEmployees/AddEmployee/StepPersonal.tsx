@@ -9,27 +9,37 @@ const TextField = ({
   value,
   onChange,
   type = "text",
+  prefix,
   ...props
 }: {
   label: string;
   value: any;
   onChange: (v: string) => void;
   type?: string;
+  prefix?: string;
   [key: string]: any;
 }) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">{label}</label>
-    <input
-      type={type}
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      className="
-        w-full px-4 py-2 bg-white border rounded-lg
-        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-        transition-all shadow-sm
-      "
-      {...props}
-    />
+    <div className="relative">
+      {prefix && (
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium pointer-events-none">
+          {prefix}
+        </span>
+      )}
+      <input
+        type={type}
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+        className={`
+          w-full py-2 bg-white border rounded-lg
+          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+          transition-all shadow-sm
+          ${prefix ? "pl-12 pr-4" : "px-4"}
+        `}
+        {...props}
+      />
+    </div>
   </div>
 );
 
@@ -133,17 +143,25 @@ const StepPersonal: React.FC = () => {
           <TextField
             label="Phone Number *"
             value={personal.phone}
-            onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { phone: v } })
-            }
+            prefix="+91"
+            maxLength={10}
+            onChange={(v) => {
+              if (/^\d*$/.test(v)) {
+                dispatch({ type: "SET_PERSONAL", payload: { phone: v } });
+              }
+            }}
           />
 
           <TextField
             label="Alternative Number"
             value={personal.alternativeNumber}
-            onChange={(v) =>
-              dispatch({ type: "SET_PERSONAL", payload: { alternativeNumber: v } })
-            }
+            prefix="+91"
+            maxLength={10}
+            onChange={(v) => {
+              if (/^\d*$/.test(v)) {
+                dispatch({ type: "SET_PERSONAL", payload: { alternativeNumber: v } });
+              }
+            }}
           />
 
           <TextField
@@ -170,9 +188,9 @@ const StepPersonal: React.FC = () => {
             }
           >
             <option value="">Select</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
           </SelectField>
 
           <SelectField
@@ -183,10 +201,10 @@ const StepPersonal: React.FC = () => {
             }
           >
             <option value="">Select</option>
-            <option value="Single">Single</option>
-            <option value="Married">Married</option>
-            <option value="Divorced">Divorced</option>
-            <option value="Widowed">Widowed</option>
+            <option value="single">Single</option>
+            <option value="married">Married</option>
+            <option value="divorced">Divorced</option>
+            <option value="widowed">Widowed</option>
           </SelectField>
 
 

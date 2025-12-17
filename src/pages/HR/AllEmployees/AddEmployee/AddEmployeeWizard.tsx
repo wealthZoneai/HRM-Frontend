@@ -1,5 +1,6 @@
 // WizardInner.tsx
 import React from "react";
+import { toast } from "react-toastify";
 import { useAddEmployee } from "./AddEmployeeContext";
 import StepPersonal from "./StepPersonal";
 import StepKin from "./StepKin";
@@ -59,13 +60,16 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
         return (
           p.firstName?.trim() &&
           p.lastName?.trim() &&
-          p.phone?.trim()
+          p.phone?.trim().length === 10 &&
+          (!p.alternativeNumber || p.alternativeNumber.length === 10) &&
+          p.personalEmail?.trim() &&
+          p.dob?.trim() &&
+          p.gender?.trim() &&
+          p.maritalStatus?.trim()
         );
 
       case 1: // JOB INFO (KIN)
         return (
-          k.email?.trim() &&
-          k.employeeId?.trim() &&
           k.startDate?.trim() &&
           k.jobTitle?.trim() &&
           k.department?.trim() &&
@@ -137,7 +141,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
           ></div>
 
           <div
-            className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${iconBgClass}`}
+            className={`shrink w-8 h-8 rounded-full flex items-center justify-center ${iconBgClass}`}
           >
             {icon}
           </div>
@@ -158,27 +162,27 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
     const b = state.bankAccounts[0]; // only 1 account
 
     return {
+      emp_id: k.employeeId,
+      work_email: k.email,
       contact: {
-        first_name: state.contact.firstName, // USER changed state.personal to state.contact in prev steps
+        first_name: state.contact.firstName,
         last_name: state.contact.lastName,
         middle_name: state.contact.middleName,
         personal_email: state.contact.personalEmail,
         phone_number: state.contact.phone,
-        alternative_number: state.contact.alternativeNumber,
+        alternate_number: state.contact.alternativeNumber,
         dob: state.contact.dob,
         blood_group: state.contact.bloodGroup,
         gender: state.contact.gender,
         marital_status: state.contact.maritalStatus,
       },
       job: {
-        email: k.email,
-        emp_id: k.employeeId,
         job_title: k.jobTitle,
         department: k.department,
         employment_type: k.employmentType,
         start_date: k.startDate,
-        role: k.role,
-        manager: k.teamLead,
+        role: "employee",
+        team_lead: k.teamLead,
         location: k.location,
         job_description: k.jobDescription,
       },
@@ -187,13 +191,11 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
         account_number: b.accountNumber,
         confirm_account_number: b.confirmAccountNumber,
         ifsc_code: b.ifscCode,
-        branch: b.branchName, // Mapped from branchName
+        branch: b.branchName,
         account_holder_name: b.accountName,
       },
     };
   };
-
-
 
   const handelApiCall = async (state: any) => {
     const payload = convertToApiPayload(state);
@@ -204,12 +206,17 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
       const response = await CreateEmployes(payload);
 
       console.log("API Response:", response.data);
-      alert("Employee created successfully!");
+      toast.success("Employee created successfully!");
       navigate('/hr/employees')
 
-    } catch (error) {
-      console.error("API Error:", error);
-      alert("Failed to create employee");
+    } catch (error: any) {
+      console.error("API Error Entire Object:", error);
+      if (error.response && error.response.data) {
+        console.error("API Validation Errors:", error.response.data);
+        toast.error(`Failed to create employee: ${JSON.stringify(error.response.data)}`);
+      } else {
+        toast.error("Failed to create employee");
+      }
     }
   };
 

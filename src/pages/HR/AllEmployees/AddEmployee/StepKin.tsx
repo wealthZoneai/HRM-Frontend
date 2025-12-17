@@ -10,17 +10,20 @@ const InputField = ({
   onChange,
   type = "text",
   error,
+  max,
 }: {
   label: string;
   value: string | undefined;
   onChange: (v: string) => void;
   type?: string;
   error?: string | null;
+  max?: string;
 }) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">{label}</label>
     <input
       type={type}
+      max={max}
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
@@ -111,7 +114,7 @@ const StepKin: React.FC = () => {
             label="Job Title *"
             value={kin.jobTitle}
             error={errors.jobTitle}
-            onChange={(v) => updateField("jobTitle", v)}
+            onChange={(v) => updateField("jobTitle", v.replace(/[0-9]/g, ""))}
           />
 
           {/* DEPARTMENT */}
@@ -138,7 +141,7 @@ const StepKin: React.FC = () => {
             label="Team Lead"
             value={kin.teamLead}
             error={errors.teamLead}
-            onChange={(v) => updateField("teamLead", v)}
+            onChange={(v) => updateField("teamLead", v.replace(/[0-9]/g, ""))}
           />
 
           {/* EMPLOYMENT TYPE */}
@@ -150,10 +153,11 @@ const StepKin: React.FC = () => {
               className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select Type</option>
-              <option value="Full time">Full time</option>
-              <option value="Part time">Part time</option>
-              <option value="Contract">Contract</option>
-              <option value="Internship">Internship</option>
+              <option value="full_time">Full time</option>
+              <option value="contract">Contract</option>
+              {/* Backend currently only supports full_time and contract */}
+              {/* <option value="part_time">Part time</option>
+              <option value="internship">Internship</option> */}
             </select>
           </div>
 
@@ -163,6 +167,7 @@ const StepKin: React.FC = () => {
             label="Start Date *"
             value={kin.startDate}
             error={errors.startDate}
+            max={new Date().toISOString().split("T")[0]}
             onChange={(v) => updateField("startDate", v)}
           />
 
@@ -182,20 +187,20 @@ const StepKin: React.FC = () => {
           </div>
 
           {/* WORK EMAIL */}
-          <InputField
+          {/* <InputField
             label="Work Email *"
             value={kin.email}
             error={errors.email}
             onChange={(v) => updateField("email", v)}
-          />
+          /> */}
 
           {/* EMPLOYEE ID */}
-          <InputField
+          {/* <InputField
             label="Employee ID *"
             value={kin.employeeId}
             error={errors.employeeId}
             onChange={(v) => updateField("employeeId", v)}
-          />
+          /> */}
 
           {/* SYSTEM ROLE (HIDDEN or OPTIONAL?) - Keeping it out as per request, but can be added if needed */}
 

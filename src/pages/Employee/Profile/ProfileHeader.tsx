@@ -2,7 +2,14 @@ import { motion } from 'framer-motion';
 import { Briefcase, IdCard, MapPin, Calendar } from 'lucide-react';
 import Pic from '../../../assets/my_pic.jpg';
 
-const ProfileHeader = () => {
+const ProfileHeader = ({ data }: { data?: any }) => {
+  // If data is missing (still loading or error), can show skeleton or default
+  // For now, using optional chaining fallback
+
+  const fullName = data?.first_name
+    ? `${data.first_name} ${data.middle_name || ''} ${data.last_name}`.trim()
+    : localStorage.getItem('userName')?.split('.')[0] || "User Name";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -17,7 +24,7 @@ const ProfileHeader = () => {
           {/* Profile Image */}
           <div className="relative shrink-0 mx-auto sm:mx-0">
             <img
-              src={Pic}
+              src={data?.protected_profile_photo_url ? `http://127.0.0.1:8000${data.protected_profile_photo_url}` : Pic}
               alt="Profile"
               className="h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-gray-50 shadow-sm object-cover bg-white"
             />
@@ -28,10 +35,10 @@ const ProfileHeader = () => {
           <div className="flex-1 text-center sm:text-left w-full">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-                  Ravi Teja
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 capitalize">
+                  {fullName}
                 </h2>
-                <p className="text-sm sm:text-base text-gray-500 font-medium mt-1">Senior Frontend Developer</p>
+                <p className="text-sm sm:text-base text-gray-500 font-medium mt-1">{data?.job_title || "Employee"}</p>
               </div>
 
               {/* Status Badge or Quick Action */}
@@ -46,22 +53,22 @@ const ProfileHeader = () => {
             <div className="mt-6 flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-4">
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <Briefcase size={14} className="text-blue-500 shrink-0" />
-                <span>Software Engineer</span>
+                <span>{data?.department || "Department"}</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <IdCard size={14} className="text-purple-500 shrink-0" />
-                <span>WZG-AI-0029</span>
+                <span>{data?.emp_id || "ID"}</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <MapPin size={14} className="text-red-500 shrink-0" />
-                <span>Hyderabad, India</span>
+                <span>{data?.location || "Location"}</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <Calendar size={14} className="text-orange-500 shrink-0" />
-                <span>DOJ: 24/09/2025</span>
+                <span>DOJ: {data?.start_date || "N/A"}</span>
               </div>
             </div>
           </div>

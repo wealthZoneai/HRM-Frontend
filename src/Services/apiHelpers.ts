@@ -14,9 +14,17 @@ export function CreateEmployes(body: ICreateEmployesBody) {
   });
 }
 
-
+// Used by HR Dashboard to list all employees
 export function GetAllEmployes() {
-  return server.get(endpoints.getAllEmployes, { requiresAuth: true });
+  return server.get(endpoints.employees, { requiresAuth: true });
+}
+
+export function GetEmployeeById(id: string) {
+  return server.get(`${endpoints.employees}${id}/`, { requiresAuth: true });
+}
+
+export function GetMyProfile() {
+  return server.get(endpoints.myProfile, { requiresAuth: true });
 }
 
 
@@ -33,8 +41,8 @@ export function OTPVerify({ email, otp }: { email: string, otp: string }) {
   return server.post(endpoints.verifyOTP, body, { requiresAuth: false })
 }
 
-export function ResetPassword({ email, new_password, confirm_password }: { email: string, new_password: string, confirm_password: string }) {
-  const body = { email, new_password, confirm_password };
+export function ResetPassword({ email, otp, new_password, confirm_password }: { email: string, otp: string, new_password: string, confirm_password: string }) {
+  const body = { email, otp, new_password, confirm_password };
   return server.post(endpoints.resetPassword, body, { requiresAuth: false })
 }
 

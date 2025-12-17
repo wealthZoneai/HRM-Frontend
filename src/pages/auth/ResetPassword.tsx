@@ -34,10 +34,15 @@ const ResetPassword: React.FC = () => {
     }
 
     // Retrieve email from localStorage (set during OTP verification)
-    const email = localStorage.getItem("resetEmail") || location.state?.email;
+    const storedEmail = localStorage.getItem("resetEmail");
+    const stateEmail = location.state?.email;
+    const email = storedEmail || stateEmail;
 
-    if (!email) {
-      showError("Session expired. Please start the process again.");
+    // Retrieve OTP from location state
+    const otp = location.state?.otp;
+
+    if (!email || !otp) {
+      showError("Session expired or invalid. Please start the process again.");
       navigate("/forgot-password");
       return;
     }
@@ -45,6 +50,7 @@ const ResetPassword: React.FC = () => {
     try {
       const response = await ResetPasswordAPI({
         email: email,
+        otp: otp,
         new_password: password,
         confirm_password: confirm,
       });

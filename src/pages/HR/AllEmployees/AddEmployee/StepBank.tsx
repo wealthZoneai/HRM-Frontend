@@ -131,7 +131,7 @@ const StepBank: React.FC = () => {
           <Field label="Branch Name" error={null}>
             <input
               value={bank.branchName || ""}
-              onChange={(e) => setBankField("branchName", e.target.value)}
+              onChange={(e) => setBankField("branchName", e.target.value.replace(/[0-9]/g, ""))}
               className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm
               focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -179,8 +179,10 @@ const StepBank: React.FC = () => {
               value={bank.ifscCode || ""}
               onChange={(e) => setBankField("ifscCode", e.target.value)}
               onBlur={(e) => validateField("ifscCode", e.target.value)}
-              className="w-full px-4 py-2 uppercase bg-white border rounded-lg shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={!bank.bankName}
+              placeholder={!bank.bankName ? "Select Bank Name first" : "Enter IFSC Code"}
+              className={`w-full px-4 py-2 uppercase bg-white border rounded-lg shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-blue-500 ${!bank.bankName ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`}
             />
           </Field>
         </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     UploadCloud,
@@ -268,13 +268,39 @@ const DocumentRow = ({
     );
 };
 
-const Identification = () => {
+const Identification = ({ data }: { data?: any }) => {
     const [docState, setDocState] = useState<AllDocumentsState>({
         aadhar: { front: null, back: null },
         pan: { front: null, back: null },
         idcard: { front: null, back: null },
         passport: { front: null, back: null },
     });
+
+    useEffect(() => {
+        if (data) {
+            const createDoc = (url?: string, name?: string): UploadedFile | null =>
+                url ? { url: `http://127.0.0.1:8000${url}`, name: name || "Existing Document", type: "image/jpeg" } : null;
+
+            setDocState({
+                aadhar: {
+                    front: createDoc(data.protected_aadhaar_image_url, "Aadhaar Front"),
+                    back: null // Assuming single file or front only for now based on API list
+                },
+                pan: {
+                    front: createDoc(data.protected_pan_image_url, "PAN Front"),
+                    back: null
+                },
+                idcard: {
+                    front: createDoc(data.protected_id_image_url, "ID Card Front"),
+                    back: null
+                },
+                passport: {
+                    front: createDoc(data.protected_passport_image_url, "Passport Front"),
+                    back: null
+                },
+            });
+        }
+    }, [data]);
 
     const [previewFile, setPreviewFile] = useState<UploadedFile | null>(null);
 
