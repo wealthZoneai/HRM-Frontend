@@ -14,10 +14,13 @@ const endpoints = {
 
     //employee endpoints
     forgotPassword: 'api/forgot-password/',
-    verifyOTP: 'api/verify-otp/',
     resetPassword: 'api/reset-password/',
     myProfile: 'api/my-profile/',
-    refresh: 'api/refresh/'
+    refresh: 'api/refresh/',
+
+    //attendance
+    clockIn: 'api/attendance/clock-in/',
+    clockOut: 'api/attendance/clock-out/',
 
 }
 

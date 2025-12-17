@@ -7,7 +7,6 @@ export function loginUser({ username, password }: ILoginUserBody) {
   return server.post(endpoints.login, body, { requiresAuth: false });
 }
 
-
 export function CreateEmployes(body: ICreateEmployesBody) {
   return server.post(endpoints.createEmployes, body, {
     requiresAuth: true,
@@ -27,7 +26,13 @@ export function GetMyProfile() {
   return server.get(endpoints.myProfile, { requiresAuth: true });
 }
 
+export function ClockIn() {
+  return server.post(endpoints.clockIn, {}, { requiresAuth: true });
+}
 
+export function ClockOut() {
+  return server.post(endpoints.clockOut, {}, { requiresAuth: true });
+}
 
 //employees
 
@@ -36,10 +41,7 @@ export function ForgotPassword(email: string) {
   return server.post(endpoints.forgotPassword, body, { requiresAuth: false })
 }
 
-export function OTPVerify({ email, otp }: { email: string, otp: string }) {
-  const body = { email, otp };
-  return server.post(endpoints.verifyOTP, body, { requiresAuth: false })
-}
+
 
 export function ResetPassword({ email, otp, new_password, confirm_password }: { email: string, otp: string, new_password: string, confirm_password: string }) {
   const body = { email, otp, new_password, confirm_password };

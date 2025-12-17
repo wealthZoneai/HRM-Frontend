@@ -4,7 +4,7 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import Logo from "../../assets/logo_svg.svg";
 import { useNavigate, useLocation } from "react-router-dom";
-import { OTPVerify, ForgotPassword as ResendOTP } from "../../Services/apiHelpers";
+import { ForgotPassword as ResendOTP } from "../../Services/apiHelpers";
 import { showSuccess, showError, showWarning } from "../../utils/toast";
 
 const OTPVerification: React.FC = () => {
@@ -48,14 +48,15 @@ const OTPVerification: React.FC = () => {
 
     try {
       // Backend expects { "email": "...", "otp": "..." }
-      const response = await OTPVerify({ email, otp: otpString });
+      // Skipping server-side verification as per new flow
+      // const response = await OTPVerify({ email, otp: otpString });
 
-      if (response.status === 200 || response.status === 201) {
-        showSuccess("OTP Verified Successfully!");
-        localStorage.setItem("resetEmail", email);
-        // Navigate to Reset Password page, passing email and otp (or token)
-        navigate('/resetpassword', { state: { email, otp: otpString } });
-      }
+      // if (response.status === 200 || response.status === 201) {
+      showSuccess("OTP Verified Successfully!");
+      localStorage.setItem("resetEmail", email);
+      // Navigate to Reset Password page, passing email and otp (or token)
+      navigate('/resetpassword', { state: { email, otp: otpString } });
+      // }
     } catch (error: any) {
       console.error("OTP Verification Error:", error);
       const errorMessage = error.response?.data?.otp?.[0] ||

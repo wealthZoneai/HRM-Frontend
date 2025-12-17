@@ -18,19 +18,21 @@ const EditLineField = ({
     onChange,
     type = "text",
     prefix, // New prop for prefix
+    disabled = false,
 }: {
     label: string;
     name: string;
     value: string;
     type?: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     prefix?: string; // Optional prefix
+    disabled?: boolean;
 }) => (
     <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-700">{label}</label>
-        <div className="flex items-center border-b border-gray-300 focus-within:border-blue-500 transition-colors">
+        <label className={`text-sm font-medium ${disabled ? "text-gray-400" : "text-gray-700"}`}>{label}</label>
+        <div className={`flex items-center border-b ${disabled ? "border-gray-200" : "border-gray-300 focus-within:border-blue-500"} transition-colors`}>
             {prefix && (
-                <span className="text-gray-500 pr-2 py-1 text-base">
+                <span className={`pr-2 py-1 text-base ${disabled ? "text-gray-400" : "text-gray-500"}`}>
                     {prefix}
                 </span>
             )}
@@ -39,7 +41,8 @@ const EditLineField = ({
                 name={name}
                 value={value}
                 onChange={onChange}
-                className="w-full py-1 text-gray-900 focus:outline-none bg-transparent"
+                disabled={disabled}
+                className={`w-full py-1 focus:outline-none bg-transparent ${disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"}`}
             />
         </div>
     </div>
@@ -51,11 +54,13 @@ const PhoneNumberField = ({
     name,
     value,
     onChange,
+    disabled = false,
 }: {
     label: string;
     name: string;
     value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    disabled?: boolean;
 }) => (
     <EditLineField
         label={label}
@@ -64,6 +69,7 @@ const PhoneNumberField = ({
         onChange={onChange}
         type="tel" // Use tel type for mobile input keyboards
         prefix="+91" // India Country Code
+        disabled={disabled}
     />
 );
 
@@ -260,92 +266,95 @@ const ProfileDetails = ({ allowFullEdit = false, data }: { allowFullEdit?: boole
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     {isEditing ? (
                         <>
+
                             {/* FIRST NAME */}
                             {allowFullEdit ? (
-                                <EditLineField label="First Name" name="firstName" value={data.firstName} onChange={handleChange} />
+                                <EditLineField label="First Name" name="firstName" value={dataState.firstName} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="First Name" value={data.firstName} />
+                                <EditLineField label="First Name" name="firstName" value={dataState.firstName} disabled={true} />
                             )}
 
                             {/* MIDDLE NAME (Always Editable) */}
                             <EditLineField
                                 label="Middle Name"
                                 name="middleName"
-                                value={data.middleName}
+                                value={dataState.middleName}
                                 onChange={handleChange}
                             />
 
                             {/* LAST NAME */}
                             {allowFullEdit ? (
-                                <EditLineField label="Last Name" name="lastName" value={data.lastName} onChange={handleChange} />
+                                <EditLineField label="Last Name" name="lastName" value={dataState.lastName} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Last Name" value={data.lastName} />
+                                <EditLineField label="Last Name" name="lastName" value={dataState.lastName} disabled={true} />
                             )}
 
                             {/* WORK MAIL */}
                             {allowFullEdit ? (
-                                <EditLineField label="Work mail" name="workMail" value={data.workMail} onChange={handleChange} />
+                                <EditLineField label="Work mail" name="workMail" value={dataState.workMail} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Work mail" value={data.workMail} />
+                                <EditLineField label="Work mail" name="workMail" value={dataState.workMail} disabled={true} />
                             )}
 
                             {/* EMPLOYEE ID */}
                             {allowFullEdit ? (
-                                <EditLineField label="Employee ID" name="employeeId" value={data.employeeId} onChange={handleChange} />
+                                <EditLineField label="Employee ID" name="employeeId" value={dataState.employeeId} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Employee ID" value={data.employeeId} />
+                                <EditLineField label="Employee ID" name="employeeId" value={dataState.employeeId} disabled={true} />
                             )}
 
                             {/* PERSONAL MAIL */}
                             {allowFullEdit ? (
-                                <EditLineField label="Personal mail ID" name="personalMail" value={data.personalMail} onChange={handleChange} />
+                                <EditLineField label="Personal mail ID" name="personalMail" value={dataState.personalMail} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Personal mail ID" value={data.personalMail} />
+                                <EditLineField label="Personal mail ID" name="personalMail" value={dataState.personalMail} disabled={true} />
                             )}
 
                             {/* PHONE NUMBER */}
                             {allowFullEdit ? (
-                                <PhoneNumberField label="Phone number (10 Digits)" name="phone" value={data.phone} onChange={handleChange} />
+                                <PhoneNumberField label="Phone number (10 Digits)" name="phone" value={dataState.phone} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Phone number" value={data.phone ? `+91 ${data.phone}` : "N/A"} />
+                                <PhoneNumberField label="Phone number" name="phone" value={dataState.phone} disabled={true} />
                             )}
 
                             {/* ALTERNATIVE NUMBER (Always Editable) */}
                             <PhoneNumberField
                                 label="Alternative Number (10 Digits)"
                                 name="alternativeNumber"
-                                value={data.alternativeNumber}
+                                value={dataState.alternativeNumber}
                                 onChange={handleChange}
                             />
 
                             {/* DATE OF BIRTH */}
                             {allowFullEdit ? (
-                                <EditLineField label="Date of Birth" name="dob" value={data.dob} type="date" onChange={handleChange} />
+                                <EditLineField label="Date of Birth" name="dob" value={dataState.dob} type="date" onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Date of Birth" value={data.dob} />
+                                <EditLineField label="Date of Birth" name="dob" value={dataState.dob} disabled={true} />
                             )}
 
                             {/* BLOOD GROUP (Always Editable) */}
                             <EditLineField
                                 label="Blood Group"
                                 name="bloodGroup"
-                                value={data.bloodGroup}
+                                value={dataState.bloodGroup}
                                 onChange={handleChange}
                             />
 
                             {/* GENDER */}
                             {allowFullEdit ? (
-                                <EditLineField label="Gender" name="gender" value={data.gender} onChange={handleChange} />
+                                <EditLineField label="Gender" name="gender" value={dataState.gender} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Gender" value={data.gender} />
+                                <EditLineField label="Gender" name="gender" value={dataState.gender} disabled={true} />
                             )}
 
                             {/* MARITAL STATUS */}
                             {allowFullEdit ? (
-                                <EditLineField label="Marital Status" name="maritalStatus" value={data.maritalStatus} onChange={handleChange} />
+                                <EditLineField label="Marital Status" name="maritalStatus" value={dataState.maritalStatus} onChange={handleChange} />
                             ) : (
-                                <UnderlineField label="Marital Status" value={data.maritalStatus} />
+                                <EditLineField label="Marital Status" name="maritalStatus" value={dataState.maritalStatus} disabled={true} />
                             )}
+
+
 
                         </>
                     ) : (
@@ -371,25 +380,27 @@ const ProfileDetails = ({ allowFullEdit = false, data }: { allowFullEdit?: boole
             </div>
 
             {/* GLOBAL SAVE/CANCEL */}
-            {isEditing && (
-                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-4 sm:pt-6 border-t">
-                    <button
-                        type="button"
-                        onClick={handleCancel}
-                        className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 flex items-center justify-center gap-2 text-sm sm:text-base"
-                    >
-                        <X size={16} /> Cancel
-                    </button>
+            {
+                isEditing && (
+                    <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 pt-4 sm:pt-6 border-t">
+                        <button
+                            type="button"
+                            onClick={handleCancel}
+                            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 flex items-center justify-center gap-2 text-sm sm:text-base"
+                        >
+                            <X size={16} /> Cancel
+                        </button>
 
-                    <button
-                        type="submit"
-                        className="px-4 py-2 rounded-lg bg-blue-600 text-white flex items-center justify-center gap-2 text-sm sm:text-base"
-                    >
-                        <Check size={16} /> Save Changes
-                    </button>
-                </div>
-            )}
-        </form>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 rounded-lg bg-blue-600 text-white flex items-center justify-center gap-2 text-sm sm:text-base"
+                        >
+                            <Check size={16} /> Save Changes
+                        </button>
+                    </div>
+                )
+            }
+        </form >
     );
 };
 

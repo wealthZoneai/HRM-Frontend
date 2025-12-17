@@ -9,6 +9,7 @@ import DeptDonutChart from "./DeptDonutChart";
 import Announcements from "./Announcements";
 import InterviewTable from "./InterviewTable";
 import TimeCard from "../../Employee/dashboard/TimeCard";
+import { ClockIn, ClockOut } from "../../../Services/apiHelpers";
 import AttendanceStat from "../../Employee/dashboard/AttendanceStat";
 // import Notifications from "../../Employee/notifications/Notifications";
 
@@ -348,6 +349,37 @@ export default function HRDashboardPage() {
   const [deptData] = useState<DeptDataItem[]>(initialDeptData);
   const [announcements] = useState<AnnouncementItem[]>(initialAnnouncements);
   const [interviews, setInterviews] = useState<InterviewItem[]>(initialInterviews);
+  const [loadingIn, setLoadingIn] = useState(false);
+  const [loadingOut, setLoadingOut] = useState(false);
+
+  const handleClockIn = async () => {
+    try {
+      setLoadingIn(true);
+      const res = await ClockIn();
+      console.log("Clock In Success:", res.data);
+      alert("Clock In Successful at " + res.data.clock_in);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to Clock In");
+    } finally {
+      setLoadingIn(false);
+    }
+  };
+
+  const handleClockOut = async () => {
+    try {
+      setLoadingOut(true);
+      const res = await ClockOut();
+      console.log("Clock Out Success:", res.data);
+      alert("Clock Out Successful at " + res.data.clock_out);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to Clock Out");
+    } finally {
+      setLoadingOut(false);
+    }
+  };
+
 
   // derived metrics
   const totalEmployees = useMemo(() => deptData.reduce((s, d) => s + d.value, 0), [deptData]);
@@ -369,8 +401,20 @@ export default function HRDashboardPage() {
     <div className="p-6 space-y-6">
       {/* Top Section: Time & Attendance */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <TimeCard label="Time In" time="9:00 AM" actionLabel="Clock in" />
-        <TimeCard label="Time Out" time="7:00 PM" actionLabel="Clock out" />
+        <TimeCard
+          label="Time In"
+          time="9:00 AM"
+          actionLabel="Clock in"
+          onAction={handleClockIn}
+          loading={loadingIn}
+        />
+        <TimeCard
+          label="Time Out"
+          time="7:00 PM"
+          actionLabel="Clock out"
+          onAction={handleClockOut}
+          loading={loadingOut}
+        />
         <AttendanceStat title="Monthly Attendance" value={80} />
       </div>
 
