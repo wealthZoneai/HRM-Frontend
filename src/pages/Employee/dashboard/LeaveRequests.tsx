@@ -109,55 +109,65 @@ export default function LeaveRequests() {
         {/* List Section */}
         <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
           <div className="space-y-1 px-4 pb-4">
-            {data.map((req) => {
-              const StatusIcon = STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].icon;
+            {data.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                <div className="p-4 rounded-full bg-stone-50 mb-4">
+                  <CalendarDays size={32} className="text-stone-300" />
+                </div>
+                <h3 className="text-lg font-medium text-stone-900">No leave requests</h3>
+                <p className="text-sm text-stone-500 mt-1">You haven't applied for any leaves recently.</p>
+              </div>
+            ) : (
+              data.map((req) => {
+                const StatusIcon = STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].icon;
 
-              return (
-                <div
-                  key={req.id}
-                  className="group flex items-center justify-between p-4 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-stone-100 transition-all duration-300 cursor-default"
-                >
-                  {/* Left Info */}
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-xl bg-stone-50 group-hover:bg-white group-hover:shadow-sm transition-all text-stone-400 group-hover:text-blue-900">
-                      <CalendarDays size={20} />
-                    </div>
+                return (
+                  <div
+                    key={req.id}
+                    className="group flex items-center justify-between p-4 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-stone-100 transition-all duration-300 cursor-default"
+                  >
+                    {/* Left Info */}
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-stone-50 group-hover:bg-white group-hover:shadow-sm transition-all text-stone-400 group-hover:text-blue-900">
+                        <CalendarDays size={20} />
+                      </div>
 
-                    <div>
-                      <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
-                        {req.type}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs font-medium text-stone-500">{req.date}</span>
-                        <span className="w-1 h-1 rounded-full bg-stone-300"></span>
-                        <div className="flex items-center text-stone-400 text-xs">
-                          <Clock className="w-3 h-3 mr-1" />
-                          <span>{req.time}</span>
+                      <div>
+                        <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
+                          {req.type}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs font-medium text-stone-500">{req.date}</span>
+                          <span className="w-1 h-1 rounded-full bg-stone-300"></span>
+                          <div className="flex items-center text-stone-400 text-xs">
+                            <Clock className="w-3 h-3 mr-1" />
+                            <span>{req.time}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Status Badge & Info */}
-                  <div className="flex items-center gap-3">
-                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold tracking-wide uppercase ${STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].style}`}>
-                      <StatusIcon size={12} strokeWidth={3} />
-                      {req.status}
+                    {/* Status Badge & Info */}
+                    <div className="flex items-center gap-3">
+                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold tracking-wide uppercase ${STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].style}`}>
+                        <StatusIcon size={12} strokeWidth={3} />
+                        {req.status}
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLeave(req);
+                        }}
+                        className="p-2 text-stone-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300"
+                      >
+                        <Info size={20} />
+                      </button>
                     </div>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedLeave(req);
-                      }}
-                      className="p-2 text-stone-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300"
-                    >
-                      <Info size={20} />
-                    </button>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
       </div>

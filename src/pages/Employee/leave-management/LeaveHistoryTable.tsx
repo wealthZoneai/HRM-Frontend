@@ -71,34 +71,42 @@ export default function LeaveHistoryTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {data.map((item, i) => (
-                <tr
-                  key={i}
-                  onClick={() => handleRowClick(item)}
-                  className="text-xs sm:text-sm text-slate-700 block sm:table-row mb-4 sm:mb-0 border border-slate-200 sm:border-0 rounded-lg sm:rounded-none p-2 sm:p-0 cursor-pointer hover:bg-slate-50 transition-colors"
-                >
-                  <td className="block sm:table-cell p-2 sm:p-4 before:content-['Type'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
-                    <span className="font-medium">{item.type}</span>
-                  </td>
-                  <td className="block sm:table-cell p-2 sm:p-4 before:content-['Date'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
-                    <span className="text-xs">{item.date}</span>
-                  </td>
-                  <td className="block sm:table-cell p-2 sm:p-4 before:content-['Duration'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
-                    {item.duration}
-                  </td>
-                  <td className="block sm:table-cell p-2 sm:p-4 before:content-['Submitted'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
-                    <span className="text-xs">{item.submitted}</span>
-                  </td>
-                  <td className="block sm:table-cell p-2 sm:p-4 before:content-['Status'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
-                    <span
-                      className={`px-2 sm:px-3 py-1 text-xs rounded-full font-medium inline-block ${statusStyle[item.status]
-                        }`}
-                    >
-                      {item.status}
-                    </span>
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-slate-500 italic">
+                    No leave applications found.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                data.map((item, i) => (
+                  <tr
+                    key={i}
+                    onClick={() => handleRowClick(item)}
+                    className="text-xs sm:text-sm text-slate-700 block sm:table-row mb-4 sm:mb-0 border border-slate-200 sm:border-0 rounded-lg sm:rounded-none p-2 sm:p-0 cursor-pointer hover:bg-slate-50 transition-colors"
+                  >
+                    <td className="block sm:table-cell p-2 sm:p-4 before:content-['Type'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
+                      <span className="font-medium">{item.type}</span>
+                    </td>
+                    <td className="block sm:table-cell p-2 sm:p-4 before:content-['Date'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
+                      <span className="text-xs">{item.date}</span>
+                    </td>
+                    <td className="block sm:table-cell p-2 sm:p-4 before:content-['Duration'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
+                      {item.duration}
+                    </td>
+                    <td className="block sm:table-cell p-2 sm:p-4 before:content-['Submitted'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
+                      <span className="text-xs">{item.submitted}</span>
+                    </td>
+                    <td className="block sm:table-cell p-2 sm:p-4 before:content-['Status'] before:font-bold before:text-slate-600 before:mr-2 sm:before:content-none">
+                      <span
+                        className={`px-2 sm:px-3 py-1 text-xs rounded-full font-medium inline-block ${statusStyle[item.status]
+                          }`}
+                      >
+                        {item.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

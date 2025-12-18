@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FiCheckCircle, FiClock, FiUsers, FiList } from "react-icons/fi";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../store";
+import { fetchTeamDashboard } from "../../../store/slice/dashboardSlice";
 
 const LeadDashboardTab: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const { stats, loading } = useSelector((state: RootState) => state.dashboard);
+
+    useEffect(() => {
+        dispatch(fetchTeamDashboard());
+    }, [dispatch]);
+
     // Mock Data for Chart
     const data = [
         { name: 'Mon', tasks: 12 },
@@ -26,8 +36,16 @@ const LeadDashboardTab: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <KPICard title="Total Task" value="20" icon={<FiList className="text-blue-500" />} />
                 <KPICard title="Completed Task" value="15" icon={<FiCheckCircle className="text-green-500" />} />
-                <KPICard title="Pending Approvals" value="04" icon={<FiClock className="text-orange-500" />} />
-                <KPICard title="Team Members" value="12" icon={<FiUsers className="text-purple-500" />} />
+                <KPICard
+                    title="Pending Approvals"
+                    value={loading ? "..." : (stats?.pending_leave_requests?.toString().padStart(2, '0') || "00")}
+                    icon={<FiClock className="text-orange-500" />}
+                />
+                <KPICard
+                    title="Team Members"
+                    value={loading ? "..." : (stats?.team_count?.toString().padStart(2, '0') || "00")}
+                    icon={<FiUsers className="text-purple-500" />}
+                />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

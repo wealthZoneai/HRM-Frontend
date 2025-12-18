@@ -53,18 +53,6 @@ const LeadProjectsTab: React.FC = () => {
                         </div>
                     </div>
                 ))}
-
-                {/* Create New Project Card */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-dashed border-blue-200 flex flex-col items-center justify-center text-center hover:bg-blue-50/30 transition cursor-pointer group">
-                    <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <FiPlus className="text-blue-600 text-2xl" />
-                    </div>
-                    <h3 className="font-bold text-gray-800 text-lg mb-1">Create a New Project</h3>
-                    <p className="text-sm text-gray-500 mb-4">Get started by adding your next big project.</p>
-                    <button className="text-blue-600 font-medium text-sm hover:underline">
-                        + New project
-                    </button>
-                </div>
             </div>
         </div>
     );

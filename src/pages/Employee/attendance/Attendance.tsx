@@ -1,11 +1,19 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import CurrentShiftCard from "../attendance/CurrentShiftCard";
 import MonthSummaryCard from "../attendance/MonthSummaryCard";
 import AttendanceTable from "../attendance/AttendanceTable";
 import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../../store";
+import { fetchTodayAttendance } from "../../../store/slice/attendanceSlice";
 
 export default function Attendance() {
+  const dispatch = useDispatch<AppDispatch>();
   const tableRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchTodayAttendance());
+  }, [dispatch]);
 
   const handleHighlightTable = () => {
     if (!tableRef.current) return;

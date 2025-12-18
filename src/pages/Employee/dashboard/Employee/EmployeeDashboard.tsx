@@ -56,7 +56,7 @@ export default function EmployeeDashboard() {
           actionLabel="Clock in"
           onAction={handleClockIn}
           loading={loading && status !== 'Working' && status !== 'Completed'}
-          disabled={status === 'Working' || status === 'Completed'}
+          disabled={!!clockInTime}
         />
         <TimeCard
           label="Time Out"
@@ -64,7 +64,7 @@ export default function EmployeeDashboard() {
           actionLabel="Clock out"
           onAction={handleClockOut}
           loading={loading && status === 'Working'}
-          disabled={status !== 'Working'}
+          disabled={!clockInTime || !!clockOutTime}
         />
 
         <AttendanceStat title="Monthly Attendance" value={80} />

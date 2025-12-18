@@ -55,6 +55,22 @@ export function GetDailyAttendance() {
   return server.get(endpoints.dailyAttendance, { requiresAuth: true });
 }
 
+export function GetPendingLeaves() {
+  return server.get(endpoints.pendingLeaves, { requiresAuth: true });
+}
+
+export function GetTeamMembers() {
+  return server.get(endpoints.teamMembers, { requiresAuth: true });
+}
+
+export function GetTeamDashboard() {
+  return server.get(endpoints.teamDashboard, { requiresAuth: true });
+}
+
+export function TLLeaveAction(id: string | number, action: 'approve' | 'reject', remarks: string = "") {
+  return server.post((endpoints as any).tlLeaveAction(id), { action, remarks }, { requiresAuth: true });
+}
+
 //employees
 
 export function ForgotPassword(email: string) {

@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './slice/userData';
 import leaveReducer from './slice/leaveSlice';
 import attendanceReducer from './slice/attendanceSlice';
+import teamReducer from './slice/teamSlice';
+import dashboardReducer from './slice/dashboardSlice';
 
 
 export const store = configureStore({
@@ -9,6 +11,8 @@ export const store = configureStore({
     user: userReducer,
     leave: leaveReducer,
     attendance: attendanceReducer,
+    team: teamReducer,
+    dashboard: dashboardReducer,
   },
 });
 

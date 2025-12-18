@@ -25,6 +25,7 @@ interface LeaveItem {
 interface LeaveState {
     leaves: LeaveItem[];      // Employee's own leaves
     hrLeaves: LeaveItem[];    // All leaves (for HR view)
+    pendingLeaves: LeaveItem[]; // Team member leaves (for TL view)
     loading: boolean;
     error: string | null;
 }
@@ -32,6 +33,7 @@ interface LeaveState {
 const initialState: LeaveState = {
     leaves: [],
     hrLeaves: [],
+    pendingLeaves: [],
     loading: false,
     error: null,
 };
@@ -74,6 +76,25 @@ export const fetchHRLeaves = createAsyncThunk(
     }
 );
 
+// Async thunk to fetch pending leaves (for TL)
+export const fetchPendingLeaves = createAsyncThunk(
+    "leave/fetchPendingLeaves",
+    async (_, { rejectWithValue }) => {
+        try {
+            const { GetPendingLeaves } = await import("../../Services/apiHelpers");
+            const response = await GetPendingLeaves();
+            if (response.data && Array.isArray(response.data.results)) {
+                return response.data.results;
+            } else if (Array.isArray(response.data)) {
+                return response.data;
+            }
+            return [];
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.detail || "Failed to fetch pending leaves");
+        }
+    }
+);
+
 const leaveSlice = createSlice({
     name: "leave",
     initialState,
@@ -110,6 +131,19 @@ const leaveSlice = createSlice({
                 state.hrLeaves = action.payload;
             })
             .addCase(fetchHRLeaves.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            // Pending Leaves (TL)
+            .addCase(fetchPendingLeaves.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchPendingLeaves.fulfilled, (state, action: PayloadAction<LeaveItem[]>) => {
+                state.loading = false;
+                state.pendingLeaves = action.payload;
+            })
+            .addCase(fetchPendingLeaves.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });

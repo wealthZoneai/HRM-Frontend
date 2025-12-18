@@ -140,12 +140,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="w-full flex items-center justify-center py-3.5 border-b border-white/10 relative z-20">
           <img src={Logo} className="h-12  brightness-0 invert" />
 
-          {/* <button
-            onClick={() => setIsSidebarOpen((o) => !o)}
-            className="hidden md:flex absolute right-[-12px] bg-white text-blue-700 rounded-full p-1 shadow border"
-          >
-            <FiChevronLeft size={18} />
-          </button> */}
+
 
           <button
             onClick={() => setIsSidebarOpen(false)}

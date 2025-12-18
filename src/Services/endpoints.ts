@@ -25,6 +25,10 @@ const endpoints = {
     hrLeaves: 'api/leaves/',
     myLeaves: 'api/leave/my-requests/',
     dailyAttendance: 'api/timesheet/daily/form/',
+    teamDashboard: 'api/team/dashboard/',
+    teamMembers: 'api/team/members/',
+    pendingLeaves: 'api/leave/pending/',
+    tlLeaveAction: (id: string | number) => `api/leave/${id}/action/`,
 
 }
 
