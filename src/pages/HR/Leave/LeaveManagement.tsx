@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LeaveDashboardCards from "./LeaveDashboardCards";
 import LeaveNotificationPopup, { type NotificationItem } from "./LeaveNotificationPopup";
 import LeaveTable, { type LeaveRow } from "./LeaveTable";
@@ -7,7 +7,14 @@ import LeaveDeclineModal from "./LeaveDeclineModal";
 import HrApplyLeaveModal from "./HrApplyLeaveModal";
 import { FiClock, FiUsers, FiUserX } from "react-icons/fi";
 
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../store";
+import { fetchHRLeaves } from "../../../store/slice/leaveSlice";
+
 const HrLeaveManagement = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const { hrLeaves } = useSelector((state: RootState) => state.leave);
+
     const [openNotification, setOpenNotification] = useState(false);
     const [viewModal, setViewModal] = useState(false);
     const [declineModal, setDeclineModal] = useState(false);
@@ -16,119 +23,31 @@ const HrLeaveManagement = () => {
 
     const [_, setSelectedRow] = useState<LeaveRow | null>(null);
 
-    // Dummy data
-    const leaveRows: LeaveRow[] = [
-        {
-            id: "1",
-            name: "Habeeb",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "2",
-            name: "srikanth",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-        {
-            id: "3",
-            name: "ramesh",
-            type: "Medical leave",
-            from: "4th-June-2023",
-            to: "20th-June-2023",
-            days: 16,
-            reason: "Hospital",
-            status: "Pending",
-        },
-    ];
+    useEffect(() => {
+        dispatch(fetchHRLeaves());
+    }, [dispatch]);
+
+    // Map Redux data to frontend LeaveRow interface
+    const leaveRows: LeaveRow[] = hrLeaves.map((item: any) => {
+        // Determine display status based on backend status
+        let displayStatus: "Pending" | "Approved" | "Declined" = "Pending";
+        if (["hr_approved", "completed"].includes(item.status)) displayStatus = "Approved";
+        else if (["hr_rejected", "tl_rejected", "cancelled"].includes(item.status)) displayStatus = "Declined";
+
+        const firstName = item.profile?.first_name || item.profile?.user?.first_name || "";
+        const lastName = item.profile?.last_name || item.profile?.user?.last_name || "";
+
+        return {
+            id: item.id.toString(),
+            name: `${firstName} ${lastName}`.trim(),
+            type: item.leave_type,
+            from: item.start_date,
+            to: item.end_date,
+            days: Number(item.days),
+            reason: item.reason,
+            status: displayStatus,
+        };
+    });
 
     // Filter rows based on status
     const filteredRows = filterStatus === "All"

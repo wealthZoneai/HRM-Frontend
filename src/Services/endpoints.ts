@@ -21,6 +21,10 @@ const endpoints = {
     //attendance
     clockIn: 'api/attendance/clock-in/',
     clockOut: 'api/attendance/clock-out/',
+    applyLeave: 'api/leave/apply/',
+    hrLeaves: 'api/leaves/',
+    myLeaves: 'api/leave/my-requests/',
+    dailyAttendance: 'api/timesheet/daily/form/',
 
 }
 

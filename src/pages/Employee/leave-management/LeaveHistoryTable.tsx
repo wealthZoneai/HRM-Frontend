@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LeaveDetailsModal from "./LeaveDetailsModal";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../store";
+import { fetchMyLeaves } from "../../../store/slice/leaveSlice";
 
 export default function LeaveHistoryTable() {
   type Status = "Approved" | "Rejected" | "Pending";
@@ -13,32 +16,25 @@ export default function LeaveHistoryTable() {
     reason?: string; // Added optional reason field
   };
 
-  const data: LeaveItem[] = [
-    {
-      type: "Annual Leave",
-      date: "Dec 02, 2024 - Dec 06, 2024",
-      duration: "7 Days",
-      submitted: "Nov 25, 2024",
-      status: "Approved",
-      reason: "Family vacation to Bali. Will have limited connectivity.",
-    },
-    {
-      type: "Sick Leave",
-      date: "Nov 15, 2024 - Nov 16, 2024",
-      duration: "2 Days",
-      submitted: "Nov 14, 2024",
-      status: "Rejected",
-      reason: "Feeling unwell due to seasonal flu.",
-    },
-    {
-      type: "Annual Leave",
-      date: "Oct 10, 2024 - Oct 10, 2024",
-      duration: "1 Day",
-      submitted: "Oct 09, 2024",
-      status: "Pending",
-      reason: "Personal urgent work.",
-    },
-  ];
+  /* REMOVED DUMMY DATA */
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { leaves } = useSelector((state: RootState) => state.leave);
+
+  useEffect(() => {
+    dispatch(fetchMyLeaves());
+  }, [dispatch]);
+
+  // Map Redux state to component's LeaveItem format
+  const data: LeaveItem[] = leaves.map((leave: any) => ({
+    type: leave.leave_type, // Assuming API returns 'leave_type'
+    date: `${new Date(leave.start_date).toLocaleDateString()} - ${new Date(leave.end_date).toLocaleDateString()}`,
+    duration: `${leave.days} Day${leave.days > 1 ? 's' : ''}`,
+    submitted: new Date(leave.created_at || Date.now()).toLocaleDateString(), // Fallback if created_at missing
+    status: leave.status === "hr_approved" || leave.status === "completed" ? "Approved" :
+      leave.status === "hr_rejected" || leave.status === "tl_rejected" ? "Rejected" : "Pending",
+    reason: leave.reason,
+  }));
 
   const [selectedLeave, setSelectedLeave] = useState<LeaveItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

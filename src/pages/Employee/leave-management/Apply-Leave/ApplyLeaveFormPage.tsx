@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-// import DashboardLayout from "../../dashboard/DashboardLayout"; // Already imported above
+import { ApplyLeave } from "../../../../Services/apiHelpers";
+import { showSuccess, showError } from "../../../../utils/toast"; // Assuming this path based on previous usage
 
 export default function ApplyLeaveFormPage() {
   const navigate = useNavigate();
@@ -44,10 +45,25 @@ export default function ApplyLeaveFormPage() {
     return days > 0 ? `${days} Day(s)` : "";
   };
 
-  const handleSubmit = () => {
-    // Later this will POST to backend
-    console.log(form);
-    navigate("/employee/leave-management/success");
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("leave_type", form.type);
+      formData.append("start_date", form.from);
+      formData.append("end_date", form.to);
+      formData.append("reason", form.reason);
+      if (form.document) {
+        formData.append("document", form.document);
+      }
+
+      const res = await ApplyLeave(formData);
+      showSuccess("Leave Application Submitted Successfully!");
+      navigate("/employee/leave-management/success");
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.detail || "Failed to submit leave application.";
+      showError(msg);
+    }
   };
 
   const durationDays = (() => {
@@ -62,10 +78,10 @@ export default function ApplyLeaveFormPage() {
   // Document is required for:
   // 1. Sick leave longer than 4 days
   // 2. Maternity/Paternity leave (always required)
-  const isDocumentRequired = 
-    (form.type === "Sick Leave" && durationDays > 4) ||
-    form.type === "Maternity Leave" ||
-    form.type === "Paternity Leave";
+  const isDocumentRequired =
+    (form.type === "sick_leave" && durationDays > 4) ||
+    form.type === "maternity_leave" ||
+    form.type === "paternity_leave";
 
   // Show document upload for any sick leave, but only require it for >4 days
   // const showDocumentUpload = 
@@ -141,9 +157,9 @@ export default function ApplyLeaveFormPage() {
               <option value="">Select Leave Type</option>
               <option value="Casual Leave">Casual Leave</option>
               <option value="Sick Leave">Sick Leave</option>
+              <option value="Earned Leave">Earned Leave</option>
               <option value="Maternity Leave">Maternity Leave</option>
               <option value="Paternity Leave">Paternity Leave</option>
-              <option value="Unpaid Leave">Unpaid Leave</option>
             </select>
           </div>
 

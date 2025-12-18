@@ -1,41 +1,47 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import TimeCard from "../TimeCard";
-import { ClockIn, ClockOut } from "../../../../Services/apiHelpers";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../../store";
+import { fetchTodayAttendance, clockIn, clockOut } from "../../../../store/slice/attendanceSlice";
 import AttendanceStat from "../AttendanceStat";
 import Announcements from "../Announcements";
 import UpcomingHolidays from "../UpcomingHolidays";
 import LeaveRequests from "../LeaveRequests";
 import ProjectStatus from "../ProjectStatus";
+import { showSuccess, showWarning } from "../../../../utils/toast";
 
 export default function EmployeeDashboard() {
-  const [loadingIn, setLoadingIn] = useState(false);
-  const [loadingOut, setLoadingOut] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { clockInTime, clockOutTime, status, loading } = useSelector((state: RootState) => state.attendance);
+
+  useEffect(() => {
+    dispatch(fetchTodayAttendance());
+  }, [dispatch]);
+
+  // Format helpers
+  const formatTime = (isoString: string | null) => {
+    if (!isoString) return "--:--";
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const displayClockIn = clockInTime ? formatTime(clockInTime) : "09:00 AM";
+  const displayClockOut = clockOutTime ? formatTime(clockOutTime) : "07:00 PM";
 
   const handleClockIn = async () => {
-    try {
-      setLoadingIn(true);
-      const res = await ClockIn();
-      console.log("Clock In Success:", res.data);
-      alert("Clock In Successful at " + res.data.clock_in);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to Clock In");
-    } finally {
-      setLoadingIn(false);
+    const result = await dispatch(clockIn());
+    if (clockIn.fulfilled.match(result)) {
+      showSuccess("Clock In Successful");
+    } else {
+      showWarning(result.payload as string || "Failed to Clock In");
     }
   };
 
   const handleClockOut = async () => {
-    try {
-      setLoadingOut(true);
-      const res = await ClockOut();
-      console.log("Clock Out Success:", res.data);
-      alert("Clock Out Successful at " + res.data.clock_out);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to Clock Out");
-    } finally {
-      setLoadingOut(false);
+    const result = await dispatch(clockOut());
+    if (clockOut.fulfilled.match(result)) {
+      showSuccess("Clock Out Successful");
+    } else {
+      showWarning(result.payload as string || "Failed to Clock Out");
     }
   };
 
@@ -46,17 +52,19 @@ export default function EmployeeDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <TimeCard
           label="Time In"
-          time="9:00 AM"
+          time={displayClockIn}
           actionLabel="Clock in"
           onAction={handleClockIn}
-          loading={loadingIn}
+          loading={loading && status !== 'Working' && status !== 'Completed'}
+          disabled={status === 'Working' || status === 'Completed'}
         />
         <TimeCard
           label="Time Out"
-          time="7:00 PM"
+          time={displayClockOut}
           actionLabel="Clock out"
           onAction={handleClockOut}
-          loading={loadingOut}
+          loading={loading && status === 'Working'}
+          disabled={status !== 'Working'}
         />
 
         <AttendanceStat title="Monthly Attendance" value={80} />

@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-
+import { useMemo, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { FiUsers, FiBriefcase, FiHome, FiUserX } from "react-icons/fi";
 import type { DeptDataItem } from "./DeptDonutChart";
 import type { AnnouncementItem } from "./Announcements";
@@ -9,22 +9,11 @@ import DeptDonutChart from "./DeptDonutChart";
 import Announcements from "./Announcements";
 import InterviewTable from "./InterviewTable";
 import TimeCard from "../../Employee/dashboard/TimeCard";
-import { ClockIn, ClockOut } from "../../../Services/apiHelpers";
 import AttendanceStat from "../../Employee/dashboard/AttendanceStat";
-// import Notifications from "../../Employee/notifications/Notifications";
-
-// const initialDeptData: DeptDataItem[] = [
-//   { name: "React Team", value: 30, color: "#81f172ff" },
-//   { name: "Java Team", value: 25, color: "#FFD166" },
-//   { name: "Digital Marketing", value: 30, color: "#9B72F1" },
-//   { name: "UI/UX Team", value: 28, color: "#2B6EF6" },
-//   { name: "Python Team", value: 18, color: "#3ABAB4" },
-//   { name: "Testing Team", value: 12, color: "#FF8A65" },
-//   { name: "HR Team", value: 30, color: "#9B72F1" },
-//   { name: "Cyber Security", value: 30, color: "#9B72F1" },
-//   { name: "BDMS", value: 30, color: "#9B72F1" },
-//   { name: "SPA", value: 30, color: "#9B72F1" },
-// ];
+import type { AppDispatch, RootState } from "../../../store";
+import { fetchTodayAttendance, clockIn, clockOut } from "../../../store/slice/attendanceSlice";
+// Assuming toast exists in utils, adjusting path
+import { showSuccess, showWarning } from "../../../utils/toast";
 
 const initialAnnouncements: AnnouncementItem[] = [
   {
@@ -346,37 +335,41 @@ const initialDeptData: DeptDataItem[] = [
 ];
 
 export default function HRDashboardPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { clockInTime, clockOutTime, status, loading } = useSelector((state: RootState) => state.attendance);
+
   const [deptData] = useState<DeptDataItem[]>(initialDeptData);
   const [announcements] = useState<AnnouncementItem[]>(initialAnnouncements);
   const [interviews, setInterviews] = useState<InterviewItem[]>(initialInterviews);
-  const [loadingIn, setLoadingIn] = useState(false);
-  const [loadingOut, setLoadingOut] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchTodayAttendance());
+  }, [dispatch]);
+
+  // Format helpers
+  const formatTime = (isoString: string | null) => {
+    if (!isoString) return "--:--";
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const displayClockIn = clockInTime ? formatTime(clockInTime) : "09:00 AM";
+  const displayClockOut = clockOutTime ? formatTime(clockOutTime) : "07:00 PM";
 
   const handleClockIn = async () => {
-    try {
-      setLoadingIn(true);
-      const res = await ClockIn();
-      console.log("Clock In Success:", res.data);
-      alert("Clock In Successful at " + res.data.clock_in);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to Clock In");
-    } finally {
-      setLoadingIn(false);
+    const result = await dispatch(clockIn());
+    if (clockIn.fulfilled.match(result)) {
+      showSuccess("Clock In Successful");
+    } else {
+      showWarning(result.payload as string || "Failed to Clock In");
     }
   };
 
   const handleClockOut = async () => {
-    try {
-      setLoadingOut(true);
-      const res = await ClockOut();
-      console.log("Clock Out Success:", res.data);
-      alert("Clock Out Successful at " + res.data.clock_out);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to Clock Out");
-    } finally {
-      setLoadingOut(false);
+    const result = await dispatch(clockOut());
+    if (clockOut.fulfilled.match(result)) {
+      showSuccess("Clock Out Successful");
+    } else {
+      showWarning(result.payload as string || "Failed to Clock Out");
     }
   };
 
@@ -403,17 +396,19 @@ export default function HRDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <TimeCard
           label="Time In"
-          time="9:00 AM"
+          time={displayClockIn}
           actionLabel="Clock in"
           onAction={handleClockIn}
-          loading={loadingIn}
+          loading={loading && status !== 'Working' && status !== 'Completed'}
+          disabled={status === 'Working' || status === 'Completed'}
         />
         <TimeCard
           label="Time Out"
-          time="7:00 PM"
+          time={displayClockOut}
           actionLabel="Clock out"
           onAction={handleClockOut}
-          loading={loadingOut}
+          loading={loading && status === 'Working'}
+          disabled={status !== 'Working'}
         />
         <AttendanceStat title="Monthly Attendance" value={80} />
       </div>

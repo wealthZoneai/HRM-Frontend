@@ -34,6 +34,27 @@ export function ClockOut() {
   return server.post(endpoints.clockOut, {}, { requiresAuth: true });
 }
 
+export function ApplyLeave(formData: FormData) {
+  return server.post(endpoints.applyLeave, formData, {
+    requiresAuth: true,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+export function GetHRLeaves() {
+  return server.get(endpoints.hrLeaves, { requiresAuth: true });
+}
+
+export function GetMyLeaves() {
+  return server.get(endpoints.myLeaves, { requiresAuth: true });
+}
+
+export function GetDailyAttendance() {
+  return server.get(endpoints.dailyAttendance, { requiresAuth: true });
+}
+
 //employees
 
 export function ForgotPassword(email: string) {
