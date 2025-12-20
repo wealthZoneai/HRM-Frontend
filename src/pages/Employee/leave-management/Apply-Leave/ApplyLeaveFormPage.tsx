@@ -56,7 +56,7 @@ export default function ApplyLeaveFormPage() {
         formData.append("document", form.document);
       }
 
-      const res = await ApplyLeave(formData);
+      await ApplyLeave(formData);
       showSuccess("Leave Application Submitted Successfully!");
       navigate("/employee/leave-management/success");
     } catch (error: any) {
