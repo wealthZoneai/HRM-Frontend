@@ -7,12 +7,12 @@ export default function ApplyLeaveFormPage() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: "Raviteja",
+    name: localStorage.getItem("userName") || "Raviteja",
     type: "",
     from: "",
     to: "",
-    id: "WZG-AI-0029",
-    role: "Employee",
+    id: localStorage.getItem("empId") || "WZG-AI-0029",
+    role: localStorage.getItem("role") || "Employee",
     reason: "",
     document: null as File | null,
   });

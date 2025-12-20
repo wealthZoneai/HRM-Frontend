@@ -71,6 +71,10 @@ export function TLLeaveAction(id: string | number, action: 'approve' | 'reject',
   return server.post((endpoints as any).tlLeaveAction(id), { action, remarks }, { requiresAuth: true });
 }
 
+export function HRLeaveAction(id: string | number, action: 'approve' | 'reject', remarks: string = "") {
+  return server.post((endpoints as any).hrLeaveAction(id), { action, remarks }, { requiresAuth: true });
+}
+
 //employees
 
 export function ForgotPassword(email: string) {

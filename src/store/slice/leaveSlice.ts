@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
-import { GetMyLeaves, GetHRLeaves } from "../../Services/apiHelpers";
+import { GetMyLeaves, GetHRLeaves, HRLeaveAction } from "../../Services/apiHelpers";
 
 // Define the shape of a leave item based on what the API returns
 interface LeaveItem {
@@ -91,6 +91,33 @@ export const fetchPendingLeaves = createAsyncThunk(
             return [];
         } catch (err: any) {
             return rejectWithValue(err.response?.data?.detail || "Failed to fetch pending leaves");
+        }
+    }
+);
+
+// Async thunks for HR Leave Actions
+export const hrApproveLeave = createAsyncThunk(
+    "leave/hrApproveLeave",
+    async ({ id, remarks }: { id: string | number; remarks?: string }, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await HRLeaveAction(id, 'approve', remarks);
+            dispatch(fetchHRLeaves()); // Refresh the list after action
+            return response.data;
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.detail || "Failed to approve leave");
+        }
+    }
+);
+
+export const hrDeclineLeave = createAsyncThunk(
+    "leave/hrDeclineLeave",
+    async ({ id, remarks }: { id: string | number; remarks: string }, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await HRLeaveAction(id, 'reject', remarks);
+            dispatch(fetchHRLeaves()); // Refresh the list after action
+            return response.data;
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.detail || "Failed to decline leave");
         }
     }
 );
