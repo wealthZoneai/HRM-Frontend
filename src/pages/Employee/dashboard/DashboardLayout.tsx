@@ -93,14 +93,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const firstName = rawName.split(".")[0];
   const formattedUserName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
 
-  const currentUser = {
+  const [currentUser, setCurrentUser] = useState({
     name: formattedUserName,
-    id: "WZG-AI-0029"
-  };
+    id: localStorage.getItem("empId") || "WZG-AI-0029"
+  });
 
   const mainContentRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    // If empId is missing, try to fetch it from the profile
+    if (!localStorage.getItem("empId")) {
+      import("../../../Services/apiHelpers").then(api => {
+        api.GetMyProfile().then(res => {
+          if (res.data && res.data.emp_id) {
+            localStorage.setItem("empId", res.data.emp_id);
+            setCurrentUser(prev => ({ ...prev, id: res.data.emp_id }));
+          }
+        }).catch(err => console.error("Layout: Failed to fetch profile", err));
+      });
+    }
+
     if (mainContentRef.current) {
       mainContentRef.current.scrollTo(0, 0);
     }

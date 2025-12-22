@@ -11,7 +11,6 @@ interface CurrentShiftCardProps {
 
 export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState<string>(new Date().toLocaleTimeString("en-US"));
   const [duration, setDuration] = useState("00:00:00");
 
   const { clockInTime, status, totalHours } = useSelector((state: RootState) => state.attendance);
@@ -29,7 +28,6 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
     // Timer logic
     const updateTimer = () => {
       const now = new Date();
-      setCurrentTime(now.toLocaleTimeString("en-US"));
 
       if (status === 'Working' && clockInTime) {
         const start = new Date(clockInTime);

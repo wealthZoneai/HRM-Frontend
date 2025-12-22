@@ -36,7 +36,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
 
   const currentUser = {
     name: localStorage.getItem("userName") || "Raviteja",
-    id: "WZG-AI-0029",
+    id: localStorage.getItem("empId") || "WZG-AI-0029",
   };
 
   const navItems = [

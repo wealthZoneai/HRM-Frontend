@@ -53,7 +53,7 @@ const HRProfileHeader = () => {
 
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                                 <IdCard size={14} className="text-purple-500 shrink-0" />
-                                <span>WZG-HR-001</span>
+                                <span>{localStorage.getItem("empId") || "WZG-HR-001"}</span>
                             </div>
 
                             <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">

@@ -65,15 +65,14 @@ export default function EmployeeScreen() {
         const rawData = response?.data?.results || [];
         console.log("Fetched Employees:", rawData);
         // Map backend → UI
+        const fallbackAvatar = "https://ui-avatars.com/api/?background=random&name=";
         const formattedData: Employee[] = rawData.map((emp: any) => ({
           id: emp.id || emp.emp_id,
           name: `${emp.first_name} ${emp.last_name}`.trim(),
           role: emp.job_title || emp.role || "Employee",
           employeeId: emp.emp_id,
           status: "Active",
-          imageUrl: `https://randomuser.me/api/portraits/${
-            Math.random() > 0.5 ? "men" : "women"
-          }/${Math.floor(Math.random() * 70)}.jpg`,
+          imageUrl: emp.profile_photo_url || `${fallbackAvatar}${emp.first_name}+${emp.last_name}`,
         }));
 
         setEmployeeData(formattedData);
@@ -140,7 +139,7 @@ export default function EmployeeScreen() {
 
         {filteredEmployees.length === 0 && (
           <p className="text-gray-500 text-center col-span-full">
-No data found.          </p>
+            No data found.          </p>
         )}
       </div>
 
