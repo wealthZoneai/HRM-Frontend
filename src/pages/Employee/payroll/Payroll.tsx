@@ -102,7 +102,7 @@ export default function Payroll() {
 
       {/* Success Modal for Download */}
       {isDownloadSuccessOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-transparent pointer-events-none">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-transparent pointer-events-none">
           <div className="bg-green-600 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 pointer-events-auto">
             <div className="bg-white/20 p-1 rounded-full">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">

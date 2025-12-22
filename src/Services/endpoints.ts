@@ -29,7 +29,8 @@ const endpoints = {
     teamMembers: 'api/team/members/',
     pendingLeaves: 'api/leave/pending/',
     tlLeaveAction: (id: string | number) => `api/leave/${id}/action/`,
-
+    totalAttendance: "api/attendance/days/",
+ 
 }
 
 export default endpoints

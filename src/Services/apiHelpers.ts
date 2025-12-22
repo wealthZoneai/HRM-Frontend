@@ -86,6 +86,24 @@ export function ResetPassword({ email, otp, new_password, confirm_password }: { 
 }
 
 
+export const gettotalAttendance = () => {
+  return server.get(endpoints.totalAttendance, {
+    requiresAuth: true,
+  });
+};
+
+
+export const secondsToHHMM = (seconds: number): string => {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+};
+
+export const timeStringToSeconds = (time: string | null): number => {
+  if (!time) return 0;
+  const [h, m] = time.split(":").map(Number);
+  return h * 3600 + m * 60;
+};
 
 
 
