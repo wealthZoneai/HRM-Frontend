@@ -28,30 +28,30 @@ export default function CalendarHeader({
   const yearOptions = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       {/* Title and Month/Year Selectors */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <h2 className="text-xl md:text-md font-bold text-gray-900">
+      <div className="flex flex-row items-center justify-between gap-1">
+        <h2 className="text-sm font-bold text-gray-900">
           {monthNames[month]} {year}
         </h2>
 
         {/* Month/Year Dropdowns */}
-        <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
+        <div className="flex items-center gap-1.5 bg-gray-50 p-1 rounded-lg border border-gray-200">
           <select
             value={month}
             onChange={(e) => onMonthChange(Number(e.target.value))}
-            className="bg-transparent text-sm text-gray-600 focus:outline-none cursor-pointer py-1 px-2"
+            className="bg-transparent text-xs text-gray-600 focus:outline-none cursor-pointer py-0.5 px-1.5"
             aria-label="Select Month"
           >
             {monthNames.map((m, idx) => (
               <option key={idx} value={idx}>{m.slice(0, 3)}</option>
             ))}
           </select>
-          <div className="w-px h-4 bg-gray-300"></div>
+          <div className="w-px h-3 bg-gray-300"></div>
           <select
             value={year}
             onChange={(e) => onYearChange(Number(e.target.value))}
-            className="bg-transparent text-sm text-gray-600 focus:outline-none cursor-pointer py-1 px-2"
+            className="bg-transparent text-xs text-gray-600 focus:outline-none cursor-pointer py-0.5 px-1.5"
             aria-label="Select Year"
           >
             {yearOptions.map((y) => (
@@ -62,30 +62,29 @@ export default function CalendarHeader({
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5">
         <button
           onClick={onSetToday}
-          className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-colors shadow-sm"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-colors shadow-sm"
         >
-          <CalendarIcon size={16} />
-          <span className="hidden sm:inline">Today</span>
-          <span className="sm:hidden">Today</span>
+          <CalendarIcon size={14} />
+          <span>Today</span>
         </button>
 
         <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm ml-auto">
           <button
             onClick={onPrevMonth}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-l-lg transition-colors border-r border-gray-200"
+            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-l-lg transition-colors border-r border-gray-200"
             aria-label="Previous month"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
           <button
             onClick={onNextMonth}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-r-lg transition-colors"
+            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-r-lg transition-colors"
             aria-label="Next month"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
         </div>
       </div>

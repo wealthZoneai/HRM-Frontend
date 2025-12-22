@@ -11,14 +11,14 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
 
-import {  showWarning, } from "../../utils/toast";
-// import { loginUser } from "../../Services/apiHelpers";
-// import { setUserData } from "../../store/slice/userData";
-// import { useDispatch } from "react-redux";
+import {  showLoginError, showLoginSuccess, showWarning, } from "../../utils/toast";
+import { loginUser } from "../../Services/apiHelpers";
+import { setUserData } from "../../store/slice/userData";
+import { useDispatch } from "react-redux";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   // const [role,] = useState<"employee" | "hr" | "admin">("employee");
   const [username, setUsername] = useState("");
@@ -39,52 +39,52 @@ const Login: React.FC = () => {
     }
 
     // navigate('/hr/dashboard')
-    navigate('/employee/dashboard')
-    // try {
-    //   const response = await loginUser({ username, password });
-    //   console.log(response)
-    //   if (response.status === 200) {
-    //     localStorage.setItem("access", response.data.access);
-    //     localStorage.setItem("refresh", response.data.refresh);
-    //     localStorage.setItem("userName", response.data.username);
-    //     if (response.data.role === "admin" || response.data.role === "hr") {
-    //       navigate(`/hr/dashboard`);
-    //     } else if (response.data.role === "tl") {
-    //       navigate(`/employee/lead-status`);
-    //     } else if (response.data.role === "employee" || response.data.role === "intern") {
-    //       navigate(`/employee/dashboard`);
-    //     }
-    //     dispatch(setUserData({
-    //       token: response.data.access,
-    //       role: response.data.role,
-    //       userName: response.data.username
-    //     }));
+    // navigate('/employee/dashboard')
+    try {
+      const response = await loginUser({ username, password });
+      console.log(response)
+      if (response.status === 200) {
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
+        localStorage.setItem("userName", response.data.username);
+        if (response.data.role === "admin" || response.data.role === "hr") {
+          navigate(`/hr/dashboard`);
+        } else if (response.data.role === "tl") {
+          navigate(`/employee/lead-status`);
+        } else if (response.data.role === "employee" || response.data.role === "intern") {
+          navigate(`/employee/dashboard`);
+        }
+        dispatch(setUserData({
+          token: response.data.access,
+          role: response.data.role,
+          userName: response.data.username
+        }));
 
-    //     // Show success toast with username
-    //     showLoginSuccess(response.data.username);
+        // Show success toast with username
+        showLoginSuccess(response.data.username);
 
-    //     // Debug log to check available fields
-    //     console.log("Login Response Data:", response.data);
+        // Debug log to check available fields
+        console.log("Login Response Data:", response.data);
 
-    //     // Save User ID/Employee ID (Adjust field name based on debug log if needed: id, user_id, employee_id)
-    //     if (response.data.id) {
-    //       localStorage.setItem("userId", response.data.id);
-    //     } else if (response.data.employee_id) {
-    //       localStorage.setItem("userId", response.data.employee_id);
-    //     } else if (response.data.user_id) {
-    //       localStorage.setItem("userId", response.data.user_id);
-    //     }
+        // Save User ID/Employee ID (Adjust field name based on debug log if needed: id, user_id, employee_id)
+        if (response.data.id) {
+          localStorage.setItem("userId", response.data.id);
+        } else if (response.data.employee_id) {
+          localStorage.setItem("userId", response.data.employee_id);
+        } else if (response.data.user_id) {
+          localStorage.setItem("userId", response.data.user_id);
+        }
 
-    //     if (response.data.emp_id) {
-    //       localStorage.setItem("empId", response.data.emp_id);
-    //     }
+        if (response.data.emp_id) {
+          localStorage.setItem("empId", response.data.emp_id);
+        }
 
-    //   }
+      }
 
-    // } catch (error) {
-    //   console.error(error);
-    //   showLoginError("Invalid credentials. Please check your email and password.");
-    // }
+    } catch (error) {
+      console.error(error);
+      showLoginError("Invalid credentials. Please check your email and password.");
+    }
   };
 
 

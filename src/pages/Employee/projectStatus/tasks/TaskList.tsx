@@ -4,8 +4,8 @@ import TaskItem from "./TaskItem";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, MessageSquare, Inbox, Filter, Plus, } from "lucide-react";
 
-// Current logged-in employee (hardcoded for demo)
-const CURRENT_EMPLOYEE = "John Doe";
+// Current logged-in employee (dynamic from localStorage)
+const CURRENT_EMPLOYEE = localStorage.getItem("userName") || "Unknown User";
 
 export default function TaskList() {
   const [taskList, setTaskList] = useState<Task[]>(() => {
@@ -23,8 +23,12 @@ export default function TaskList() {
     localStorage.setItem("tasks", JSON.stringify(taskList));
   }, [taskList]);
 
+  // Role-based logic
+  const role = localStorage.getItem("role");
+  const isTLorHR = role === "tl" || role === "hr" || role === "admin";
+
   // Filter states
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("All"); // Employee filter
+  const [selectedEmployee, setSelectedEmployee] = useState<string>(isTLorHR ? "All" : CURRENT_EMPLOYEE); // Employee filter
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
   const [selectedPriority, setSelectedPriority] = useState<string>("All");
 
@@ -76,6 +80,22 @@ export default function TaskList() {
       assignedTo: assignedTo,
     };
     updated[actualIndex].subtasks.push(newSubtask);
+
+    // Auto-update task status based on subtask completion
+    const task = updated[actualIndex];
+    const totalSubtasks = task.subtasks.length;
+    const completedSubtasks = task.subtasks.filter((s) => s.completed).length;
+
+    if (totalSubtasks > 0) {
+      if (completedSubtasks === 0) {
+        task.status = "notStarted";
+      } else if (completedSubtasks === totalSubtasks) {
+        task.status = "completed";
+      } else {
+        task.status = "inProgress";
+      }
+    }
+
     setTaskList(updated);
   };
 
@@ -182,21 +202,23 @@ export default function TaskList() {
           </div>
 
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
-            {/* Employee Filter */}
-            <div className="flex-1 sm:flex-initial min-w-[150px]">
-              <select
-                value={selectedEmployee}
-                onChange={(e) => setSelectedEmployee(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white hover:border-gray-400 transition"
-              >
-                <option value="All">All Employees</option>
-                {employees.map((emp) => (
-                  <option key={emp} value={emp}>
-                    {emp}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Employee Filter - Only for TL/HR/Admin */}
+            {isTLorHR && (
+              <div className="flex-1 sm:flex-initial min-w-[150px]">
+                <select
+                  value={selectedEmployee}
+                  onChange={(e) => setSelectedEmployee(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white hover:border-gray-400 transition"
+                >
+                  <option value="All">All Employees</option>
+                  {employees.map((emp) => (
+                    <option key={emp} value={emp}>
+                      {emp}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Status Filter */}
             <div className="flex-1 sm:flex-initial min-w-[150px]">

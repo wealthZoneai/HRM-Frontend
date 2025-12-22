@@ -9,7 +9,7 @@ interface Props {
 export default function CalendarDayCell({ day, events, isToday }: Props) {
   // Empty cell for days outside the current month
   if (!day) {
-    return <div className="bg-gray-50/50 h-16 sm:h-20 md:h-24"></div>;
+    return <div className="bg-gray-50/50 h-10 sm:h-12 md:h-14"></div>;
   }
 
   // Get color styles for the event badge
@@ -26,14 +26,14 @@ export default function CalendarDayCell({ day, events, isToday }: Props) {
   };
 
   return (
-    <div className={`h-16 sm:h-20 md:h-24 p-1 sm:p-2 flex flex-col transition-colors hover:bg-gray-50 
+    <div className={`h-10 sm:h-12 md:h-14 p-0.5 sm:p-1 flex flex-col transition-colors hover:bg-gray-50 
       ${isToday ? 'bg-blue-50/30' : 'bg-white'}
     `}>
       {/* Day Number */}
       <div className="flex justify-between items-start">
         <span
           className={`
-            text-xs sm:text-sm font-medium w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-full
+            text-[9px] sm:text-[10px] font-medium w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full
             ${isToday ? "bg-blue-600 text-white shadow-sm" : "text-gray-700"}
           `}
         >
@@ -42,12 +42,12 @@ export default function CalendarDayCell({ day, events, isToday }: Props) {
       </div>
 
       {/* Events List */}
-      <div className="mt-1 sm:mt-2 flex flex-col gap-1 overflow-hidden flex-1">
-        {events.slice(0, 3).map((event) => (
+      <div className="mt-0.5 flex flex-col gap-0.5 overflow-hidden flex-1">
+        {events.slice(0, 1).map((event) => (
           <div
             key={event.id}
             className={`
-              hidden sm:block px-1.5 py-0.5 text-[10px] sm:text-xs font-medium rounded border truncate
+              hidden sm:block px-1 py-0 text-[8px] font-medium rounded border truncate
               ${getEventStyles(event.type)}
             `}
             title={event.title}
@@ -67,9 +67,9 @@ export default function CalendarDayCell({ day, events, isToday }: Props) {
         </div>
 
         {/* Show "+X more" */}
-        {events.length > 3 && (
-          <span className="hidden sm:block text-[10px] text-gray-400 font-medium pl-1">
-            +{events.length - 3} more
+        {events.length > 1 && (
+          <span className="hidden sm:block text-[8px] text-gray-400 font-medium pl-1">
+            +{events.length - 1} more
           </span>
         )}
       </div>

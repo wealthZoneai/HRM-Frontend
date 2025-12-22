@@ -79,9 +79,9 @@ export default function ApplyLeaveFormPage() {
   // 1. Sick leave longer than 4 days
   // 2. Maternity/Paternity leave (always required)
   const isDocumentRequired =
-    (form.type === "sick_leave" && durationDays > 4) ||
-    form.type === "maternity_leave" ||
-    form.type === "paternity_leave";
+    (form.type === "Sick Leave" && durationDays > 4) ||
+    form.type === "Maternity Leave" ||
+    form.type === "Paternity Leave";
 
   // Show document upload for any sick leave, but only require it for >4 days
   // const showDocumentUpload = 
@@ -157,7 +157,6 @@ export default function ApplyLeaveFormPage() {
               <option value="">Select Leave Type</option>
               <option value="Casual Leave">Casual Leave</option>
               <option value="Sick Leave">Sick Leave</option>
-              <option value="Earned Leave">Earned Leave</option>
               <option value="Maternity Leave">Maternity Leave</option>
               <option value="Paternity Leave">Paternity Leave</option>
             </select>
