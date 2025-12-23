@@ -28,8 +28,6 @@ const Login: React.FC = () => {
     navigate('/forgot-password')
   }
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
