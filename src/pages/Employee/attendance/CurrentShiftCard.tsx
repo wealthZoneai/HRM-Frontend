@@ -67,11 +67,11 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
       <motion.div
         whileHover={{ scale: 1.01, y: -2 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        className="relative overflow-hidden border border-blue-100/50 rounded-3xl bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 p-8 shadow-lg hover:shadow-2xl transition-all duration-500"
+        className="relative overflow-hidden border border-blue-100/50 rounded-3xl bg-linear-to-br from-white via-blue-50/30 to-indigo-50/40 p-8 shadow-lg hover:shadow-2xl transition-all duration-500"
       >
         {/* Animated Background Accents */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl opacity-50 -translate-y-32 translate-x-24 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-purple-300/15 to-pink-300/15 rounded-full blur-2xl opacity-40 translate-y-20 -translate-x-16"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl opacity-50 -translate-y-32 translate-x-24 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-linear-to-tr from-purple-300/15 to-pink-300/15 rounded-full blur-2xl opacity-40 translate-y-20 -translate-x-16"></div>
 
         {/* Content */}
         <div className="relative flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
@@ -87,7 +87,7 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
 
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
               Shift started at{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 {startDisplay}
               </span>
             </h2>
@@ -104,10 +104,10 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl blur-xl"></div>
+              <div className="absolute inset-0 bg-linear-to-r from-blue-500/20 to-indigo-500/20 rounded-2xl blur-xl"></div>
               <div className="relative bg-white/80 backdrop-blur-sm px-8 py-4 rounded-2xl border border-blue-200/50 shadow-xl">
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Work Duration</p>
-                <h2 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent tabular-nums">
+                <h2 className="text-xl md:text-3xl font-bold bg-linear-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent tabular-nums">
                   {duration}
                 </h2>
               </div>
