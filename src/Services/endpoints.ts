@@ -31,7 +31,8 @@ const endpoints = {
     hrLeaveAction: (id: string | number) => `api/leaves/${id}/action/`,
     tlLeaveAction: (id: string | number) => `api/leave/${id}/action/`,
     totalAttendance: "api/attendance/days/",
- 
+    announcements: "/api/announcements/",
+    notifications: "/api/notifications/",
 }
 
 export default endpoints

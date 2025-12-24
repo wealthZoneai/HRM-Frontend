@@ -1,111 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, X, Calendar, Bell, Info, Clock } from "lucide-react";
+import { getAnnouncements } from "../../../Services/apiHelpers";
 
-// --- Mock Data ---
-const ANNOUNCEMENTS: Announcement[] = [
-  {
-    id: 1,
-    day: "Mon",
-    date: "08",
-    month: "Oct",
-    year: "2024",
-    event: "Marketing Strategy",
-    time: "10:00 AM",
-    description:
-      "Quarterly review of campaign performance and brainstorming session for the upcoming holiday season strategies.",
-    location: "Executive Conference Room",
-    type: "Strategy",
-    priority: "High",
-  },
-  {
-    id: 2,
-    day: "Tue",
-    date: "09",
-    month: "Oct",
-    year: "2024",
-    event: "Design System Review",
-    time: "11:00 AM",
-    description:
-      "Critique session for the new mobile design prototypes. Please bring your updated Figma files.",
-    location: "Design Studio / Figma Live",
-    type: "Design",
-    priority: "Medium",
-  },
-  {
-    id: 3,
-    day: "Wed",
-    date: "10",
-    month: "Oct",
-    year: "2024",
-    event: "Engineering Sync",
-    time: "12:30 PM",
-    description:
-      "Full stack team sync to discuss API architecture changes and workflow division for the Q4 sprint.",
-    location: "Zoom Meeting Link",
-    type: "Dev",
-    priority: "High",
-  },
-  {
-    id: 4,
-    day: "Thu",
-    date: "11",
-    month: "Oct",
-    year: "2024",
-    event: "Client Demo: Alpha",
-    time: "04:00 PM",
-    description:
-      "Monthly product demo review with the Alpha Corp stakeholders. Casual business attire required.",
-    location: "Conference Room A",
-    type: "Client",
-    priority: "Low",
-  },
-];
-
-export default function Announcements() {
-  const [selected, setSelected] = useState<Announcement | null>(null);
-
-  return (
-    <div
-      className="max-h-[500px] bg-white flex items-center justify-center font-sans text-stone-800"
-    >
-      {/* Main Card Container */}
-      <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-6 md:px-8 border-b border-stone-100 flex justify-between items-end bg-white">
-          <div>
-            {/* <h2 className="text-sm font-bold tracking-widest uppercase text-blue-900/60 mb-1">Updates</h2> */}
-            <h1 className="text-2xl md:text-xl font-bold text-stone-900 tracking-tight">
-              Announcements
-            </h1>
-          </div>
-          <div className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-stone-50 text-stone-400 border border-stone-100">
-            <Bell size={18} />
-          </div>
-        </div>
-
-        {/* Scrollable List Area */}
-        <div className="max-h-[380px] overflow-y-auto custom-scrollbar">
-          <ul className="divide-y divide-stone-50">
-            {ANNOUNCEMENTS.map((item) => (
-              <ListItem
-                key={item.id}
-                item={item}
-                onClick={() => setSelected(item)}
-              />
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Detail Modal */}
-      <DetailModal selected={selected} onClose={() => setSelected(null)} />
-    </div>
-  );
-}
-
-// --- Sub-Components ---
-
+/* ----------------------------------------------------
+   TYPES
+---------------------------------------------------- */
 interface Announcement {
   id: number;
   day: string;
@@ -125,7 +25,43 @@ interface ListItemProps {
   onClick: () => void;
 }
 
-// Helper to get priority color styles
+interface DetailModalProps {
+  selected: Announcement | null;
+  onClose: () => void;
+}
+
+/* ----------------------------------------------------
+   API → UI FORMATTER
+---------------------------------------------------- */
+const formatAnnouncement = (item: any): Announcement => {
+  const d = new Date(item.date);
+
+  return {
+    id: item.id,
+    day: d.toLocaleDateString("en-US", { weekday: "short" }),
+    date: d.getDate().toString().padStart(2, "0"),
+    month: d.toLocaleDateString("en-US", { month: "short" }),
+    year: d.getFullYear().toString(),
+    event: item.title,
+    time: new Date(`1970-01-01T${item.time}`).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    description: item.description,
+    location: item.department || "Office",
+    type: item.department,
+    priority:
+      item.priority === "HIGH"
+        ? "High"
+        : item.priority === "MEDIUM"
+        ? "Medium"
+        : "Low",
+  };
+};
+
+/* ----------------------------------------------------
+   PRIORITY STYLES
+---------------------------------------------------- */
 const getPriorityStyles = (priority: string) => {
   switch (priority) {
     case "High":
@@ -139,6 +75,75 @@ const getPriorityStyles = (priority: string) => {
   }
 };
 
+/* ----------------------------------------------------
+   MAIN COMPONENT
+---------------------------------------------------- */
+export default function Announcements() {
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [selected, setSelected] = useState<Announcement | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const res = await getAnnouncements();
+        const formatted = res.data.data.map(formatAnnouncement);
+        setAnnouncements(formatted);
+      } catch (error) {
+        console.error("Failed to fetch announcements", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
+
+  return (
+    <div className="max-h-[500px] bg-white flex items-center justify-center font-sans text-stone-800">
+      <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
+        {/* Header */}
+        <div className="px-6 py-6 md:px-8 border-b border-stone-100 flex justify-between items-end">
+          <h1 className="text-2xl md:text-xl font-bold text-stone-900">
+            Announcements
+          </h1>
+          <div className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-stone-50 border border-stone-100 text-stone-400">
+            <Bell size={18} />
+          </div>
+        </div>
+
+        {/* List */}
+        <div className="max-h-[380px] overflow-y-auto custom-scrollbar">
+          <ul className="divide-y divide-stone-50">
+            {loading ? (
+              <li className="p-6 text-center text-stone-400">
+                Loading announcements…
+              </li>
+            ) : announcements.length === 0 ? (
+              <li className="p-6 text-center text-stone-400">
+                No announcements available
+              </li>
+            ) : (
+              announcements.map((item) => (
+                <ListItem
+                  key={item.id}
+                  item={item}
+                  onClick={() => setSelected(item)}
+                />
+              ))
+            )}
+          </ul>
+        </div>
+      </div>
+
+      <DetailModal selected={selected} onClose={() => setSelected(null)} />
+    </div>
+  );
+}
+
+/* ----------------------------------------------------
+   LIST ITEM
+---------------------------------------------------- */
 function ListItem({ item, onClick }: ListItemProps) {
   const priorityStyle = getPriorityStyles(item.priority);
 
@@ -148,156 +153,97 @@ function ListItem({ item, onClick }: ListItemProps) {
       onClick={onClick}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group flex items-center gap-4 p-6 md:px-8 hover:bg-blue-50/30 cursor-pointer transition-all duration-300"
+      className="group flex items-center gap-4 p-6 md:px-8 hover:bg-blue-50/30 cursor-pointer transition-all"
     >
-      {/* Date Component - Classic Typography */}
-      <div className="flex flex-col items-center justify-center w-14 min-w-14">
-        <span className="text-xs font-bold tracking-wider text-stone-400 uppercase group-hover:text-blue-400 transition-colors">
+      <div className="flex flex-col items-center w-14">
+        <span className="text-xs font-bold text-stone-400 uppercase">
           {item.day}
         </span>
-        <span className="text-2xl font-bold text-stone-800 group-hover:text-blue-900 transition-colors">
+        <span className="text-2xl font-bold text-stone-800">
           {item.date}
         </span>
       </div>
 
-      {/* Vertical Divider */}
-      <div className="h-10 w-px bg-stone-200/60 hidden md:block mx-2"></div>
-
-      {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="flex justify-between items-start">
-          <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
-            {item.event}
-          </h3>
-          {/* Mobile Priority Badge (or if you want it always visible on right) */}
-          <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border ${priorityStyle} whitespace-nowrap`}>
+        <div className="flex justify-between">
+          <h3 className="text-lg font-medium truncate">{item.event}</h3>
+          <span
+            className={`hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${priorityStyle}`}
+          >
             {item.priority}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 mt-1 text-sm text-stone-500">
-          <span className="flex items-center gap-1 group-hover:text-blue-800/70 transition-colors">
-            <Clock size={14} className="text-stone-400" />
-            <span className="truncate">{item.time}</span>
-          </span>
-          <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-stone-300"></span>
-          <span className="hidden sm:flex items-center gap-1 truncate group-hover:text-blue-800/70 transition-colors">
-            {item.type}
-          </span>
-          {/* Very Small Screen Priority Fallback */}
-          <span className={`sm:hidden inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border ${priorityStyle}`}>
-            {item.priority}
-          </span>
+        <div className="flex items-center gap-2 text-sm text-stone-500 mt-1">
+          <Clock size={14} />
+          {item.time}
+          <span className="hidden sm:inline">• {item.type}</span>
         </div>
       </div>
 
-      {/* Action Icon */}
-      <div className="text-stone-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 pl-2">
-        <Info size={20} />
-      </div>
+      <Info size={20} className="text-stone-300 group-hover:text-blue-600" />
     </motion.li>
   );
 }
 
-interface DetailModalProps {
-  selected: Announcement | null;
-  onClose: () => void;
-}
-
+/* ----------------------------------------------------
+   DETAIL MODAL
+---------------------------------------------------- */
 function DetailModal({ selected, onClose }: DetailModalProps) {
   if (!selected) return null;
   const priorityStyle = getPriorityStyles(selected.priority);
 
   return (
     <AnimatePresence>
-      {selected && (
-        <>
-          {/* Backdrop */}
-          <div
-            onClick={onClose}
-            className="fixed inset-0 bg-stone-900/20 backdrop-blur-sm z-40"
-          />
+      <div className="fixed inset-0 bg-stone-900/20 backdrop-blur-sm z-40" onClick={onClose} />
 
-          {/* Modal Card */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-            <motion.div
-              layoutId={`card-${selected.id}`}
-              className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
-            >
-              {/* Modal Header Image/Pattern Placeholder */}
-              <div className="h-24 bg-linear-to-r from-stone-100 to-stone-200 flex items-center justify-between px-6 relative">
-                <div className="flex flex-col">
-                  <span className="text-4xl font-bold text-stone-400 opacity-50">
-                    {selected.date}
-                  </span>
-                  <span className="text-xs uppercase tracking-widest text-stone-500 font-bold">
-                    {selected.month}, {selected.year}
-                  </span>
-                </div>
-                <button
-                  onClick={onClose}
-                  className="bg-white/50 hover:bg-white p-2 rounded-full transition-colors text-stone-600 hover:text-blue-900"
-                >
-                  <X size={20} />
-                </button>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <motion.div
+          layoutId={`card-${selected.id}`}
+          className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+        >
+          <div className="h-24 bg-linear-to-r from-stone-100 to-stone-200 flex justify-between p-6">
+            <div>
+              <div className="text-4xl font-bold text-stone-400">
+                {selected.date}
               </div>
-
-              {/* Modal Content */}
-              <div className="p-6 md:p-8">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-xs font-bold uppercase tracking-wider text-blue-800">
-                      {selected.type}
-                    </span>
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${priorityStyle}`}>
-                      {selected.priority} Priority
-                    </span>
-                  </div>
-
-                  <h2 className="text-2xl font-bold text-stone-900 mb-4 leading-tight">
-                    {selected.event}
-                  </h2>
-
-                  <p className="text-stone-600 leading-relaxed mb-8">
-                    {selected.description}
-                  </p>
-
-                  <div className="space-y-4 border-t border-stone-100 pt-6">
-                    <div className="flex items-start gap-3">
-                      <Calendar className="text-stone-400 mt-0.5" size={18} />
-                      <div>
-                        <p className="text-sm font-bold text-stone-900">
-                          Date & Time
-                        </p>
-                        <p className="text-sm text-stone-500">
-                          {selected.day}, {selected.month} {selected.date}, {selected.year} at{" "}
-                          {selected.time}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <MapPin className="text-stone-400 mt-0.5" size={18} />
-                      <div>
-                        <p className="text-sm font-bold text-stone-900">
-                          Location
-                        </p>
-                        <p className="text-sm text-stone-500">
-                          {selected.location}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+              <div className="text-xs uppercase font-bold">
+                {selected.month}, {selected.year}
               </div>
-            </motion.div>
+            </div>
+            <button onClick={onClose}>
+              <X />
+            </button>
           </div>
-        </>
-      )}
+
+          <div className="p-6">
+            <div className="flex gap-2 mb-3">
+              <span className="px-3 py-1 text-xs font-bold bg-blue-50 text-blue-800 rounded-full">
+                {selected.type}
+              </span>
+              <span
+                className={`px-3 py-1 text-xs font-bold rounded-full border ${priorityStyle}`}
+              >
+                {selected.priority} Priority
+              </span>
+            </div>
+
+            <h2 className="text-2xl font-bold mb-4">{selected.event}</h2>
+            <p className="text-stone-600 mb-6">{selected.description}</p>
+
+            <div className="space-y-4 border-t pt-4">
+              <div className="flex gap-3">
+                <Calendar size={18} />
+                {selected.day}, {selected.month} {selected.date} at {selected.time}
+              </div>
+              <div className="flex gap-3">
+                <MapPin size={18} />
+                {selected.location}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
 }

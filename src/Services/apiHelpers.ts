@@ -110,6 +110,18 @@ export const timeStringToSeconds = (time: string | null): number => {
 };
 
 
+export const getAnnouncements = () => {
+  return server.get(endpoints.announcements, {
+    requiresAuth: true, // set false if backend does not require token
+  });
+};
+
+export const getNotifications = () => {
+  return server.get(endpoints.notifications, {
+    requiresAuth: true, 
+  });
+};
+
 
 
 
