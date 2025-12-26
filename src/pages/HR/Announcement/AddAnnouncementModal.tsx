@@ -92,7 +92,7 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) =>
             <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-white animate-zoomIn max-h-[90vh] overflow-y-auto custom-scrollbar">
 
                 {/* Header Gradient */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 text-white flex justify-between items-center sticky top-0 z-10">
+                <div className="bg-linear-to-r from-blue-600 to-indigo-600 p-5 text-white flex justify-between items-center sticky top-0 z-10">
                     <div>
                         <h2 className="text-2xl font-semibold">Add New Announcement</h2>
                         <p className="text-sm opacity-80">Send updates to the selected departments</p>

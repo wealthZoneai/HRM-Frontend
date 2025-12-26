@@ -26,6 +26,21 @@ export function GetMyProfile() {
   return server.get(endpoints.myProfile, { requiresAuth: true });
 }
 
+export function UpdateMyProfileImage(formData: FormData) {
+  return server.patch(endpoints.myProfileContact, formData, {
+    requiresAuth: true,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+export function UpdateContactDetails(body: any) {
+  return server.patch(endpoints.myProfileContact, body, {
+    requiresAuth: true,
+  });
+}
+
 export function ClockIn() {
   return server.post(endpoints.clockIn, {}, { requiresAuth: true });
 }
@@ -118,7 +133,23 @@ export const getAnnouncements = () => {
 
 export const getNotifications = () => {
   return server.get(endpoints.notifications, {
-    requiresAuth: true, 
+    requiresAuth: true,
+  });
+};
+
+export const getCalendarEvents = (year?: number, month?: number) => {
+  let url = endpoints.calendar;
+  const params = new URLSearchParams();
+  if (year) params.append('year', year.toString());
+  if (month) params.append('month', month.toString());
+
+  const queryString = params.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
+
+  return server.get(url, {
+    requiresAuth: true,
   });
 };
 

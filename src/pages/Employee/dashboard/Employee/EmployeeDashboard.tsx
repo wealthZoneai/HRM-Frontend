@@ -57,10 +57,14 @@ export default function EmployeeDashboard() {
   /* ---------------- HELPERS ---------------- */
   const formatTime = (isoString: string | null) => {
     if (!isoString) return "--:--";
-    return new Date(isoString).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    try {
+      return new Date(isoString).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (e) {
+      return "--:--";
+    }
   };
 
   const displayClockIn = clockInTime ? formatTime(clockInTime) : "09:00 AM";
@@ -84,6 +88,10 @@ export default function EmployeeDashboard() {
     }
   };
 
+  // Determine if buttons should be disabled based on persisted state
+  const isClockInDisabled = !!clockInTime;
+  const isClockOutDisabled = !clockInTime || !!clockOutTime;
+
   return (
     <div className="space-y-6">
 
@@ -95,7 +103,7 @@ export default function EmployeeDashboard() {
           actionLabel="Clock in"
           onAction={handleClockIn}
           loading={loading && status !== "Working" && status !== "Completed"}
-          disabled={!!clockInTime}
+          disabled={isClockInDisabled}
         />
 
         <TimeCard
@@ -104,10 +112,9 @@ export default function EmployeeDashboard() {
           actionLabel="Clock out"
           onAction={handleClockOut}
           loading={loading && status === "Working"}
-          disabled={!clockInTime || !!clockOutTime}
+          disabled={isClockOutDisabled}
         />
 
-        {/* ✅ REAL API VALUE HERE */}
         <AttendanceStat
           title="Monthly Attendance"
           value={monthlyAttendance}

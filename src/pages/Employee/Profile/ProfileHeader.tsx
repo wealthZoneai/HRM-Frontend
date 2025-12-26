@@ -1,8 +1,14 @@
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, IdCard, MapPin, Calendar } from 'lucide-react';
+import { Briefcase, IdCard, MapPin, Calendar, Camera } from 'lucide-react';
 import Pic from '../../../assets/my_pic.jpg';
+import { UpdateMyProfileImage } from '../../../Services/apiHelpers';
+import { showSuccess, showError } from '../../../utils/toast';
 
 const ProfileHeader = ({ data }: { data?: any }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
   // If data is missing (still loading or error), can show skeleton or default
   // For now, using optional chaining fallback
 
@@ -22,13 +28,49 @@ const ProfileHeader = ({ data }: { data?: any }) => {
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
 
           {/* Profile Image */}
-          <div className="relative shrink-0 mx-auto sm:mx-0">
+          {/* Profile Image */}
+          <div className="relative shrink-0 mx-auto sm:mx-0 group">
             <img
               src={data?.protected_profile_photo_url ? `http://127.0.0.1:8000${data.protected_profile_photo_url}` : Pic}
               alt="Profile"
               className="h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-gray-50 shadow-sm object-cover bg-white"
             />
-            <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full border-2 border-white bg-green-500 shadow-sm" />
+            {/* Online Status Indicator */}
+            <span className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full border-2 border-white bg-green-500 shadow-sm z-10" />
+
+            {/* Upload Overlay */}
+            <div
+              className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-20"
+              onClick={() => !uploading && fileInputRef.current?.click()}
+            >
+              <Camera className="text-white w-6 h-6 sm:w-8 sm:h-8" />
+            </div>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setUploading(true);
+                  const formData = new FormData();
+                  formData.append('profile_photo', file);
+
+                  try {
+                    await UpdateMyProfileImage(formData);
+                    showSuccess("Profile photo updated successfully! Please refresh.");
+                    window.location.reload();
+                  } catch (err: any) {
+                    showError(err.response?.data?.detail || "Failed to update profile photo.");
+                    console.error(err);
+                  } finally {
+                    setUploading(false);
+                  }
+                }
+              }}
+            />
           </div>
 
           {/* Profile Info */}

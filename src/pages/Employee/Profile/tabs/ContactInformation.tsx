@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Pencil, X, Check, } from "lucide-react";
+import { UpdateContactDetails } from "../../../../Services/apiHelpers";
+import { showSuccess, showError } from "../../../../utils/toast";
 
 // Existing component for display mode
 const UnderlineField = ({ label, value }: { label: string; value: string }) => (
@@ -19,14 +21,16 @@ const EditLineField = ({
     type = "text",
     prefix, // New prop for prefix
     disabled = false,
+    options,
 }: {
     label: string;
     name: string;
     value: string;
     type?: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
     prefix?: string; // Optional prefix
     disabled?: boolean;
+    options?: string[];
 }) => (
     <div className="space-y-1">
         <label className={`text-sm font-medium ${disabled ? "text-gray-400" : "text-gray-700"}`}>{label}</label>
@@ -36,14 +40,31 @@ const EditLineField = ({
                     {prefix}
                 </span>
             )}
-            <input
-                type={type}
-                name={name}
-                value={value}
-                onChange={onChange}
-                disabled={disabled}
-                className={`w-full py-1 focus:outline-none bg-transparent ${disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"}`}
-            />
+            {options ? (
+                <select
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    disabled={disabled}
+                    className={`w-full py-1 focus:outline-none bg-transparent ${disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"}`}
+                >
+                    <option value="" disabled>Select {label}</option>
+                    {options.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
+            ) : (
+                <input
+                    type={type}
+                    name={name}
+                    value={value}
+                    onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
+                    disabled={disabled}
+                    className={`w-full py-1 focus:outline-none bg-transparent ${disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"}`}
+                />
+            )}
         </div>
     </div>
 );
@@ -59,7 +80,7 @@ const PhoneNumberField = ({
     label: string;
     name: string;
     value: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
     disabled?: boolean;
 }) => (
     <EditLineField
@@ -240,8 +261,24 @@ const ProfileDetails = ({ allowFullEdit = false, data }: { allowFullEdit?: boole
         // Middle Name and Blood Group have no special validation (just text inputs)
 
         // If all validation passes
-        setIsEditing(false);
-        console.log("Data saved:", data);
+
+        const payload = {
+            phone_number: dataState.phone,
+            alternate_number: dataState.alternativeNumber,
+            marital_status: dataState.maritalStatus,
+            // Add other fields only if allowed to edit full profile, but for now specific fields
+        };
+
+        UpdateContactDetails(payload)
+            .then(() => {
+                showSuccess("Profile updated successfully");
+                setIsEditing(false);
+                setBackup(dataState);
+            })
+            .catch((err) => {
+                console.error(err);
+                showError("Failed to update profile");
+            });
     };
 
     return (
@@ -347,12 +384,14 @@ const ProfileDetails = ({ allowFullEdit = false, data }: { allowFullEdit?: boole
                                 <EditLineField label="Gender" name="gender" value={dataState.gender} disabled={true} />
                             )}
 
-                            {/* MARITAL STATUS */}
-                            {allowFullEdit ? (
-                                <EditLineField label="Marital Status" name="maritalStatus" value={dataState.maritalStatus} onChange={handleChange} />
-                            ) : (
-                                <EditLineField label="Marital Status" name="maritalStatus" value={dataState.maritalStatus} disabled={true} />
-                            )}
+                            {/* MARITAL STATUS (Always Editable now) */}
+                            <EditLineField
+                                label="Marital Status"
+                                name="maritalStatus"
+                                value={dataState.maritalStatus}
+                                onChange={handleChange}
+                                options={["Single", "Married", "Divorced", "Widowed"]}
+                            />
 
 
 

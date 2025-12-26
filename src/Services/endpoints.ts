@@ -16,6 +16,7 @@ const endpoints = {
     forgotPassword: 'api/forgot-password/',
     resetPassword: 'api/reset-password/',
     myProfile: 'api/my-profile/',
+    myProfileContact: 'api/my-profile/contact/',
     refresh: 'api/refresh/',
 
     //attendance
@@ -33,6 +34,7 @@ const endpoints = {
     totalAttendance: "api/attendance/days/",
     announcements: "/api/announcements/",
     notifications: "/api/notifications/",
+    calendar: "api/calendar/events/",
 }
 
 export default endpoints

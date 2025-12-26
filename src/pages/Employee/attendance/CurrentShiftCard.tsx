@@ -25,33 +25,40 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
   };
 
   useEffect(() => {
-    // Timer logic
-    const updateTimer = () => {
-      const now = new Date();
+    let timer: any;
 
-      if (status === 'Working' && clockInTime) {
-        const start = new Date(clockInTime);
-        const diff = now.getTime() - start.getTime();
-
-        if (diff > 0) {
-          const hours = Math.floor(diff / (1000 * 60 * 60));
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-          setDuration(
-            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-          );
-        }
-      } else if (status === 'Completed') {
-        setDuration(formatTotalHours(totalHours));
-      } else {
+    if (status === 'Working' && clockInTime) {
+      const parsedClockInTime = new Date(clockInTime);
+      if (isNaN(parsedClockInTime.getTime())) {
+        console.error("Invalid clockInTime received:", clockInTime);
         setDuration("00:00:00");
-      }
-    };
+      } else {
+        const updateTimer = () => {
+          const now = new Date();
+          const diff = now.getTime() - parsedClockInTime.getTime();
 
-    updateTimer(); // Initial call
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
+          if (diff > 0) {
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            setDuration(
+              `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+            );
+          }
+        };
+        updateTimer();
+        timer = setInterval(updateTimer, 1000);
+      }
+    } else if (status === 'Completed' && totalHours !== null) {
+      setDuration(formatTotalHours(totalHours));
+    } else {
+      setDuration("00:00:00");
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
   }, [status, clockInTime, totalHours]);
 
   const submitTime = "05:30:12 PM"; // Placeholder for modal

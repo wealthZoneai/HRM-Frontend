@@ -1,76 +1,17 @@
-import { useState } from "react";
-import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, User, FileText, Info } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, User, FileText, Info, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-// Enhanced data with detailed information
-const data = [
-  {
-    id: 1,
-    type: "Sick Leave",
-    time: "2 hrs ago",
-    status: "Pending",
-    date: "Oct 24 - Oct 25",
-    startDate: "October 24, 2025",
-    endDate: "October 25, 2025",
-    days: 2,
-    reason: "Suffering from viral fever and need rest as per doctor's advice.",
-    appliedOn: "October 23, 2025",
-    appliedBy: "John Doe",
-    employeeId: "EMP001"
-  },
-  {
-    id: 2,
-    type: "Annual Leave",
-    time: "13 days ago",
-    status: "Approved",
-    date: "Nov 01 - Nov 10",
-    startDate: "November 01, 2025",
-    endDate: "November 10, 2025",
-    days: 10,
-    reason: "Planning for family vacation and personal time off.",
-    appliedOn: "October 15, 2025",
-    appliedBy: "John Doe",
-    employeeId: "EMP001",
-    approvedBy: "Jane Smith (HR Manager)",
-    approvedOn: "October 16, 2025"
-  },
-  {
-    id: 3,
-    type: "Remote Work",
-    time: "2 days ago",
-    status: "Rejected",
-    date: "Oct 12",
-    startDate: "October 12, 2025",
-    endDate: "October 12, 2025",
-    days: 1,
-    reason: "Need to work from home due to personal commitments.",
-    appliedOn: "October 10, 2025",
-    appliedBy: "John Doe",
-    employeeId: "EMP001",
-    rejectedBy: "Jane Smith (HR Manager)",
-    rejectedOn: "October 11, 2025",
-    rejectionReason: "Team meeting scheduled on this date requiring in-person attendance."
-  },
-  {
-    id: 4,
-    type: "Sick Leave",
-    time: "1 month ago",
-    status: "Approved",
-    date: "Sep 15",
-    startDate: "September 15, 2025",
-    endDate: "September 15, 2025",
-    days: 1,
-    reason: "Medical checkup and diagnostic tests.",
-    appliedOn: "September 14, 2025",
-    appliedBy: "John Doe",
-    employeeId: "EMP001",
-    approvedBy: "Jane Smith (HR Manager)",
-    approvedOn: "September 14, 2025"
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../store";
+import { fetchMyLeaves } from "../../../store/slice/leaveSlice";
+import { createPortal } from "react-dom";
 
 const STATUS_CONFIG = {
   Pending: {
+    style: "bg-amber-50 text-amber-700 border-amber-200",
+    icon: AlertCircle
+  },
+  pending: { // Handle lowercase variations from backend
     style: "bg-amber-50 text-amber-700 border-amber-200",
     icon: AlertCircle
   },
@@ -78,27 +19,66 @@ const STATUS_CONFIG = {
     style: "bg-emerald-50 text-emerald-700 border-emerald-200",
     icon: CheckCircle2
   },
+  approved: {
+    style: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    icon: CheckCircle2
+  },
   Rejected: {
+    style: "bg-rose-50 text-rose-700 border-rose-200",
+    icon: XCircle
+  },
+  rejected: {
     style: "bg-rose-50 text-rose-700 border-rose-200",
     icon: XCircle
   },
 };
 
-import { createPortal } from "react-dom";
-
-// ... (imports remain the same)
-
-// ... (data and STATUS_CONFIG remain the same)
+const getStatusConfig = (status: string) => {
+  return STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || {
+    style: "bg-stone-50 text-stone-700 border-stone-200",
+    icon: Info
+  };
+};
 
 export default function LeaveRequests() {
-  const [selectedLeave, setSelectedLeave] = useState<typeof data[0] | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const { leaves, loading, error } = useSelector((state: RootState) => state.leave);
+  const [selectedLeave, setSelectedLeave] = useState<any | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchMyLeaves());
+  }, [dispatch]);
+
+  const formatDateShort = (dateStr: string) => {
+    if (!dateStr) return "";
+    return new Date(dateStr).toLocaleDateString([], { month: 'short', day: 'numeric' });
+  };
+
+  const formatDateLong = (dateStr: string) => {
+    if (!dateStr) return "";
+    return new Date(dateStr).toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+
+  const getTimeAgo = (dateStr: string) => {
+    if (!dateStr) return "";
+    const now = new Date();
+    const past = new Date(dateStr);
+    const diffInMs = now.getTime() - past.getTime();
+    const diffInMins = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMins / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInDays > 0) return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
+    if (diffInHours > 0) return `${diffInHours} ${diffInHours === 1 ? 'hr' : 'hrs'} ago`;
+    if (diffInMins > 0) return `${diffInMins} ${diffInMins === 1 ? 'min' : 'mins'} ago`;
+    return "just now";
+  };
 
   return (
-    <div className="max-h-[700px] bg-white flex items-center justify-center font-sans text-stone-800">
+    <div className="max-h-[700px] h-full bg-white flex items-center justify-center font-sans text-stone-800">
 
       {/* Main Card */}
-      <div className="h-full w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
-        {/* ... (Header and List Section remain the same) ... */}
+      <div className="h-full w-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-6 pt-8 pb-6 flex justify-between items-start">
           <div>
@@ -107,9 +87,20 @@ export default function LeaveRequests() {
         </div>
 
         {/* List Section */}
-        <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="space-y-1 px-4 pb-4">
-            {data.length === 0 ? (
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-4" />
+                <p className="text-stone-500 font-medium">Loading leaves...</p>
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                <AlertCircle size={32} className="text-rose-500 mb-4" />
+                <h3 className="text-lg font-medium text-stone-900">Failed to load leaves</h3>
+                <p className="text-sm text-stone-500 mt-1">{error}</p>
+              </div>
+            ) : leaves.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                 <div className="p-4 rounded-full bg-stone-50 mb-4">
                   <CalendarDays size={32} className="text-stone-300" />
@@ -118,8 +109,9 @@ export default function LeaveRequests() {
                 <p className="text-sm text-stone-500 mt-1">You haven't applied for any leaves recently.</p>
               </div>
             ) : (
-              data.map((req) => {
-                const StatusIcon = STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].icon;
+              leaves.map((req) => {
+                const config = getStatusConfig(req.status);
+                const StatusIcon = config.icon;
 
                 return (
                   <div
@@ -127,29 +119,31 @@ export default function LeaveRequests() {
                     className="group flex items-center justify-between p-4 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-stone-100 transition-all duration-300 cursor-default"
                   >
                     {/* Left Info */}
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-xl bg-stone-50 group-hover:bg-white group-hover:shadow-sm transition-all text-stone-400 group-hover:text-blue-900">
+                    <div className="flex items-start gap-4 flex-1 min-w-0">
+                      <div className="p-3 rounded-xl bg-stone-50 group-hover:bg-white group-hover:shadow-sm transition-all text-stone-400 group-hover:text-blue-900 shrink-0">
                         <CalendarDays size={20} />
                       </div>
 
-                      <div>
-                        <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
-                          {req.type}
+                      <div className="min-w-0">
+                        <h3 className="text-lg font-medium text-stone-900 truncate group-hover:text-blue-900 transition-colors">
+                          {req.leave_type}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs font-medium text-stone-500">{req.date}</span>
-                          <span className="w-1 h-1 rounded-full bg-stone-300"></span>
-                          <div className="flex items-center text-stone-400 text-xs">
-                            <Clock className="w-3 h-3 mr-1" />
-                            <span>{req.time}</span>
+                          <span className="text-xs font-medium text-stone-500 whitespace-nowrap">
+                            {formatDateShort(req.start_date)} - {formatDateShort(req.end_date)}
+                          </span>
+                          <span className="w-1 h-1 rounded-full bg-stone-300 shrink-0"></span>
+                          <div className="flex items-center text-stone-400 text-xs truncate">
+                            <Clock className="w-3 h-3 mr-1 shrink-0" />
+                            <span>{req.created_at ? getTimeAgo(req.created_at) : "---"}</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
                     {/* Status Badge & Info */}
-                    <div className="flex items-center gap-3">
-                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold tracking-wide uppercase ${STATUS_CONFIG[req.status as keyof typeof STATUS_CONFIG].style}`}>
+                    <div className="flex items-center gap-3 shrink-0 ml-4">
+                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-bold tracking-wide uppercase ${config.style}`}>
                         <StatusIcon size={12} strokeWidth={3} />
                         {req.status}
                       </div>
@@ -159,7 +153,7 @@ export default function LeaveRequests() {
                           e.stopPropagation();
                           setSelectedLeave(req);
                         }}
-                        className="p-2 text-stone-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300"
+                        className="p-2 text-stone-300 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 whitespace-nowrap"
                       >
                         <Info size={20} />
                       </button>
@@ -179,7 +173,7 @@ export default function LeaveRequests() {
             <>
               {/* Backdrop */}
               <motion.div
-                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100"
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -188,7 +182,7 @@ export default function LeaveRequests() {
 
               {/* Modal */}
               <motion.div
-                className="fixed top-1/2 left-1/2 z-101 w-[95%] max-w-2xl bg-white rounded-2xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2"
+                className="fixed top-1/2 left-1/2 z-[101] w-[95%] max-w-2xl bg-white rounded-2xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
@@ -196,11 +190,11 @@ export default function LeaveRequests() {
                 {/* Modal Header */}
                 <div className="flex justify-between items-start p-6 border-b border-stone-100">
                   <div>
-                    <h2 className="text-2xl font-bold text-stone-900">{selectedLeave.type}</h2>
-                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold tracking-wide uppercase mt-2 ${STATUS_CONFIG[selectedLeave.status as keyof typeof STATUS_CONFIG].style}`}>
-                      {STATUS_CONFIG[selectedLeave.status as keyof typeof STATUS_CONFIG].icon && (
+                    <h2 className="text-2xl font-bold text-stone-900">{selectedLeave.leave_type}</h2>
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-bold tracking-wide uppercase mt-2 ${getStatusConfig(selectedLeave.status).style}`}>
+                      {getStatusConfig(selectedLeave.status).icon && (
                         (() => {
-                          const Icon = STATUS_CONFIG[selectedLeave.status as keyof typeof STATUS_CONFIG].icon;
+                          const Icon = getStatusConfig(selectedLeave.status).icon;
                           return <Icon size={12} strokeWidth={3} />;
                         })()
                       )}
@@ -216,32 +210,20 @@ export default function LeaveRequests() {
                 </div>
 
                 {/* Modal Content */}
-                <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
-                  {/* Applicant Info */}
-                  <div className="flex items-start gap-3 p-4 bg-stone-50 rounded-xl">
-                    <div className="p-2 bg-white rounded-lg">
-                      <User size={20} className="text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">Applicant</p>
-                      <p className="text-sm font-bold text-stone-900 mt-0.5">{selectedLeave.appliedBy}</p>
-                      <p className="text-xs text-stone-500 mt-0.5">ID: {selectedLeave.employeeId}</p>
-                    </div>
-                  </div>
-
+                <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
                   {/* Leave Duration */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                       <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">Start Date</p>
-                      <p className="text-sm font-bold text-blue-900 mt-1">{selectedLeave.startDate}</p>
+                      <p className="text-sm font-bold text-blue-900 mt-1">{formatDateLong(selectedLeave.start_date)}</p>
                     </div>
                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                       <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">End Date</p>
-                      <p className="text-sm font-bold text-blue-900 mt-1">{selectedLeave.endDate}</p>
+                      <p className="text-sm font-bold text-blue-900 mt-1">{formatDateLong(selectedLeave.end_date)}</p>
                     </div>
                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                       <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">Duration</p>
-                      <p className="text-sm font-bold text-blue-900 mt-1">{selectedLeave.days} {selectedLeave.days > 1 ? 'Days' : 'Day'}</p>
+                      <p className="text-sm font-bold text-blue-900 mt-1">{selectedLeave.days} {Number(selectedLeave.days) > 1 ? 'Days' : 'Day'}</p>
                     </div>
                   </div>
 
@@ -249,9 +231,9 @@ export default function LeaveRequests() {
                   <div className="p-4 bg-stone-50 rounded-xl">
                     <div className="flex items-center gap-2 mb-2">
                       <FileText size={16} className="text-stone-600" />
-                      <p className="text-xs font-medium text-stone-600 uppercase tracking-wide">Detailed Description</p>
+                      <p className="text-xs font-medium text-stone-600 uppercase tracking-wide">Detailed Reason</p>
                     </div>
-                    <p className="text-sm text-stone-700 leading-relaxed">{selectedLeave.reason}</p>
+                    <p className="text-sm text-stone-700 leading-relaxed">{selectedLeave.reason || "No reason provided."}</p>
                   </div>
 
                   {/* Application Details */}
@@ -259,38 +241,10 @@ export default function LeaveRequests() {
                     <p className="text-xs font-medium text-stone-600 uppercase tracking-wide mb-3">Application Details</p>
                     <div className="flex justify-between">
                       <span className="text-xs text-stone-500">Applied On:</span>
-                      <span className="text-xs font-medium text-stone-900">{selectedLeave.appliedOn}</span>
+                      <span className="text-xs font-medium text-stone-900">{selectedLeave.created_at ? formatDateLong(selectedLeave.created_at) : "---"}</span>
                     </div>
-                    {selectedLeave.status === "Approved" && selectedLeave.approvedBy && (
-                      <>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-stone-500">Approved By:</span>
-                          <span className="text-xs font-medium text-emerald-700">{selectedLeave.approvedBy}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-stone-500">Approved On:</span>
-                          <span className="text-xs font-medium text-stone-900">{selectedLeave.approvedOn}</span>
-                        </div>
-                      </>
-                    )}
-                    {selectedLeave.status === "Rejected" && selectedLeave.rejectedBy && (
-                      <>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-stone-500">Rejected By:</span>
-                          <span className="text-xs font-medium text-rose-700">{selectedLeave.rejectedBy}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-stone-500">Rejected On:</span>
-                          <span className="text-xs font-medium text-stone-900">{selectedLeave.rejectedOn}</span>
-                        </div>
-                        {selectedLeave.rejectionReason && (
-                          <div className="mt-3 p-3 bg-rose-50 border border-rose-100 rounded-lg">
-                            <p className="text-xs font-medium text-rose-600 mb-1">Rejection Reason:</p>
-                            <p className="text-xs text-rose-700">{selectedLeave.rejectionReason}</p>
-                          </div>
-                        )}
-                      </>
-                    )}
+                    {/* Note: The backend schema for MyLeaves might not return HR details in the same way as HRLeaves. 
+                        Usually, an employee sees their own leave status. If HR adds remarks, we could show them here. */}
                   </div>
                 </div>
 

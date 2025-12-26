@@ -38,7 +38,7 @@ export default function CalendarGrid({ month, year, events }: Props) {
       <div className="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-xl overflow-hidden shadow-sm">
         {grid.map((day, i) => {
           const dateKey = day ? formatDate(year, month, day) : null;
-          const dayEvents = events.filter((e) => e.date === dateKey);
+          const dayEvents = Array.isArray(events) ? events.filter((e) => e.date === dateKey) : [];
 
           return (
             <CalendarDayCell

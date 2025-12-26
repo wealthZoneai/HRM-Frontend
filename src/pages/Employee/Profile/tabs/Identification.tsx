@@ -49,12 +49,6 @@ const documents: DocumentType[] = [
         requiresBack: false
     },
     {
-        id: "idcard",
-        label: "ID Card",
-        requiresBack: false,
-        isOptional: true
-    },
-    {
         id: "passport",
         label: "Passport",
         requiresBack: true,
@@ -272,7 +266,6 @@ const Identification = ({ data }: { data?: any }) => {
     const [docState, setDocState] = useState<AllDocumentsState>({
         aadhar: { front: null, back: null },
         pan: { front: null, back: null },
-        idcard: { front: null, back: null },
         passport: { front: null, back: null },
     });
 
@@ -288,10 +281,6 @@ const Identification = ({ data }: { data?: any }) => {
                 },
                 pan: {
                     front: createDoc(data.protected_pan_image_url, "PAN Front"),
-                    back: null
-                },
-                idcard: {
-                    front: createDoc(data.protected_id_image_url, "ID Card Front"),
                     back: null
                 },
                 passport: {
