@@ -15,6 +15,8 @@ import {
 import Logo from "../../assets/white_logo.png";
 import HrTopbar from "../../components/HrTopbar";
 import LogoutModal from "../../components/LogoutModal";
+import { useDispatch } from "react-redux";
+import { clearAttendance } from "../../store/slice/attendanceSlice";
 
 interface HRLayoutProps {
   children: React.ReactNode;
@@ -22,6 +24,7 @@ interface HRLayoutProps {
 
 export default function HRLayout({ children }: HRLayoutProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const [openLogout, setOpenLogout] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -150,8 +153,21 @@ export default function HRLayout({ children }: HRLayoutProps) {
         isOpen={openLogout}
         onClose={() => setOpenLogout(false)}
         onConfirm={() => {
+          // Clear all auth & user data
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
           localStorage.removeItem("authToken");
           localStorage.removeItem("role");
+          localStorage.removeItem("userName");
+          localStorage.removeItem("userId");
+          localStorage.removeItem("empId");
+          localStorage.removeItem("attendance_state");
+
+          // Dispatch Redux action
+          dispatch(clearAttendance());
+
           navigate("/login");
           setIsSidebarOpen(false);
         }}

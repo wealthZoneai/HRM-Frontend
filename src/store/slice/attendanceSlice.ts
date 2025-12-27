@@ -9,6 +9,7 @@ interface AttendanceState {
     loading: boolean;
     error: string | null;
     lastUpdated: string | null; // ISO Date string (YYYY-MM-DD)
+    userId: string | null; // Added to scope state to specific user
 }
 
 // ------------------- HELPERS ------------------- //
@@ -33,30 +34,34 @@ const toFullISO = (timeStr: string | null) => {
 
 // ------------------- LOCAL STORAGE ------------------- //
 
-const loadState = () => {
+const loadState = (): Partial<AttendanceState> => {
     try {
         const serializedState = localStorage.getItem('attendance_state');
-        if (serializedState === null) {
+        const currentUserId = localStorage.getItem('userId');
+
+        if (serializedState === null || !currentUserId) {
             return {
                 clockInTime: null,
                 clockOutTime: null,
                 totalHours: null,
                 status: 'Not Started' as const,
-                lastUpdated: null
+                lastUpdated: null,
+                userId: currentUserId
             };
         }
         const state = JSON.parse(serializedState);
         const today = getTodayKey();
 
-        // If the stored data is from a different day, reset it
-        if (state.lastUpdated !== today) {
+        // If the stored data is from a different day OR different user, reset it
+        if (state.lastUpdated !== today || state.userId !== currentUserId) {
             localStorage.removeItem('attendance_state');
             return {
                 clockInTime: null,
                 clockOutTime: null,
                 totalHours: null,
                 status: 'Not Started' as const,
-                lastUpdated: today
+                lastUpdated: today,
+                userId: currentUserId
             };
         }
 
@@ -67,7 +72,8 @@ const loadState = () => {
             clockOutTime: null,
             totalHours: null,
             status: 'Not Started' as const,
-            lastUpdated: getTodayKey()
+            lastUpdated: getTodayKey(),
+            userId: localStorage.getItem('userId')
         };
     }
 };
@@ -75,6 +81,12 @@ const loadState = () => {
 const persistedState = loadState();
 
 const initialState: AttendanceState = {
+    clockInTime: null,
+    clockOutTime: null,
+    totalHours: null,
+    status: 'Not Started',
+    lastUpdated: null,
+    userId: null,
     ...persistedState,
     loading: false,
     error: null,
@@ -82,8 +94,14 @@ const initialState: AttendanceState = {
 
 const saveState = (state: Partial<AttendanceState>) => {
     try {
+        const currentUserId = localStorage.getItem('userId');
         const currentState = loadState();
-        const newState = { ...currentState, ...state, lastUpdated: getTodayKey() };
+        const newState = {
+            ...currentState,
+            ...state,
+            lastUpdated: getTodayKey(),
+            userId: currentUserId
+        };
         localStorage.setItem('attendance_state', JSON.stringify(newState));
     } catch (err) {
         console.error("Could not save state", err);
@@ -235,9 +253,14 @@ const attendanceSlice = createSlice({
         builder.addCase(clockOut.fulfilled, (state, action: PayloadAction<any>) => {
             state.loading = false;
             state.clockOutTime = toFullISO(action.payload.clock_out);
-            if (action.payload.total_hours_workdone !== undefined) {
+
+            // Map duration_seconds from backend response to state.totalHours
+            if (action.payload.duration_seconds !== undefined) {
+                state.totalHours = action.payload.duration_seconds;
+            } else if (action.payload.total_hours_workdone !== undefined) {
                 state.totalHours = action.payload.total_hours_workdone;
             }
+
             state.status = 'Completed';
             saveState({
                 clockOutTime: state.clockOutTime,

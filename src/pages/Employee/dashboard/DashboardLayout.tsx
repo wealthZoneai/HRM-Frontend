@@ -17,6 +17,8 @@ import Topbar from "./Topbar";
 import Logo from "../../../assets/white_logo.png";
 import SidebarImage from "../../../assets/Sidebar.png";
 import LogoutModal from "../../../components/LogoutModal";
+import { useDispatch } from "react-redux";
+import { clearAttendance } from "../../../store/slice/attendanceSlice";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -30,6 +32,7 @@ type NavItem = {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
@@ -224,11 +227,24 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         onClose={() => setIsLogoutOpen(false)}
         onConfirm={() => {
           try {
+            // Clearing all auth & user data
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
+            localStorage.removeItem("access"); // Also used in Login logic
+            localStorage.removeItem("refresh"); // Also used in Login logic
             localStorage.removeItem("authToken");
             localStorage.removeItem("role");
-          } catch (e) { }
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("empId");
+            localStorage.removeItem("attendance_state"); // Clear persisted attendance
+
+            // Dispatch Redux action to clear state
+            dispatch(clearAttendance());
+
+          } catch (e) {
+            console.error("Logout cleanup error", e);
+          }
           setIsLogoutOpen(false);
           navigate("/login");
         }}

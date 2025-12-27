@@ -1,13 +1,50 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, IdCard, MapPin, Calendar, Camera } from 'lucide-react';
 import Pic from '../../../assets/my_pic.jpg';
 import { UpdateMyProfileImage } from '../../../Services/apiHelpers';
+import server from '../../../Services/index';
 import { showSuccess, showError } from '../../../utils/toast';
 
 const ProfileHeader = ({ data }: { data?: any }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string>(Pic);
+
+  useEffect(() => {
+    let active = true;
+    let objectUrl: string | null = null;
+
+    const fetchImage = async () => {
+      if (data?.protected_profile_photo_url) {
+        try {
+          // Fetch image as Blob with auth headers
+          const response = await server.get(data.protected_profile_photo_url, {
+            responseType: "blob",
+            requiresAuth: true,
+            params: { t: new Date().getTime() } // Cache busting
+          });
+
+          if (active) {
+            objectUrl = URL.createObjectURL(response.data);
+            setImageSrc(objectUrl);
+          }
+        } catch (error) {
+          console.error("Failed to load profile image", error);
+          if (active) setImageSrc(Pic);
+        }
+      } else {
+        if (active) setImageSrc(Pic);
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [data?.protected_profile_photo_url]);
 
   // If data is missing (still loading or error), can show skeleton or default
   // For now, using optional chaining fallback
@@ -31,7 +68,7 @@ const ProfileHeader = ({ data }: { data?: any }) => {
           {/* Profile Image */}
           <div className="relative shrink-0 mx-auto sm:mx-0 group">
             <img
-              src={data?.protected_profile_photo_url ? `http://127.0.0.1:8000${data.protected_profile_photo_url}` : Pic}
+              src={imageSrc}
               alt="Profile"
               className="h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-gray-50 shadow-sm object-cover bg-white"
             />
@@ -61,6 +98,7 @@ const ProfileHeader = ({ data }: { data?: any }) => {
                   try {
                     await UpdateMyProfileImage(formData);
                     showSuccess("Profile photo updated successfully! Please refresh.");
+                    // Force a reload to re-mount component and trigger useEffect
                     window.location.reload();
                   } catch (err: any) {
                     showError(err.response?.data?.detail || "Failed to update profile photo.");

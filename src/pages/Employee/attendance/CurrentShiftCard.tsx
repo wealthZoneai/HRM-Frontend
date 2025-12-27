@@ -16,11 +16,12 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
   const { clockInTime, status, totalHours } = useSelector((state: RootState) => state.attendance);
 
   // Helper to convert decimal hours (e.g. 8.5) to HH:MM:SS
-  const formatTotalHours = (val: number | null) => {
-    if (!val) return "00:00:00";
-    const h = Math.floor(val);
-    const m = Math.floor((val - h) * 60);
-    const s = Math.floor(((val - h) * 60 - m) * 60);
+  // Helper to convert seconds to HH:MM:SS
+  const formatTotalHours = (secondsInput: number | null) => {
+    if (!secondsInput) return "00:00:00";
+    const h = Math.floor(secondsInput / 3600);
+    const m = Math.floor((secondsInput % 3600) / 60);
+    const s = Math.floor(secondsInput % 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
