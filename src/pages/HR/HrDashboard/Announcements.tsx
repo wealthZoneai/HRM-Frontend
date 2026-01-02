@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Info } from "lucide-react";
+import { getHrAnnouncements } from "../../../Services/apiHelpers";  
 
 export interface AnnouncementItem {
   id: string;
@@ -11,12 +12,63 @@ export interface AnnouncementItem {
   priority: "High" | "Medium" | "Low";
 }
 
-interface Props {
-  items: AnnouncementItem[];
-}
-
-const Announcements: React.FC<Props> = ({ items }) => {
+const Announcements: React.FC = () => {
+  const [items, setItems] = useState<AnnouncementItem[]>([]);
   const [selected, setSelected] = useState<AnnouncementItem | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
+
+  const fetchAnnouncements = async () => {
+    try {
+      const res = await getHrAnnouncements();
+
+      const mapped: AnnouncementItem[] = res.data.map((a: any) => ({
+        id: String(a.id),
+        title: a.title,
+        summary: a.description,
+        date: formatDate(a.date),
+        priority: mapPriority(a.priority),
+      }));
+
+      setItems(mapped);
+    } catch (err) {
+      console.error("Announcements fetch failed:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const mapPriority = (p: string): "High" | "Medium" | "Low" => {
+    switch (p?.toUpperCase()) {
+      case "HIGH":
+        return "High";
+      case "MEDIUM":
+        return "Medium";
+      case "LOW":
+      default:
+        return "Low";
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        Loading announcements…
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 h-full flex flex-col">
@@ -33,7 +85,6 @@ const Announcements: React.FC<Props> = ({ items }) => {
   );
 };
 
-// Helper: Get priority styles
 const getPriorityStyles = (priority: string) => {
   switch (priority) {
     case "High":
@@ -48,14 +99,12 @@ const getPriorityStyles = (priority: string) => {
 };
 
 function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => void }) {
-  // Parsing for the large date block (Month/Day)
   const parts = item.date.split(" ");
-  const month = parts.length > 0 ? parts[0] : "";
-  const day = parts.length > 1 ? parts[1] : item.date;
+  const month = parts[0] || "";
+  const day = parts[1] || item.date;
 
-  // Re-format display date
   let displayDate = item.date;
-  if (parts.length >= 3 && !item.date.includes(',')) {
+  if (parts.length >= 3 && !item.date.includes(",")) {
     displayDate = `${parts[0]} ${parts[1]}, ${parts[2]}`;
   }
 
@@ -69,37 +118,32 @@ function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => vo
       animate={{ opacity: 1, y: 0 }}
       className="group flex items-center gap-3 p-3 rounded-md hover:bg-gray-50 cursor-pointer transition-all duration-300"
     >
-      {/* Date Component (Month/Day only) */}
       <div className="flex flex-col items-center justify-center w-12 min-w-12">
-        <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase group-hover:text-blue-500 transition-colors">
+        <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">
           {month}
         </span>
-        <span className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-          {day}
-        </span>
+        <span className="text-xl font-bold text-gray-800">{day}</span>
       </div>
 
-      {/* Vertical Divider */}
       <div className="h-8 w-px bg-gray-200 hidden md:block mx-1"></div>
 
-      {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-start">
-          <p className="font-medium text-gray-800 truncate group-hover:text-blue-700 transition-colors">
+          <p className="font-medium text-gray-800 truncate">
             {item.title}
           </p>
-          {/* Priority Badge */}
-          <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wide ml-2 ${badgeClass} whitespace-nowrap`}>
+
+          <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wide ml-2 ${badgeClass}`}>
             {item.priority}
           </span>
         </div>
+
         <p className="text-xs text-gray-400 mt-0.5 truncate">
           {item.summary || displayDate}
         </p>
       </div>
 
-      {/* Action Icon */}
-      <div className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-300">
+      <div className="text-gray-300">
         <Info size={18} />
       </div>
     </motion.div>
@@ -107,91 +151,52 @@ function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => vo
 }
 
 function DetailModal({ selected, onClose }: { selected: AnnouncementItem | null; onClose: () => void }) {
-  // Re-format the date for the Detail Modal display
-  let modalDate = "";
-  if (selected) {
-    const parts = selected.date.split(" ");
-    if (parts.length >= 3 && !selected.date.includes(',')) {
-      modalDate = `${parts[0]} ${parts[1]}, ${parts[2]}`;
-    } else {
-      modalDate = selected.date;
-    }
-  }
+  if (!selected) return null;
 
   return (
     <AnimatePresence>
-      {selected && (
-        <>
-          {/* Backdrop */}
-          <div
-            onClick={onClose}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
-          />
+      <>
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+        />
 
-          {/* Modal Card */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-            <motion.div
-              layoutId={`card-${selected.id}`}
-              className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
-            >
-              {/* Modal Header */}
-              <div className="h-20 bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-between px-6 relative">
-                <div className="flex flex-col">
-                  <span className="text-3xl font-bold text-gray-400 opacity-50">
-                    {modalDate}
-                  </span>
-                </div>
-                <button
-                  onClick={onClose}
-                  className="bg-white/50 hover:bg-white p-2 rounded-full transition-colors text-gray-600 hover:text-blue-900"
-                >
-                  <X size={20} />
-                </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+          <motion.div
+            layoutId={`card-${selected.id}`}
+            className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
+          >
+            <div className="h-20 bg-gray-100 flex items-center justify-between px-6">
+              <span className="text-3xl font-bold text-gray-400 opacity-50">
+                {selected.date}
+              </span>
+
+              <button onClick={onClose}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-2">{selected.title}</h2>
+
+              <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${getPriorityStyles(selected.priority)}`}>
+                {selected.priority}
+              </span>
+
+              <p className="mt-4 text-gray-600">
+                {selected.summary}
+              </p>
+
+              <div className="mt-4 flex items-center gap-2">
+                <Calendar size={18} />
+                <span>{selected.date}</span>
               </div>
-
-              {/* Modal Content */}
-              <div className="p-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <h2 className="text-xl font-bold text-gray-900 leading-tight">
-                      {selected.title}
-                    </h2>
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wide ${getPriorityStyles(selected.priority)}`}>
-                      {selected.priority}
-                    </span>
-                  </div>
-
-                  <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                    {selected.summary}
-                  </p>
-
-                  <div className="space-y-3 border-t border-gray-100 pt-4">
-                    <div className="flex items-start gap-3">
-                      <Calendar className="text-gray-400 mt-0.5" size={18} />
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          Date
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {modalDate}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        </>
-      )}
+            </div>
+          </motion.div>
+        </div>
+      </>
     </AnimatePresence>
   );
 }
 
 export default Announcements;
-
-

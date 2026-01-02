@@ -12,8 +12,22 @@ import TimeCard from "../../Employee/dashboard/TimeCard";
 import AttendanceStat from "../../Employee/dashboard/AttendanceStat";
 import type { AppDispatch, RootState } from "../../../store";
 import { fetchTodayAttendance, clockIn, clockOut } from "../../../store/slice/attendanceSlice";
-// Assuming toast exists in utils, adjusting path
 import { showSuccess, showWarning } from "../../../utils/toast";
+
+/* ✅ added import */
+import { gettotalAttendance } from "../../../Services/apiHelpers";
+
+/* ✅ added type */
+type AttendanceRecord = {
+  status: "present" | "absent" | "late";
+};
+
+/* ✅ added percentage calculation */
+const calculateAttendancePercentage = (data: AttendanceRecord[]) => {
+  if (!data.length) return 0;
+  const presentDays = data.filter(d => d.status === "present").length;
+  return Math.round((presentDays / data.length) * 100);
+};
 
 const initialAnnouncements: AnnouncementItem[] = [
   {
@@ -85,16 +99,9 @@ const initialAnnouncements: AnnouncementItem[] = [
 const initialInterviews: InterviewItem[] = [
   { id: "i1", candidate: "Rahul", interviewers: "Vivien", schedule: "2025-11-20", status: "Scheduled" },
   { id: "i2", candidate: "Maya", interviewers: "Arjun", schedule: "2025-11-22", status: "Scheduled" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
-  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" },
+  { id: "i3", candidate: "John", interviewers: "Ravi", schedule: "2025-11-10", status: "Completed" }
 ];
+
 const initialDeptData: DeptDataItem[] = [
   {
     name: "React Team",
@@ -335,21 +342,45 @@ const initialDeptData: DeptDataItem[] = [
 ];
 
 export default function HRDashboardPage() {
+
   const dispatch = useDispatch<AppDispatch>();
-  const { clockInTime, clockOutTime, status, loading } = useSelector((state: RootState) => state.attendance);
+  const { clockInTime, clockOutTime, status, loading } =
+    useSelector((state: RootState) => state.attendance);
 
   const [deptData] = useState<DeptDataItem[]>(initialDeptData);
   const [announcements] = useState<AnnouncementItem[]>(initialAnnouncements);
-  const [interviews, setInterviews] = useState<InterviewItem[]>(initialInterviews);
+  const [interviews, setInterviews] =
+    useState<InterviewItem[]>(initialInterviews);
+
+  /* ✅ added state */
+  const [monthlyAttendance, setMonthlyAttendance] = useState<number>(0);
 
   useEffect(() => {
     dispatch(fetchTodayAttendance());
   }, [dispatch]);
 
-  // Format helpers
+  /* ✅ fetch monthly attendance from API */
+  useEffect(() => {
+    const fetchMonthlyAttendance = async () => {
+      try {
+        const res = await gettotalAttendance();
+        const percentage = calculateAttendancePercentage(res.data);
+        setMonthlyAttendance(percentage);
+      } catch (error) {
+        console.error("Failed to load monthly attendance", error);
+        setMonthlyAttendance(0);
+      }
+    };
+
+    fetchMonthlyAttendance();
+  }, []);
+
   const formatTime = (isoString: string | null) => {
     if (!isoString) return "--:--";
-    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return new Date(isoString).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   };
 
   const displayClockIn = clockInTime ? formatTime(clockInTime) : "09:00 AM";
@@ -373,77 +404,98 @@ export default function HRDashboardPage() {
     }
   };
 
+  const totalEmployees = useMemo(
+    () => deptData.reduce((s, d) => s + d.value, 0),
+    [deptData]
+  );
 
-  // derived metrics
-  const totalEmployees = useMemo(() => deptData.reduce((s, d) => s + d.value, 0), [deptData]);
-  const wfoEmployees = Math.max(0, Math.round(totalEmployees * 0.9)); // sample
+  const wfoEmployees = Math.max(0, Math.round(totalEmployees * 0.9));
   const wfh = Math.round(totalEmployees * 0.06);
   const totalPresent = wfoEmployees + wfh;
   const absentees = totalEmployees - totalPresent;
 
   function markInterviewComplete(id: string) {
-    setInterviews(prev => prev.map(it => it.id === id ? { ...it, status: "Completed" } : it));
+    setInterviews(prev =>
+      prev.map(it =>
+        it.id === id ? { ...it, status: "Completed" } : it
+      )
+    );
   }
 
   function handleReschedule(id: string, date: string) {
-    setInterviews(prev => prev.map(it => it.id === id ? { ...it, schedule: date, status: "Rescheduled" } : it));
-    // Optional: You might want to call an API here to persist the change
+    setInterviews(prev =>
+      prev.map(it =>
+        it.id === id ? { ...it, schedule: date, status: "Rescheduled" } : it
+      )
+    );
   }
 
   return (
     <div className="p-6 space-y-6">
-      {/* Top Section: Time & Attendance */}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <TimeCard
           label="Time In"
           time={displayClockIn}
           actionLabel="Clock in"
           onAction={handleClockIn}
-          loading={loading && status !== 'Working' && status !== 'Completed'}
-          disabled={status === 'Working' || status === 'Completed'}
+          loading={loading && status !== "Working" && status !== "Completed"}
+          disabled={status === "Working" || status === "Completed"}
         />
+
         <TimeCard
           label="Time Out"
           time={displayClockOut}
           actionLabel="Clock out"
           onAction={handleClockOut}
-          loading={loading && status === 'Working'}
-          disabled={status !== 'Working'}
+          loading={loading && status === "Working"}
+          disabled={status !== "Working"}
         />
-        <AttendanceStat title="Monthly Attendance" value={80} />
+
+        {/* ✅ now uses live API value */}
+        <AttendanceStat
+          title="Monthly Attendance"
+          value={monthlyAttendance}
+        />
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Total Employee Count" value={`${totalPresent} / ${totalEmployees}`} subtitle="Present / Total" icon={<FiUsers size={22} />} />
-        <SummaryCard title="Working From Office  " value={wfoEmployees} subtitle="Employees" icon={<FiHome size={22} />} />
-        <SummaryCard title="Work From Home" value={wfh} subtitle="Employees" icon={<FiBriefcase size={22} />} />
-        <SummaryCard title="On Leave" value={absentees} subtitle="Employees" icon={<FiUserX size={22} />} />
+        <SummaryCard
+          title="Total Employee Count"
+          value={`${totalPresent} / ${totalEmployees}`}
+          subtitle="Present / Total"
+          icon={<FiUsers size={22} />}
+        />
+        <SummaryCard
+          title="Working From Office"
+          value={wfoEmployees}
+          subtitle="Employees"
+          icon={<FiHome size={22} />}
+        />
+        <SummaryCard
+          title="Work From Home"
+          value={wfh}
+          subtitle="Employees"
+          icon={<FiBriefcase size={22} />}
+        />
+        <SummaryCard
+          title="On Leave"
+          value={absentees}
+          subtitle="Employees"
+          icon={<FiUserX size={22} />}
+        />
       </div>
 
-      {/* middle section: chart + announcements */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <DeptDonutChart data={deptData} />
-        </div>
-
-        <div className="lg:relative">
-          <div className="lg:absolute lg:inset-0">
-            <Announcements items={announcements} />
-          </div>
-        </div>
+        <DeptDonutChart data={deptData} />
+        <Announcements items={announcements} />
       </div>
 
-      {/* bottom: charts + interview table */}
-      <div className="grid grid-cols-1 gap-6">
-        <div>
-          <InterviewTable
-            items={interviews}
-            onToggleComplete={markInterviewComplete}
-            onReschedule={handleReschedule}
-          />
-        </div>
-      </div>
+      <InterviewTable
+        items={interviews}
+        onToggleComplete={markInterviewComplete}
+        onReschedule={handleReschedule}
+      />
     </div>
   );
 }

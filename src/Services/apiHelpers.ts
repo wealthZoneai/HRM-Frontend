@@ -137,6 +137,8 @@ export const getNotifications = () => {
   });
 };
 
+
+
 export const getCalendarEvents = (year?: number, month?: number) => {
   let url = endpoints.calendar;
   const params = new URLSearchParams();
@@ -154,26 +156,15 @@ export const getCalendarEvents = (year?: number, month?: number) => {
 };
 
 
+export const getHrAnnouncements = async () => {
+  const response = await server.get(endpoints.hrAnnouncements);
+  return response.data;
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const GetMonthlyAttendance = (year: string, month: string) => {
+  const url = `${endpoints.hrMonthlyAttendance}?month=${year}-${month}`;
+  
+  return server.get(url, {
+    requiresAuth: true,
+  });
+};

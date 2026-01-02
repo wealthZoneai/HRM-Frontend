@@ -1,3 +1,4 @@
+import { GetDailyAttendance } from "./apiHelpers"
 
 
 const endpoints = {
@@ -10,6 +11,8 @@ const endpoints = {
 
     createEmployes: 'api/hr/create-employee/',
     employees: 'api/employees/',
+    hrAnnouncements: '/api/announcement/list/',
+    hrMonthlyAttendance: "api/attendance/",
 
 
     //employee endpoints
@@ -35,6 +38,8 @@ const endpoints = {
     announcements: "/api/announcements/",
     notifications: "/api/notifications/",
     calendar: "api/calendar/events/",
+    // todayAttendance:"/api/attendance/today/"
+
 }
 
 export default endpoints
