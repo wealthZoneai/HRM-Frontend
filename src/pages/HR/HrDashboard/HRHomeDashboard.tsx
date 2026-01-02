@@ -1,8 +1,8 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FiUsers, FiBriefcase, FiHome, FiUserX } from "react-icons/fi";
+import { FiUsers, FiBriefcase, FiUserX } from "react-icons/fi";
 import type { DeptDataItem } from "./DeptDonutChart";
-import type { AnnouncementItem } from "./Announcements";
+
 import type { InterviewItem } from "./InterviewTable";
 import SummaryCard from "./SummaryCard";
 import DeptDonutChart from "./DeptDonutChart";
@@ -12,6 +12,7 @@ import TimeCard from "../../Employee/dashboard/TimeCard";
 import AttendanceStat from "../../Employee/dashboard/AttendanceStat";
 import type { AppDispatch, RootState } from "../../../store";
 import { fetchTodayAttendance, clockIn, clockOut } from "../../../store/slice/attendanceSlice";
+import { fetchHRDashboardStats } from "../../../store/slice/dashboardSlice";
 import { showSuccess, showWarning } from "../../../utils/toast";
 
 /* ✅ added import */
@@ -29,72 +30,7 @@ const calculateAttendancePercentage = (data: AttendanceRecord[]) => {
   return Math.round((presentDays / data.length) * 100);
 };
 
-const initialAnnouncements: AnnouncementItem[] = [
-  {
-    id: "1",
-    title: "Quarterly Strategy Meeting",
-    date: "Oct 08 2024",
-    summary: "Review of Q3 performance and strategic planning for Q4 objectives with all department heads.",
-    color: "bg-purple-100 text-purple-700",
-    priority: "High"
-  },
-  {
-    id: "2",
-    title: "New Health Insurance Policy",
-    date: "Oct 12 2024",
-    summary: "Open enrollment for the new health insurance plan begins next week. Please review the updated benefits guide.",
-    color: "bg-blue-100 text-blue-700",
-    priority: "High"
-  },
-  {
-    id: "3",
-    title: "Diwali Celebration",
-    date: "Oct 25 2024",
-    summary: "Office-wide Diwali celebration starts at 4 PM. Traditional wear is encouraged! Snacks and sweets will be provided.",
-    color: "bg-orange-100 text-orange-700",
-    priority: "Medium"
-  },
-  {
-    id: "4",
-    title: "IT Security Audit",
-    date: "Oct 28 2024",
-    summary: "Mandatory security audit for all workstations. Please ensure your systems are updated and passwords are changed.",
-    color: "bg-red-100 text-red-700",
-    priority: "High"
-  },
-  {
-    id: "5",
-    title: "Employee Training: Soft Skills",
-    date: "Nov 02 2024",
-    summary: "Workshop on effective communication and leadership skills. Required for all team leads and managers.",
-    color: "bg-green-100 text-green-700",
-    priority: "Medium"
-  },
-  {
-    id: "6",
-    title: "Annual Performance Reviews",
-    date: "Nov 15 2024",
-    summary: "Performance review cycle begins. Managers, please schedule 1:1s with your team members by the end of the month.",
-    color: "bg-indigo-100 text-indigo-700",
-    priority: "High"
-  },
-  {
-    id: "7",
-    title: "Office Renovation Notice",
-    date: "Nov 20 2024",
-    summary: "The 2nd-floor cafeteria will be closed for renovations. Temporary refreshments will be available in the lobby.",
-    color: "bg-yellow-100 text-yellow-700",
-    priority: "Low"
-  },
-  {
-    id: "8",
-    title: "Holiday Schedule Update",
-    date: "Dec 01 2024",
-    summary: "The updated holiday calendar for next year is now available on the portal. Please plan your leaves accordingly.",
-    color: "bg-teal-100 text-teal-700",
-    priority: "Medium"
-  }
-];
+
 
 const initialInterviews: InterviewItem[] = [
   { id: "i1", candidate: "Rahul", interviewers: "Vivien", schedule: "2025-11-20", status: "Scheduled" },
@@ -346,9 +282,10 @@ export default function HRDashboardPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { clockInTime, clockOutTime, status, loading } =
     useSelector((state: RootState) => state.attendance);
+  const { hrStats } = useSelector((state: RootState) => state.dashboard);
 
   const [deptData] = useState<DeptDataItem[]>(initialDeptData);
-  const [announcements] = useState<AnnouncementItem[]>(initialAnnouncements);
+
   const [interviews, setInterviews] =
     useState<InterviewItem[]>(initialInterviews);
 
@@ -357,6 +294,7 @@ export default function HRDashboardPage() {
 
   useEffect(() => {
     dispatch(fetchTodayAttendance());
+    dispatch(fetchHRDashboardStats());
   }, [dispatch]);
 
   /* ✅ fetch monthly attendance from API */
@@ -404,16 +342,6 @@ export default function HRDashboardPage() {
     }
   };
 
-  const totalEmployees = useMemo(
-    () => deptData.reduce((s, d) => s + d.value, 0),
-    [deptData]
-  );
-
-  const wfoEmployees = Math.max(0, Math.round(totalEmployees * 0.9));
-  const wfh = Math.round(totalEmployees * 0.06);
-  const totalPresent = wfoEmployees + wfh;
-  const absentees = totalEmployees - totalPresent;
-
   function markInterviewComplete(id: string) {
     setInterviews(prev =>
       prev.map(it =>
@@ -459,28 +387,22 @@ export default function HRDashboardPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <SummaryCard
-          title="Total Employee Count"
-          value={`${totalPresent} / ${totalEmployees}`}
-          subtitle="Present / Total"
+          title="Total Employees"
+          value={hrStats?.total_employees ?? 0}
+          subtitle="Employees"
           icon={<FiUsers size={22} />}
         />
         <SummaryCard
-          title="Working From Office"
-          value={wfoEmployees}
-          subtitle="Employees"
-          icon={<FiHome size={22} />}
-        />
-        <SummaryCard
-          title="Work From Home"
-          value={wfh}
+          title="Present Employees"
+          value={hrStats?.present_employees ?? 0}
           subtitle="Employees"
           icon={<FiBriefcase size={22} />}
         />
         <SummaryCard
-          title="On Leave"
-          value={absentees}
+          title="On Leave Employees"
+          value={hrStats?.on_leave_employees ?? 0}
           subtitle="Employees"
           icon={<FiUserX size={22} />}
         />
@@ -488,7 +410,7 @@ export default function HRDashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DeptDonutChart data={deptData} />
-        <Announcements items={announcements} />
+        <Announcements />
       </div>
 
       <InterviewTable

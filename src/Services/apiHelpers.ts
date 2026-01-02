@@ -1,6 +1,8 @@
 import endpoints from "./endpoints";
 import server from "./index";
 
+export const PrivateAxios = server;
+
 
 export function loginUser({ username, password }: ILoginUserBody) {
   const body = { username, password };
@@ -161,10 +163,22 @@ export const getHrAnnouncements = async () => {
   return response.data;
 };
 
+export const CreateAnnouncement = (data: any) => {
+  return server.post(endpoints.createAnnouncement, data, {
+    requiresAuth: true,
+  });
+};
+
 export const GetMonthlyAttendance = (year: string, month: string) => {
   const url = `${endpoints.hrMonthlyAttendance}?month=${year}-${month}`;
-  
+
   return server.get(url, {
+    requiresAuth: true,
+  });
+};
+
+export const getHRDashboardStats = () => {
+  return server.get(endpoints.hrDashboardStats, {
     requiresAuth: true,
   });
 };
