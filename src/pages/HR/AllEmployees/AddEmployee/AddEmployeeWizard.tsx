@@ -10,7 +10,7 @@ import { CheckCircle, ArrowLeft, ArrowRight, CornerDownRight } from "lucide-reac
 import { CreateEmployes } from "../../../../Services/apiHelpers";
 import { useNavigate } from "react-router-dom";
 
-const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
+const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({ editData, onSuccess }) => {
   const { state, dispatch } = useAddEmployee();
   const navigate = useNavigate();
   console.log(state)
@@ -206,8 +206,11 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
       const response = await CreateEmployes(payload);
 
       console.log("API Response:", response.data);
-      toast.success("Employee created successfully!");
-      navigate('/hr/employees')
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate('/hr/employees');
+      }
 
     } catch (error: any) {
       console.error("API Error Entire Object:", error);
@@ -288,6 +291,7 @@ const WizardInner: React.FC<{ editData?: any }> = ({ editData }) => {
           </button>
         )}
       </div>
+
     </div>
   );
 };

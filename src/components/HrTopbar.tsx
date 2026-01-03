@@ -1,6 +1,10 @@
 import { Bell } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import myPic from "../assets/my_pic.jpg";
+// import { GetMyProfile } from "../Services/apiHelpers"; // Removed to use direct call
+import server from "../Services/index";
+import endpoints from "../Services/endpoints";
 
 interface TopbarProps {
   name: string;
@@ -10,6 +14,53 @@ interface TopbarProps {
 export default function HrTopbar({ name, id }: TopbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [imageSrc, setImageSrc] = useState<string>(myPic);
+
+  useEffect(() => {
+    let active = true;
+    let objectUrl: string | null = null;
+
+    const fetchImage = async () => {
+      try {
+        // Fetch profile directly with cache busting to ensure we get the latest photo URL
+        const profileRes = await server.get(endpoints.myProfile, {
+          requiresAuth: true,
+          params: { t: new Date().getTime() }
+        });
+
+        console.log("HrTopbar: Profile Response", profileRes);
+
+        const photoUrl = profileRes.data?.data?.protected_profile_photo_url || profileRes.data?.protected_profile_photo_url;
+        console.log("HrTopbar: Photo URL", photoUrl);
+
+        if (photoUrl) {
+          // Fetch image as Blob with auth headers and cache busting
+          const response = await server.get(photoUrl, {
+            responseType: "blob",
+            requiresAuth: true,
+            params: { t: new Date().getTime() }
+          });
+
+          if (active) {
+            objectUrl = URL.createObjectURL(response.data);
+            setImageSrc(objectUrl);
+          }
+        } else {
+          console.log("HrTopbar: No photo URL found, using default.");
+        }
+      } catch (error) {
+        console.error("HrTopbar: Failed to load profile image", error);
+        if (active) setImageSrc(myPic);
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   const handleNotification = () => {
     // Toggle between notifications page and dashboard
@@ -78,7 +129,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
             tabIndex={0}
           >
             <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-              <img src={myPic} alt="Profile" className="w-full h-full object-cover" />
+              <img src={imageSrc} alt="Profile" className="w-full h-full object-cover" />
             </div>
             <div className="hidden sm:flex flex-col leading-tight">
               <span className="text-sm font-semibold text-gray-800">{name}</span>
