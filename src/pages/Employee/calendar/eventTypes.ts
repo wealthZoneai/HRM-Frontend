@@ -4,7 +4,11 @@ export type CalendarEventType =
   | "birthday"
   | "training"
   | "interview"
-  | "leave";
+  | "leave"
+  | "announcement"
+  | "Federal"
+  | "Optional"
+  | "Company";
 
 export interface CalendarEvent {
   id: string;

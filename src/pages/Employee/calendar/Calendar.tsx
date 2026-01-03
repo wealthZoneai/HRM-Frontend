@@ -1,36 +1,34 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CalendarHeader from "./CalendarHeader";
 import CalendarGrid from "./CalendarGrid";
 import type { CalendarEvent } from "./eventTypes";
-import { getCalendarEvents } from "../../../Services/apiHelpers";
+import { fetchCalendarEvents, selectAllCalendarEvents } from "../../../store/slice/calendarSlice";
+import {type AppDispatch } from "../../../store";
 
 export default function Calendar() {
+  const dispatch = useDispatch<AppDispatch>();
+  const allEvents = useSelector(selectAllCalendarEvents);
+
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth());
   const [year, setYear] = useState(today.getFullYear());
   const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
-    fetchEvents();
-  }, [month, year]);
+    dispatch(fetchCalendarEvents({ year, month: month + 1 }));
+  }, [dispatch, month, year]);
 
-  const fetchEvents = () => {
-    // API expects month 1-12, but JS use 0-11
-    getCalendarEvents(year, month + 1)
-      .then((res) => {
-        if (Array.isArray(res.data)) {
-          setEvents(res.data);
-        } else if (res.data && Array.isArray(res.data.results)) {
-          setEvents(res.data.results);
-        } else {
-          setEvents([]);
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to fetch calendar events", err);
-        setEvents([]);
-      });
-  };
+  useEffect(() => {
+    // Map generic Redux events to local CalendarEvent type
+    const mapped: CalendarEvent[] = allEvents.map(e => ({
+      id: e.id,
+      date: e.date,
+      title: e.title,
+      type: e.type as any
+    }));
+    setEvents(mapped);
+  }, [allEvents]);
 
   const handleMonthChange = (m: number) => {
     setMonth(m);

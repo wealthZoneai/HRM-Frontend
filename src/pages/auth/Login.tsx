@@ -11,10 +11,11 @@ import LoginImg from "../../assets/Login.png";
 import LoginMobile from "../../assets/Login Mobile.png";
 import { useNavigate } from "react-router-dom";
 
-import {  showLoginError, showLoginSuccess, showWarning, } from "../../utils/toast";
+import { showLoginError, showLoginSuccess, showWarning, } from "../../utils/toast";
 import { loginUser } from "../../Services/apiHelpers";
 import { setUserData } from "../../store/slice/userData";
 import { useDispatch } from "react-redux";
+
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -36,8 +37,6 @@ const Login: React.FC = () => {
       return;
     }
 
-    // navigate('/hr/dashboard')
-    // navigate('/employee/dashboard')
     try {
       const response = await loginUser({ username, password });
       console.log(response)
@@ -63,6 +62,7 @@ const Login: React.FC = () => {
 
         // Debug log to check available fields
         console.log("Login Response Data:", response.data);
+
 
         // Save User ID/Employee ID (Adjust field name based on debug log if needed: id, user_id, employee_id)
         if (response.data.id) {

@@ -2,19 +2,32 @@
 import { Calendar, CalendarDays, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const HOLIDAYS = [
-  { name: "New Year Day", date: "1 Jan", day: "Monday", type: "Public" },
-  { name: "Pongal", date: "14 Jan", day: "Sunday", type: "Regional" },
-  { name: "Republic Day", date: "26 Jan", day: "Friday", type: "National" },
-  { name: "Maha Shivaratri", date: "8 Mar", day: "Friday", type: "Optional" },
-  { name: "Holi", date: "25 Mar", day: "Monday", type: "Public" },
-];
+import { useSelector } from "react-redux";
+import { selectAllCalendarEvents } from "../../../store/slice/calendarSlice";
 
 export default function UpcomingHolidays() {
   const navigate = useNavigate();
+  const allEvents = useSelector(selectAllCalendarEvents);
+
+  const upcomingHolidays = allEvents
+    .filter(e => new Date(e.date) >= new Date()) // Future only
+    .filter(e => ["Federal", "Company", "Optional", "Holiday"].includes(e.type)) // Only holidays, assuming we don't want meetings here? User said "public holidays"
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 5)
+    .map(e => {
+      const d = new Date(e.date);
+      return {
+        name: e.title,
+        date: d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
+        day: d.toLocaleDateString('en-US', { weekday: 'long' }),
+        type: e.type === "Federal" ? "National" : e.type
+      };
+    });
+
   const handleClick = () => {
     navigate("/employee/calendar");
   }
+
   return (
     <div className="max-h-[700px] bg-white flex items-center justify-center font-sans text-stone-800" >
 
@@ -35,7 +48,7 @@ export default function UpcomingHolidays() {
         {/* List Section */}
         <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
           <ul className="divide-y divide-stone-50">
-            {HOLIDAYS.map((h, i) => (
+            {upcomingHolidays.map((h, i) => (
               <li
                 key={i}
                 className="group flex items-center justify-between p-6 hover:bg-stone-50 cursor-default transition-colors duration-200"

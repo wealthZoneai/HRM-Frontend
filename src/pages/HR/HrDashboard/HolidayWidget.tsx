@@ -1,108 +1,51 @@
 import { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-// import { getCalendarEvents } from "../../../Services/apiHelpers";
+import { useSelector, useDispatch } from "react-redux";
+import { type AppDispatch } from "../../../store";
+import { fetchCalendarEvents, selectAllCalendarEvents, selectCalendarLoading } from "../../../store/slice/calendarSlice";
 
-// Types
 // Types
 interface Holiday {
     id: string;
     name: string;
     date: string; // YYYY-MM-DD
-    type: "Federal" | "Company" | "Optional";
+    type: "Federal" | "Company" | "Optional" | "Announcement" | "Meeting";
 }
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// 2026 Holidays
-const STATIC_HOLIDAYS: Holiday[] = [
-    // January
-    { id: "h1", name: "New Year’s Day", date: "2026-01-01", type: "Optional" },
-    { id: "h2", name: "Lohri / Bhogi", date: "2026-01-13", type: "Optional" },
-    { id: "h3", name: "Makar Sankranti / Pongal", date: "2026-01-14", type: "Optional" },
-    { id: "h4", name: "Makara Sankranti", date: "2026-01-15", type: "Optional" },
-    { id: "h5", name: "Kanuma", date: "2026-01-16", type: "Optional" },
-    { id: "h6", name: "Vasant Panchami", date: "2026-01-23", type: "Optional" },
-    { id: "h7", name: "Republic Day", date: "2026-01-26", type: "Federal" }, // National
-
-    // February
-    { id: "h8", name: "Maha Shivaratri", date: "2026-02-15", type: "Optional" },
-
-    // March
-    { id: "h9", name: "Holika Dahan / Holi", date: "2026-03-03", type: "Optional" }, // Date range 3-4, picked 3
-    { id: "h10", name: "Holi", date: "2026-03-04", type: "Optional" },
-    { id: "h11", name: "Ugadi / Gudi Padwa", date: "2026-03-19", type: "Optional" },
-    { id: "h12", name: "Eid-ul-Fitr", date: "2026-03-20", type: "Optional" }, // Moon based 20-21
-    { id: "h13", name: "Ram Navami", date: "2026-03-26", type: "Optional" }, // 26-27
-    { id: "h14", name: "Mahavir Jayanti", date: "2026-03-31", type: "Optional" },
-
-    // April
-    { id: "h15", name: "Good Friday", date: "2026-04-03", type: "Optional" },
-    { id: "h16", name: "Akshaya Tritiya", date: "2026-04-19", type: "Optional" },
-
-    // May
-    { id: "h17", name: "Labour Day", date: "2026-05-01", type: "Federal" }, // Often a holiday
-    { id: "h18", name: "Eid ul-Adha / Bakrid", date: "2026-05-27", type: "Optional" },
-
-    // June
-    { id: "h19", name: "Jyeshtha Purnima", date: "2026-06-16", type: "Optional" },
-
-    // July
-    { id: "h20", name: "Rath Yatra", date: "2026-07-16", type: "Optional" },
-
-    // August
-    { id: "h21", name: "Independence Day", date: "2026-08-15", type: "Federal" }, // National
-    { id: "h22", name: "Onam", date: "2026-08-25", type: "Optional" },
-    { id: "h23", name: "Raksha Bandhan", date: "2026-08-28", type: "Optional" },
-
-    // September
-    { id: "h24", name: "Janmashtami", date: "2026-09-04", type: "Optional" },
-    { id: "h25", name: "Ganesh Chaturthi", date: "2026-09-15", type: "Optional" },
-    { id: "h26", name: "Vishwakarma Puja", date: "2026-09-17", type: "Optional" },
-    // Note: Late Sep festivals without exact dates in prompt (Bathukamma) omitted or need exact date.
-    // Assuming prompt wanted the list provided. I will stick to specific dates found or provided.
-
-    // October
-    { id: "h27", name: "Gandhi Jayanti", date: "2026-10-02", type: "Federal" }, // National
-    { id: "h28", name: "Navratri Start", date: "2026-10-11", type: "Optional" },
-    { id: "h29", name: "Dussehra", date: "2026-10-20", type: "Optional" },
-    { id: "h30", name: "Karwa Chauth", date: "2026-10-29", type: "Optional" },
-
-    // November
-    { id: "h31", name: "Dhanteras", date: "2026-11-06", type: "Optional" },
-    { id: "h32", name: "Diwali", date: "2026-11-08", type: "Federal" }, // Major festival
-    { id: "h33", name: "Govardhan Puja", date: "2026-11-10", type: "Optional" },
-    { id: "h34", name: "Bhai Dooj", date: "2026-11-11", type: "Optional" },
-    { id: "h35", name: "Chhath Puja", date: "2026-11-15", type: "Optional" },
-    { id: "h36", name: "Guru Nanak Jayanti", date: "2026-11-24", type: "Optional" },
-
-    // December
-    { id: "h37", name: "Christmas Day", date: "2026-12-25", type: "Federal" }, // Major
-];
 
 export default function HolidayWidget() {
+    const dispatch = useDispatch<AppDispatch>();
+    const allEvents = useSelector(selectAllCalendarEvents);
+    const loading = useSelector(selectCalendarLoading);
     const [currentDate, setCurrentDate] = useState(new Date("2026-01-01"));
+
     const [holidays, setHolidays] = useState<Holiday[]>([]);
-    const [loading,] = useState(false);
     const [view, setView] = useState<'calendar' | 'list'>('calendar');
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
     // Fetch holidays
+    // Fetch dynamic events when month changes
     useEffect(() => {
-        // For now, we are using the static list primarily as requested by the user to "fix" the list.
-        // We will simulate fetching by just setting the static list filtered by month.
-        // If the user wants to mix API, we can, but the request was specific about THIS list.
-        // Let's filter the STATIC_HOLIDAYS for the current view.
-        // Actually, let's just set all of them or filter? Usually widgets show month view.
+        dispatch(fetchCalendarEvents({ year, month: month + 1 }));
+    }, [dispatch, year, month]);
 
-        const monthHolidays = STATIC_HOLIDAYS.filter(h => {
-            const d = new Date(h.date);
+    // Filter events for the current view
+    useEffect(() => {
+        const filtered = allEvents.filter(e => {
+            const d = new Date(e.date);
             return d.getMonth() === month && d.getFullYear() === year;
-        });
-        setHolidays(monthHolidays);
-
-    }, [year, month]);
+        }).map(e => ({
+            id: e.id,
+            name: e.title,
+            date: e.date,
+            type: e.type as any
+        }));
+        setHolidays(filtered);
+    }, [allEvents, year, month]);
 
     // Helper to get days in month
     const getDaysInMonth = (year: number, month: number) => {
@@ -144,14 +87,25 @@ export default function HolidayWidget() {
     };
 
     // Color helpers
+    // Color helpers
     const getHolidayColor = (type: Holiday["type"]) => {
-        // Federal = Main -> Green
-        // Optional = Remaining -> Blue/Purple
-        return type === "Federal" ? "bg-green-100 text-green-700 border-green-200" : "bg-blue-50 text-blue-700 border-blue-200";
+        switch (type) {
+            case "Federal": return "bg-red-100 text-red-600 border-red-200";
+            case "Company": return "bg-blue-100 text-blue-600 border-blue-200";
+            case "Optional": return "bg-green-100 text-green-600 border-green-200";
+            case "Announcement": return "bg-purple-100 text-purple-600 border-purple-200";
+            case "Meeting": return "bg-amber-100 text-amber-600 border-amber-200";
+            default: return "bg-gray-100 text-gray-600 border-gray-200";
+        }
     };
 
     const getHolidayDotColor = (type: Holiday["type"]) => {
-        return type === "Federal" ? "bg-green-500" : "bg-blue-400";
+        switch (type) {
+            case "Federal": return "bg-red-500";
+            case "Announcement": return "bg-purple-500";
+            case "Meeting": return "bg-amber-500";
+            default: return "bg-blue-400"; // Optional / Company
+        }
     };
 
     return (

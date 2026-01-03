@@ -4,6 +4,8 @@ import leaveReducer from './slice/leaveSlice';
 import attendanceReducer from './slice/attendanceSlice';
 import teamReducer from './slice/teamSlice';
 import dashboardReducer from './slice/dashboardSlice';
+import announcementReducer from './slice/announcementSlice';
+import calendarReducer from './slice/calendarSlice';
 
 
 export const store = configureStore({
@@ -13,7 +15,10 @@ export const store = configureStore({
     attendance: attendanceReducer,
     team: teamReducer,
     dashboard: dashboardReducer,
+    announcements: announcementReducer,
+    calendar: calendarReducer,
   },
+  devTools: true,
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
