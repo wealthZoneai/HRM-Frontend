@@ -1,17 +1,30 @@
-export type Status = "Present" | "Absent" | "On Leave";
+// types.ts
 
-export interface DailyViewItem {
-  id: string;
-  employee: string;
-  empId: string;
-  avatar: string;
-  checkIn: string;
-  checkOut: string;
-  status: Status;
-  department: string;
+export type Status = "Present" | "Absent" | "On Leave" | "Working";
+
+export interface User {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
 }
 
-export interface MonthlySummaryItem {
+// Matches your API Response exactly
+export interface AttendanceRecord {
+  id: number;
+  user: User;
+  date: string;           // "2026-01-02"
+  clock_in: string | null;
+  clock_out: string | null;
+  duration_time: string | null;
+  status: string;         // "working", "absent", etc.
+  created_at: string;
+}
+
+// Used for the Monthly View Table
+export interface MonthlyAggregatedItem {
   id: string;
   employee: string;
   avatar: string;
@@ -21,16 +34,5 @@ export interface MonthlySummaryItem {
   absent: number;
   onLeave: number;
   month: string;
-}
-
-export interface AttendanceRecord extends DailyViewItem {
-  date: string; // YYYY-MM-DD
-}
-
-export interface LogEntry {
-  date: string;
-  loginTime: string;
-  logoutTime: string;
-  duration: string;
-  status: Status;
+  logs: AttendanceRecord[];
 }
