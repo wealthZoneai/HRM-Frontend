@@ -6,9 +6,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   editData?: any;
+  onSuccess?: () => void;
 }
 
-const AddEmployeeModal: React.FC<Props> = ({ open, onClose, editData }) => {
+const AddEmployeeModal: React.FC<Props> = ({ open, onClose, editData, onSuccess }) => {
   if (!open) return null;
 
   return (
@@ -62,7 +63,7 @@ const AddEmployeeModal: React.FC<Props> = ({ open, onClose, editData }) => {
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 bg-white/40 no-scrollbar">
           <AddEmployeeProvider>
-            <WizardInner editData={editData} />
+            <WizardInner editData={editData} onSuccess={onSuccess} />
           </AddEmployeeProvider>
         </div>
 

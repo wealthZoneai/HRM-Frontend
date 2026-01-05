@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getHrAnnouncements, CreateAnnouncement } from '../../../Services/apiHelpers';
 import { FiCalendar, FiBriefcase, FiAlertCircle, FiGift, FiHome, FiPlus } from 'react-icons/fi'; // Importing icons
 import AddAnnouncementModal from './AddAnnouncementModal';
+import AnnouncementSuccessModal from './AnnouncementSuccessModal';
+import { toast } from 'react-toastify';
 
 // Define the data structure for an announcement
 interface Announcement {
@@ -12,49 +15,7 @@ interface Announcement {
   priority: 'High' | 'Medium' | 'Low';
 }
 
-// Dummy data for announcements
-const DUMMY_ANNOUNCEMENTS: Announcement[] = [
-  {
-    id: '1',
-    iconType: 'event',
-    title: 'Team Building Event - Join Us',
-    description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
-    category: 'Events',
-    priority: 'High',
-  },
-  {
-    id: '2',
-    iconType: 'policy',
-    title: 'Remote work policy Update',
-    description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
-    category: 'Policy',
-    priority: 'Medium',
-  },
-  {
-    id: '3',
-    iconType: 'company',
-    title: 'Quarterly Town Hall Meeting',
-    description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
-    category: 'Company',
-    priority: 'High',
-  },
-  {
-    id: '4',
-    iconType: 'benefits',
-    title: 'New Employee Benefits Program',
-    description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
-    category: 'Benefits',
-    priority: 'Medium',
-  },
-  {
-    id: '5',
-    iconType: 'facility',
-    title: 'Office Maintenance Notice',
-    description: "We're organizing a team building event next Friday at the city park. It will be a great opportunity to bond with colleagues and some fun. Lunch will be provided, please RSVP by Wednesday.",
-    category: 'Facility',
-    priority: 'Low',
-  },
-];
+
 
 // Helper function to get icon based on type
 const getIcon = (type: Announcement['iconType']) => {
@@ -128,6 +89,35 @@ const AnnouncementCard: React.FC<{ announcement: Announcement }> = ({ announceme
 // Main Announcements Screen Component
 export default function AnnouncementsScreen() {
   const [open, setOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await getHrAnnouncements();
+      // Based on Announcements.tsx, the array is in response.data
+      const data = response.data || [];
+      console.log("Fetched announcements:", data);
+
+      const formattedData: Announcement[] = data.map((item: any) => ({
+        id: item.id?.toString() || Math.random().toString(),
+        // Map category to iconType loosely, or default to 'company'
+        iconType: (item.department || 'company').toLowerCase() as any,
+        title: item.title,
+        description: item.description,
+        category: item.department || 'General',
+        priority: item.priority || 'Medium',
+      }));
+
+      setAnnouncements(formattedData);
+    } catch (error) {
+      console.error("Failed to fetch announcements:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
@@ -155,16 +145,35 @@ export default function AnnouncementsScreen() {
 
         {/* Announcement List */}
         <div className="flex flex-col gap-4 sm:gap-6">
-          {DUMMY_ANNOUNCEMENTS.map((announcement) => (
+          {announcements.map((announcement) => (
             <AnnouncementCard key={announcement.id} announcement={announcement} />
           ))}
+          {announcements.length === 0 && (
+            <p className="text-gray-500 text-center py-10">No announcements found.</p>
+          )}
         </div>
       </div>
 
       <AddAnnouncementModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        onSubmit={(data) => console.log("Announcement:", data)}
+        onSubmit={async (data) => {
+          console.log("Announcement Data:", data);
+          try {
+            await CreateAnnouncement(data);
+            setOpen(false);
+            setShowSuccessModal(true);
+            fetchAnnouncements();
+          } catch (error) {
+            console.error("Failed to create announcement:", error);
+            toast.error("Failed to create announcement.");
+          }
+        }}
+      />
+
+      <AnnouncementSuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
       />
     </div>
   );

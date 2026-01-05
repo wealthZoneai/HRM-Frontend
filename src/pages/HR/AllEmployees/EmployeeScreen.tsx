@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FiSearch, FiPlus } from 'react-icons/fi';
 import AddEmployeeModal from './AddEmployeeModal';
+import EmployeeAddedSuccessModal from './AddEmployee/EmployeeAddedSuccessModal';
 import EmployeeDetailsModal from './EmployeeDetailsModal';
 import { GetAllEmployes } from '../../../Services/apiHelpers';
 
@@ -49,6 +50,7 @@ const EmployeeCard: React.FC<{
 export default function EmployeeScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const [open, setOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null
   );
@@ -58,29 +60,32 @@ export default function EmployeeScreen() {
   // =============================
   // FETCH EMPLOYEES FROM API
   // =============================
+  // =============================
+  // FETCH EMPLOYEES FROM API
+  // =============================
+  const fetchEmployees = async () => {
+    try {
+      const response = await GetAllEmployes();
+      const rawData = response?.data?.results || [];
+      console.log("Fetched Employees:", rawData);
+      // Map backend → UI
+      const fallbackAvatar = "https://ui-avatars.com/api/?background=random&name=";
+      const formattedData: Employee[] = rawData.map((emp: any) => ({
+        id: emp.id || emp.emp_id,
+        name: `${emp.first_name} ${emp.last_name}`.trim(),
+        role: emp.job_title || emp.role || "Employee",
+        employeeId: emp.emp_id,
+        status: "Active",
+        imageUrl: emp.profile_photo_url || `${fallbackAvatar}${emp.first_name}+${emp.last_name}`,
+      }));
+
+      setEmployeeData(formattedData);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await GetAllEmployes();
-        const rawData = response?.data?.results || [];
-        console.log("Fetched Employees:", rawData);
-        // Map backend → UI
-        const fallbackAvatar = "https://ui-avatars.com/api/?background=random&name=";
-        const formattedData: Employee[] = rawData.map((emp: any) => ({
-          id: emp.id || emp.emp_id,
-          name: `${emp.first_name} ${emp.last_name}`.trim(),
-          role: emp.job_title || emp.role || "Employee",
-          employeeId: emp.emp_id,
-          status: "Active",
-          imageUrl: emp.profile_photo_url || `${fallbackAvatar}${emp.first_name}+${emp.last_name}`,
-        }));
-
-        setEmployeeData(formattedData);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    };
-
     fetchEmployees();
   }, []);
 
@@ -144,7 +149,26 @@ export default function EmployeeScreen() {
       </div>
 
       {/* Modals */}
-      <AddEmployeeModal open={open} onClose={() => setOpen(false)} />
+      <AddEmployeeModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSuccess={() => {
+          setOpen(false);
+          setShowSuccessModal(true);
+        }}
+      />
+
+      <EmployeeAddedSuccessModal
+        isOpen={showSuccessModal}
+        onNavigate={() => {
+          setShowSuccessModal(false);
+          fetchEmployees();
+        }}
+        onClose={() => {
+          setShowSuccessModal(false);
+          fetchEmployees();
+        }}
+      />
 
       <EmployeeDetailsModal
         open={detailsOpen}

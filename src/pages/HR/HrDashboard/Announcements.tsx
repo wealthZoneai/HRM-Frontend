@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Info } from "lucide-react";
-import { getHrAnnouncements } from "../../../Services/apiHelpers";  
+import { getHrAnnouncements } from "../../../Services/apiHelpers";
 
 export interface AnnouncementItem {
   id: string;
@@ -101,7 +101,7 @@ const getPriorityStyles = (priority: string) => {
 function ListItem({ item, onClick }: { item: AnnouncementItem; onClick: () => void }) {
   const parts = item.date.split(" ");
   const month = parts[0] || "";
-  const day = parts[1] || item.date;
+  const day = (parts[1] || item.date).replace(",", "");
 
   let displayDate = item.date;
   if (parts.length >= 3 && !item.date.includes(",")) {

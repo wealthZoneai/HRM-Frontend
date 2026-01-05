@@ -4,6 +4,8 @@ import DefaultAvatar from "../../../assets/my_pic.jpg";
 import { useRef, useEffect, useState } from "react";
 // import myPic from "../../../assets/my_pic.jpg";
 import LogoutModal from "../../../components/LogoutModal";
+import server from "../../../Services/index";
+import endpoints from "../../../Services/endpoints";
 // import { useSelector } from "react-redux";
 
 interface TopbarProps {
@@ -44,6 +46,48 @@ export default function Topbar({ name, id }: TopbarProps) {
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [imageSrc, setImageSrc] = useState<string>(DefaultAvatar);
+
+  useEffect(() => {
+    let active = true;
+    let objectUrl: string | null = null;
+
+    const fetchImage = async () => {
+      try {
+        // Fetch profile directly with cache busting to ensure we get the latest photo URL
+        const profileRes = await server.get(endpoints.myProfile, {
+          requiresAuth: true,
+          params: { t: new Date().getTime() }
+        });
+
+        const photoUrl = profileRes.data?.data?.protected_profile_photo_url || profileRes.data?.protected_profile_photo_url;
+
+        if (photoUrl) {
+          // Fetch image as Blob with auth headers and cache busting
+          const response = await server.get(photoUrl, {
+            responseType: "blob",
+            requiresAuth: true,
+            params: { t: new Date().getTime() }
+          });
+
+          if (active) {
+            objectUrl = URL.createObjectURL(response.data);
+            setImageSrc(objectUrl);
+          }
+        }
+      } catch (error) {
+        console.error("Topbar: Failed to load profile image", error);
+        if (active) setImageSrc(DefaultAvatar);
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   const handleNotification = () => {
     // Toggle between notifications page and dashboard
@@ -147,7 +191,7 @@ export default function Topbar({ name, id }: TopbarProps) {
               className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-100 cursor-pointer select-none transition-colors"
             >
               <img
-                src={DefaultAvatar}
+                src={imageSrc}
                 alt="Profile"
                 className="h-9 w-9 rounded-full object-cover shadow-sm"
               />

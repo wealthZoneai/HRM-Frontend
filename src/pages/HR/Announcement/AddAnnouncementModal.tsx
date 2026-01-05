@@ -148,13 +148,12 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) =>
                                 className={`mt-2 w-full px-4 py-2.5 rounded-xl border ${errors.department ? 'border-red-500' : 'bg-gray-50'} focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
                             >
                                 <option value="">Select department</option>
-                                <option value="All Departments">All departments</option>
-                                <option value="React">React</option>
-                                <option value="Java">Java</option>
-                                <option value="UI/UX">UI/UX</option>
-                                <option value="Python">Python</option>
-                                <option value="Testing">QA</option>
+                                <option value="EMP">All Employees</option>
+                                <option value="IT">IT Department</option>
                                 <option value="HR">HR</option>
+                                <option value="TL">Team Leads</option>
+                                <option value="FIN">Finance</option>
+                                <option value="MKT">Marketing</option>
                             </select>
                             {errors.department && <p className="text-red-500 text-xs mt-1">{errors.department}</p>}
                         </div>
