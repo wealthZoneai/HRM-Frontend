@@ -22,11 +22,13 @@ httpClient.interceptors.request.use(
       const access = localStorage.getItem("access");
 
       if (access) {
+        config.headers = config.headers ?? {};
         config.headers["Authorization"] = `Bearer ${access}`;
       }
     }
 
     if (config.data instanceof FormData) {
+      config.headers = config.headers ?? {};
       config.headers["Content-Type"] = "multipart/form-data";
     }
 
@@ -44,8 +46,13 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // If access token expired
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // no response available
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    // Unauthorized and not retried before
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const newAccessToken = await refreshAccessToken();
@@ -54,8 +61,14 @@ httpClient.interceptors.response.use(
         httpClient.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
-        return httpClient(originalRequest); // retry
+        return httpClient(originalRequest); // retry request
       }
+    }
+
+    // second 401 or refresh failed → logout
+    if (error.response.status === 401) {
+      localStorage.clear();
+      window.location.href = "/";
     }
 
     return Promise.reject(error);

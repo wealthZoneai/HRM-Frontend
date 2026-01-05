@@ -4,9 +4,8 @@ import {
   DEPARTMENTS, 
   MONTHS, 
   BADGE_STYLES, 
-  recordData 
 } from "./data";
-import type { AttendanceRecord } from "./types";
+import type { AttendanceRecord, User } from "./types";
 import { GetMonthlyAttendance } from "../../../Services/apiHelpers"; 
 
 // --- HELPER: Format Time (e.g., "2025-12-30T12:00:27..." -> "12:00 PM") ---
@@ -283,93 +282,236 @@ export const MonthlyView: React.FC<{ onViewLog: (emp: string, month: string, log
 
 // --- RECORDS VIEW COMPONENT ---
 export const RecordsView: React.FC = () => {
-  const [search, setSearch] = useState("");
-  const [fromDate, setFromDate] = useState("2025-03-01");
-  const [toDate, setToDate] = useState("2025-03-31");
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const filteredRecords = recordData.filter(r => {
-    const matchesSearch = r.employee.toLowerCase().includes(search.toLowerCase());
+  const [search, setSearch] = useState("");
+  
+  // CHANGED: Initialize as empty strings to show "All" by default
+  const [fromDate, setFromDate] = useState(""); 
+  const [toDate, setToDate] = useState("");
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      
+      // LOGIC CHANGE:
+      // If 'fromDate' is set, use it to determine the month to fetch.
+      // If 'fromDate' is EMPTY, default to the CURRENT DATE (so we fetch the current month's data).
+      const dateObj = fromDate ? new Date(fromDate) : new Date();
+      
+      const year = dateObj.getFullYear().toString();
+      const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+
+      const response = await GetMonthlyAttendance(year, month);
+      
+      if (response.data && response.data.results) {
+        setRecords(response.data.results);
+      } else {
+        setRecords([]);
+      }
+    } catch (error) {
+      console.error("Error fetching records:", error);
+      setRecords([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromDate]); 
+
+  // --- FILTERING LOGIC ---
+  const filteredRecords = records.filter((r) => {
+    // 1. Search Logic
+    const searchTerm = search.toLowerCase();
+    const fullName = getEmployeeName(r.user).toLowerCase();
+    
+    const matchesSearch = 
+      r.user.username.toLowerCase().includes(searchTerm) ||
+      r.user.email.toLowerCase().includes(searchTerm) ||
+      fullName.includes(searchTerm);
+
+    // 2. Date Range Logic
     const recDate = new Date(r.date);
     const start = fromDate ? new Date(fromDate) : null;
     const end = toDate ? new Date(toDate) : null;
+
+    if (start) start.setHours(0, 0, 0, 0);
+    if (end) end.setHours(23, 59, 59, 999);
+
+    // If 'start' (fromDate) is empty, !start is true, so we show everything
     const isAfterStart = !start || recDate >= start;
+    // If 'end' (toDate) is empty, !end is true, so we show everything
     const isBeforeEnd = !end || recDate <= end;
+
     return matchesSearch && isAfterStart && isBeforeEnd;
   });
 
   const handleDownload = (data: AttendanceRecord[]) => {
     const csvContent = [
-      ["Employee", "Employee ID", "Department", "Date", "Check In", "Check Out", "Status"],
-      ...data.map(item => [item.employee, item.empId, item.department, item.date, item.checkIn, item.checkOut, item.status])
-    ].map(e => e.join(",")).join("\n");
+      ["Employee", "Employee ID", "Role", "Email", "Date", "Check In", "Check Out", "Status"],
+      ...data.map((item) => {
+        return [
+          getEmployeeName(item.user),
+          item.user.id,
+          item.user.role,
+          item.user.email,
+          item.date,
+          formatTime(item.clock_in),
+          formatTime(item.clock_out),
+          item.status
+        ];
+      })
+    ]
+      .map((e) => e.join(","))
+      .join("\n");
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", `attendance_records_${fromDate}_to_${toDate}.csv`);
+    // Handle filename if dates are empty
+    const fileNameDate = fromDate ? `${fromDate}_to_${toDate || 'end'}` : 'Full_Month';
+    link.setAttribute("download", `attendance_records_${fileNameDate}.csv`);
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
+  function getEmployeeName(user: User): string {
+    return user.first_name && user.last_name 
+      ? `${user.first_name} ${user.last_name}` 
+      : user.username || "";
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
       <div className="flex flex-col gap-4 mb-6">
         <h3 className="text-xl font-semibold text-gray-800">Full Attendance Records</h3>
+        
+        {/* Controls */}
         <div className="flex flex-wrap justify-between items-center gap-4">
-          <div className="relative">
+          
+          {/* Search */}
+          <div className="relative w-full md:w-auto">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" placeholder="Search Employee" className="pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Search Employee..."
+              className="pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors w-full md:w-64"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
+
+          {/* Date Pickers */}
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200">
               <div className="relative">
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold uppercase">From</span>
-                <input type="date" max={new Date().toISOString().split("T")[0]} value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="pl-12 pr-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none" />
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] font-bold uppercase tracking-wider">From</span>
+                <input
+                  type="date"
+                  max={new Date().toISOString().split("T")[0]}
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="pl-10 pr-2 py-1.5 border-none bg-transparent text-sm text-gray-700 focus:ring-0 cursor-pointer placeholder-gray-400"
+                />
               </div>
+              <div className="h-4 w-px bg-gray-300"></div>
               <div className="relative">
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold uppercase">To</span>
-                <input type="date" max={new Date().toISOString().split("T")[0]} value={toDate} onChange={(e) => setToDate(e.target.value)} className="pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white focus:ring-blue-500 focus:border-blue-500 transition-colors appearance-none" />
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] font-bold uppercase tracking-wider">To</span>
+                <input
+                  type="date"
+                  max={new Date().toISOString().split("T")[0]}
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="pl-8 pr-2 py-1.5 border-none bg-transparent text-sm text-gray-700 focus:ring-0 cursor-pointer placeholder-gray-400"
+                />
               </div>
             </div>
-            <button onClick={() => handleDownload(filteredRecords)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium">
-              <FiDownload /> Download
+            
+            <button
+              onClick={() => handleDownload(filteredRecords)}
+              disabled={loading || filteredRecords.length === 0}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              <FiDownload /> Export
             </button>
           </div>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[800px]">
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg border border-gray-100">
+        <table className="w-full text-sm min-w-[900px]">
           <thead className="text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
             <tr>
               <th className="py-3 px-6 text-left">Employee</th>
-              <th className="py-3 px-6">Employee ID</th>
-              <th className="py-3 px-6">Department</th>
-              <th className="py-3 px-6">Date</th>
-              <th className="py-3 px-6">Check In</th>
-              <th className="py-3 px-6">Check Out</th>
-              <th className="py-3 px-6">Status</th>
+              <th className="py-3 px-6 text-center">ID</th>
+              <th className="py-3 px-6 text-center">Role</th>
+              <th className="py-3 px-6 text-center">Date</th>
+              <th className="py-3 px-6 text-center">Check In</th>
+              <th className="py-3 px-6 text-center">Check Out</th>
+              <th className="py-3 px-6 text-center">Status</th>
             </tr>
           </thead>
           <tbody>
-            {filteredRecords.map((r, index) => (
-              <tr key={r.id} className={`border-b border-gray-100 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50/50`}>
-                <td className="py-3 px-6 flex items-center gap-3 font-medium text-gray-800">
-                  <img src={r.avatar} alt={r.employee} className="w-9 h-9 rounded-full object-cover" /> {r.employee}
-                </td>
-                <td className="text-center text-gray-600">{r.empId}</td>
-                <td className="text-center text-gray-600">{r.department}</td>
-                <td className="text-center text-gray-600 font-medium">{r.date}</td>
-                <td className="text-center font-bold text-gray-700">{r.checkIn}</td>
-                <td className="text-center font-bold text-gray-700">{r.checkOut}</td>
-                <td className="text-center">
-                  <span className={`px-3 py-1 rounded-full text-xs ${BADGE_STYLES[r.status]}`}>{r.status}</span>
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="text-center py-12">
+                   <div className="flex justify-center items-center gap-2 text-gray-500">
+                     <span className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></span>
+                     Loading records...
+                   </div>
                 </td>
               </tr>
-            ))}
-            {filteredRecords.length === 0 && (
-              <tr><td colSpan={7} className="text-center py-8 text-gray-500">No records found for the selected date range.</td></tr>
+            ) : filteredRecords.length > 0 ? (
+              filteredRecords.map((r, index) => (
+                <tr
+                  key={r.id}
+                  className={`border-b border-gray-100 transition-colors ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  } hover:bg-blue-50/50`}
+                >
+                  <td className="py-3 px-6 flex items-center gap-3 font-medium text-gray-800">
+                    <img
+                      src={`https://ui-avatars.com/api/?name=${r.user.username}&background=random&color=fff`}
+                      alt={r.user.username}
+                      className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
+                    />
+                    <div className="flex flex-col">
+                        <span>{getEmployeeName(r.user)}</span>
+                        <span className="text-xs text-gray-400 font-normal">{r.user.email}</span>
+                    </div>
+                  </td>
+                  <td className="text-center text-gray-600">{r.user.id}</td>
+                  <td className="text-center text-gray-600 capitalize">{r.user.role}</td>
+                  <td className="text-center text-gray-600 font-medium">{r.date}</td>
+                  <td className="text-center font-bold text-gray-700">
+                    {formatTime(r.clock_in)}
+                  </td>
+                  <td className="text-center font-bold text-gray-700">
+                    {formatTime(r.clock_out)}
+                  </td>
+                  <td className="text-center">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusStyle(r.status)}`}
+                    >
+                      {r.status.replace('_', ' ')}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="text-center py-12 text-gray-500">
+                  No records found.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -377,3 +519,4 @@ export const RecordsView: React.FC = () => {
     </div>
   );
 };
+
