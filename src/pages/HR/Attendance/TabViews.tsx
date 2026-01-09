@@ -97,7 +97,7 @@ export const DailyView: React.FC = () => {
                         <p className="font-medium text-gray-800 capitalize">
                           {d.user.first_name ? `${d.user.first_name} ${d.user.last_name}` : d.user.username}
                         </p>
-                        <p className="text-xs text-gray-500 capitalize">{d.user.role} ({d.user.id})</p>
+                        <p className="text-xs text-gray-500 capitalize">{d.user.role} </p>
                       </div>
                     </td>
                     <td className={`text-center font-semibold text-base ${!d.clock_in ? 'text-gray-400' : 'text-green-600'}`}>

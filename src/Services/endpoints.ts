@@ -13,7 +13,7 @@ const endpoints = {
     employees: 'api/employees/',
     hrAnnouncements: '/api/announcement/list/',
     createAnnouncement: 'api/announcement/create/',
-    hrDashboardStats: 'api/dashboard/stats/',
+    hrDashboardStats: 'api/hr/dashboard/stats/',
     hrLeaveDashboardStats: 'api/leave-dashboard/stats/',
     hrMonthlyAttendance: "api/attendance/",
 
