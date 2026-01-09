@@ -22,8 +22,8 @@ const SalaryManagement: React.FC = () => {
         { id: "4", name: "Emily Chen", dept: "Java", role: "Java Developer", email: "emily.c@company.com", salary: "110k" },
         { id: "5", name: "James Wilson", dept: "Python", role: "Data Scientist", email: "j.wilson@company.com", salary: "145k" },
         { id: "6", name: "Jessica Lee", dept: "Python", role: "Backend Python Dev", email: "jess.lee@company.com", salary: "115k" },
-        { id: "7", name: "Robert Taylor", dept: "AWS", role: "Cloud Architect", email: "rob.taylor@company.com", salary: "160k" },
-        { id: "8", name: "Lisa Wong", dept: "AWS", role: "DevOps Engineer", email: "lisa.w@company.com", salary: "135k" },
+        { id: "7", name: "Robert Taylor", dept: "Cloud", role: "Cloud Architect", email: "rob.taylor@company.com", salary: "160k" },
+        { id: "8", name: "Lisa Wong", dept: "Cloud", role: "DevOps Engineer", email: "lisa.w@company.com", salary: "135k" },
         { id: "9", name: "Alex Martin", dept: "Cyber Security", role: "Security Analyst", email: "alex.m@company.com", salary: "130k" },
         { id: "10", name: "Samantha Green", dept: "Cyber Security", role: "Penetration Tester", email: "sam.g@company.com", salary: "140k" },
         { id: "11", name: "Daniel Brown", dept: "UI/UX", role: "Senior Product Designer", email: "dan.brown@company.com", salary: "135k" },
@@ -31,9 +31,9 @@ const SalaryManagement: React.FC = () => {
         { id: "13", name: "Kevin Brooks", dept: "UI/UX", role: "UI Designer", email: "kevin.b@company.com", salary: "95k" },
         { id: "14", name: "Priya Patel", dept: "React", role: "Frontend Engineer", email: "priya.p@company.com", salary: "115k" },
         { id: "15", name: "Tom Harris", dept: "Java", role: "Senior Java Dev", email: "tom.h@company.com", salary: "145k" },
-        { id: "16", name: "Brian Scott", dept: "QA", role: "QA Engineer", email: "brian.s@company.com", salary: "105k" },
-        { id: "17", name: "Laura Miller", dept: "QA", role: "Automation Tester", email: "laura.m@company.com", salary: "115k" },
-        { id: "18", name: "Steven Clark", dept: "QA", role: "QA Lead", email: "steven.c@company.com", salary: "135k" },
+        { id: "16", name: "Brian Scott", dept: "Testing", role: "QA Engineer", email: "brian.s@company.com", salary: "105k" },
+        { id: "17", name: "Laura Miller", dept: "Testing", role: "Automation Tester", email: "laura.m@company.com", salary: "115k" },
+        { id: "18", name: "Steven Clark", dept: "Testing", role: "QA Lead", email: "steven.c@company.com", salary: "135k" },
     ]);
 
     // Get unique departments for filter
@@ -51,8 +51,8 @@ const SalaryManagement: React.FC = () => {
         .sort((a, b) => a.dept.localeCompare(b.dept)); // Sort by department
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen"> 
-            
+        <div className="p-6 bg-gray-50 min-h-screen">
+
             {/* Page Header */}
             <div className="mb-8">
                 <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight">
@@ -121,7 +121,7 @@ const SalaryManagement: React.FC = () => {
                                 <div className="text-gray-600">{emp.dept}</div>
                                 <div className="truncate text-gray-600">{emp.role}</div>
                                 <div className="truncate text-gray-500 italic">{emp.email}</div>
-                                
+
                                 {/* Salary - Adjusted spacing is now handled by the grid definition */}
                                 <div className="text-blue-700 font-bold text-lg text-center">
                                     {emp.salary}
@@ -129,7 +129,7 @@ const SalaryManagement: React.FC = () => {
 
                                 {/* Button - Fixed width column */}
                                 <div className="flex justify-end">
-                                    <button 
+                                    <button
                                         className="flex items-center space-x-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm shadow-md"
                                         onClick={() => setOpen(true)}
                                     >
@@ -147,7 +147,7 @@ const SalaryManagement: React.FC = () => {
                 </div>
 
             </div>
-            
+
             <EditSalaryModal
                 isOpen={open}
                 onClose={() => setOpen(false)}

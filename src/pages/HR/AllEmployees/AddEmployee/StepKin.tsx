@@ -126,13 +126,17 @@ const StepKin: React.FC = () => {
               className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select Department</option>
-              <option value="Product">Product</option>
-              <option value="Software">IT & Software</option>
-              <option value="Design">Design</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Sales">Sales</option>
-              <option value="HR">Human Resources</option>
-              <option value="Finance">Finance</option>
+              <option value="Python">Python</option>
+              <option value="Testing">Testing</option>
+              <option value="Java">Java</option>
+              <option value="UI/UX">UI/UX</option>
+              <option value="React">React</option>
+              <option value="Cyber Security">Cyber Security</option>
+              <option value="Digital Marketing">Digital Marketing</option>
+              <option value="HR">HR</option>
+              <option value="BDM">BDM</option>
+              <option value="Networking">Networking</option>
+              <option value="Cloud">Cloud (AWS / DevOps)</option>
             </select>
           </div>
 

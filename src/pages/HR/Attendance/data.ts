@@ -4,14 +4,17 @@
 // DEPARTMENTS (static list)
 // ==============================
 export const DEPARTMENTS = [
-  "Teams",
-  "AWS",
-  "Cyber Security",
-  "Java",
   "Python",
-  "QA",
-  "React",
+  "Testing",
+  "Java",
   "UI/UX",
+  "React",
+  "Cyber Security",
+  "Digital Marketing",
+  "HR",
+  "BDM",
+  "Networking",
+  "Cloud",
 ];
 
 

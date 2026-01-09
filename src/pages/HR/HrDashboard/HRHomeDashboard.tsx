@@ -40,7 +40,7 @@ const initialInterviews: InterviewItem[] = [
 
 const initialDeptData: DeptDataItem[] = [
   {
-    name: "React Team",
+    name: "React",
     value: 30,
     interns: 4,
     juniors: 10,
@@ -64,7 +64,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "Java Team",
+    name: "Java",
     value: 25,
     interns: 3,
     juniors: 8,
@@ -112,7 +112,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "UI/UX Team",
+    name: "UI/UX",
     value: 28,
     interns: 5,
     juniors: 10,
@@ -136,7 +136,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "Python Team",
+    name: "Python",
     value: 18,
     interns: 2,
     juniors: 6,
@@ -160,7 +160,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "QA",
+    name: "Testing",
     value: 12,
     interns: 1,
     juniors: 4,
@@ -184,7 +184,7 @@ const initialDeptData: DeptDataItem[] = [
   },
 
   {
-    name: "HR Team",
+    name: "HR",
     value: 20,
     interns: 1,
     juniors: 6,
@@ -230,7 +230,7 @@ const initialDeptData: DeptDataItem[] = [
     ],
   },
   {
-    name: "BDMS",
+    name: "BDM",
     value: 20,
     interns: 1,
     juniors: 6,
@@ -253,7 +253,7 @@ const initialDeptData: DeptDataItem[] = [
     ],
   },
   {
-    name: "SAP",
+    name: "Cloud",
     value: 20,
     interns: 1,
     juniors: 6,

@@ -158,9 +158,8 @@ export const getCalendarEvents = (year?: number, month?: number) => {
 };
 
 
-export const getHrAnnouncements = async () => {
-  const response = await server.get(endpoints.hrAnnouncements);
-  return response.data;
+export const getHrAnnouncements = () => {
+  return server.get(endpoints.hrAnnouncements, { requiresAuth: true });
 };
 
 export const CreateAnnouncement = (data: any) => {
@@ -179,6 +178,12 @@ export const GetMonthlyAttendance = (year: string, month: string) => {
 
 export const getHRDashboardStats = () => {
   return server.get(endpoints.hrDashboardStats, {
+    requiresAuth: true,
+  });
+};
+
+export const getLeaveDashboardStats = () => {
+  return server.get(endpoints.hrLeaveDashboardStats, {
     requiresAuth: true,
   });
 };

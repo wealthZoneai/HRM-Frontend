@@ -9,11 +9,11 @@ import { FiClock, FiUsers, FiUserX } from "react-icons/fi";
 
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
-import { fetchHRLeaves, hrApproveLeave, hrDeclineLeave } from "../../../store/slice/leaveSlice";
+import { fetchHRLeaves, fetchLeaveDashboardStats, hrApproveLeave, hrDeclineLeave } from "../../../store/slice/leaveSlice";
 
 const HrLeaveManagement = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { hrLeaves } = useSelector((state: RootState) => state.leave);
+    const { hrLeaves, stats } = useSelector((state: RootState) => state.leave);
 
     const [openNotification, setOpenNotification] = useState(false);
     const [viewModal, setViewModal] = useState(false);
@@ -25,6 +25,7 @@ const HrLeaveManagement = () => {
 
     useEffect(() => {
         dispatch(fetchHRLeaves());
+        dispatch(fetchLeaveDashboardStats());
     }, [dispatch]);
 
     // Map Redux data to frontend LeaveRow interface
@@ -111,19 +112,19 @@ const HrLeaveManagement = () => {
     const summaryCardData = [
         {
             title: "Today's Present",
-            value: "32",
+            value: stats?.present_today?.toString() ?? "0",
             icon: <FiUsers size={22} className="text-white" />,
             color: "bg-blue-600",
         },
         {
             title: "Today's Absent",
-            value: "10",
+            value: stats?.absent_today?.toString() ?? "0",
             icon: <FiUserX size={22} className="text-white" />,
             color: "bg-red-500",
         },
         {
             title: "Leave Request",
-            value: leaveRows.filter(r => r.status === "Pending").length.toString(),
+            value: stats?.leave_requests?.toString() ?? "0",
             icon: <FiClock size={22} className="text-white" />,
             color: "bg-yellow-500",
             onClick: () => setFilterStatus("Pending"),

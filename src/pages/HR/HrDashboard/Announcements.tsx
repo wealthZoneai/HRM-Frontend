@@ -25,7 +25,7 @@ const Announcements: React.FC = () => {
     try {
       const res = await getHrAnnouncements();
 
-      const mapped: AnnouncementItem[] = res.data.map((a: any) => ({
+      const mapped: AnnouncementItem[] = res.data.data.map((a: any) => ({
         id: String(a.id),
         title: a.title,
         summary: a.description,
@@ -71,10 +71,10 @@ const Announcements: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 h-full flex flex-col">
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 h-[420px] flex flex-col">
       <h3 className="text-lg font-semibold mb-4">Announcements</h3>
 
-      <div className="space-y-3 flex-1 overflow-y-auto min-h-0">
+      <div className="space-y-3 flex-1 overflow-y-auto min-h-0 scrollbar-hide">
         {items.map((it) => (
           <ListItem key={it.id} item={it} onClick={() => setSelected(it)} />
         ))}

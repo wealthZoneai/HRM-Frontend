@@ -28,6 +28,7 @@ interface LeaveState {
     pendingLeaves: LeaveItem[]; // Team member leaves (for TL view)
     loading: boolean;
     error: string | null;
+    stats: LeaveDashboardStats | null;
 }
 
 const initialState: LeaveState = {
@@ -36,6 +37,7 @@ const initialState: LeaveState = {
     pendingLeaves: [],
     loading: false,
     error: null,
+    stats: null,
 };
 
 // Async thunk to fetch leaves
@@ -102,6 +104,7 @@ export const hrApproveLeave = createAsyncThunk(
         try {
             const response = await HRLeaveAction(id, 'approve', remarks);
             dispatch(fetchHRLeaves()); // Refresh the list after action
+            dispatch(fetchLeaveDashboardStats()); // Refresh stats
             return response.data;
         } catch (err: any) {
             return rejectWithValue(err.response?.data?.detail || "Failed to approve leave");
@@ -115,9 +118,33 @@ export const hrDeclineLeave = createAsyncThunk(
         try {
             const response = await HRLeaveAction(id, 'reject', remarks);
             dispatch(fetchHRLeaves()); // Refresh the list after action
+            dispatch(fetchLeaveDashboardStats()); // Refresh stats
             return response.data;
         } catch (err: any) {
             return rejectWithValue(err.response?.data?.detail || "Failed to decline leave");
+        }
+    }
+);
+
+// Define stats interface
+export interface LeaveDashboardStats {
+    present_today: number;
+    absent_today: number;
+    leave_requests: number;
+}
+
+
+
+import { getLeaveDashboardStats } from "../../Services/apiHelpers";
+
+export const fetchLeaveDashboardStats = createAsyncThunk(
+    "leave/fetchLeaveDashboardStats",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await getLeaveDashboardStats();
+            return response.data;
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.detail || "Failed to fetch leave stats");
         }
     }
 );
@@ -131,6 +158,7 @@ const leaveSlice = createSlice({
             state.hrLeaves = [];
             state.loading = false;
             state.error = null;
+            state.stats = null;
         },
     },
     extraReducers: (builder) => {
@@ -173,6 +201,10 @@ const leaveSlice = createSlice({
             .addCase(fetchPendingLeaves.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+            // Dashboard Stats
+            .addCase(fetchLeaveDashboardStats.fulfilled, (state, action: PayloadAction<LeaveDashboardStats>) => {
+                state.stats = action.payload;
             });
     },
 });

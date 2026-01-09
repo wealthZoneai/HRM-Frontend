@@ -14,6 +14,7 @@ const endpoints = {
     hrAnnouncements: '/api/announcement/list/',
     createAnnouncement: 'api/announcement/create/',
     hrDashboardStats: 'api/dashboard/stats/',
+    hrLeaveDashboardStats: 'api/leave-dashboard/stats/',
     hrMonthlyAttendance: "api/attendance/",
 
 
