@@ -172,7 +172,7 @@ const attendanceSlice = createSlice({
         });
         builder.addCase(fetchTodayAttendance.fulfilled, (state, action: PayloadAction<any>) => {
             state.loading = false;
-            const { clock_in, clock_out, total_hours_workdone } = action.payload;
+            const { clock_in, clock_out, total_hours_workdone, duration_seconds } = action.payload;
 
             const serverClockIn = toFullISO(clock_in);
             const serverClockOut = toFullISO(clock_out);
@@ -203,7 +203,16 @@ const attendanceSlice = createSlice({
 
             state.clockInTime = finalClockIn;
             state.clockOutTime = finalClockOut;
-            state.totalHours = total_hours_workdone;
+
+            // Standardize totalHours to SECONDS
+            if (duration_seconds !== undefined && duration_seconds !== null) {
+                state.totalHours = duration_seconds;
+            } else if (total_hours_workdone !== undefined && total_hours_workdone !== null) {
+                // Backend returns hours (e.g. 2.5), we need seconds
+                state.totalHours = Math.floor(Number(total_hours_workdone) * 3600);
+            } else {
+                state.totalHours = null;
+            }
 
             if (state.clockOutTime) {
                 state.status = 'Completed';

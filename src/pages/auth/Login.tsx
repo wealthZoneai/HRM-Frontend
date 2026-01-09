@@ -26,6 +26,8 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleForgotPassword = () => {
     navigate('/forgot-password')
   }
@@ -33,10 +35,14 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isLoading) return;
+
     if (!username.trim() || !password.trim()) {
       showWarning("Please fill in all fields");
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const response = await loginUser({ username, password });
@@ -83,6 +89,8 @@ const Login: React.FC = () => {
     } catch (error) {
       console.error(error);
       showLoginError("Invalid credentials. Please check your email and password.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -171,6 +179,7 @@ const Login: React.FC = () => {
                   placeholder="Enter your name"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -186,6 +195,7 @@ const Login: React.FC = () => {
                   placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -196,6 +206,7 @@ const Login: React.FC = () => {
                 </button>
               </div>
             </div>
+
 
 
 
@@ -246,9 +257,10 @@ const Login: React.FC = () => {
             {/* LOGIN BUTTON */}
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition shadow-sm"
+              disabled={isLoading}
+              className={`w-full py-3 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition shadow-sm ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              Login
+              {isLoading ? "Logging in..." : "Login"}
             </button>
 
             <p className="text-center text-sm text-white">

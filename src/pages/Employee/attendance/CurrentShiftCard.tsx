@@ -85,23 +85,29 @@ export default function CurrentShiftCard({ }: CurrentShiftCardProps) {
         <div className="relative flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
           {/* Left Side - Shift Info */}
           <div className="flex-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100/60 rounded-full mb-4">
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-              <p className="text-blue-700 font-semibold text-sm flex items-center gap-1.5">
+            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 ${status === 'Working' ? 'bg-blue-100/60' :
+                status === 'Completed' ? 'bg-green-100/60' : 'bg-gray-100/60'
+              }`}>
+              <div className={`w-2 h-2 rounded-full ${status === 'Working' ? 'bg-blue-600 animate-pulse' :
+                  status === 'Completed' ? 'bg-green-600' : 'bg-gray-400'
+                }`}></div>
+              <p className={`font-semibold text-sm flex items-center gap-1.5 ${status === 'Working' ? 'text-blue-700' :
+                  status === 'Completed' ? 'text-green-700' : 'text-gray-600'
+                }`}>
                 <Clock className="w-3.5 h-3.5" />
                 {status === 'Not Started' ? 'Not Started' : status === 'Working' ? 'Currently Working' : 'Shift Completed'}
               </p>
             </div>
 
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
-              Shift started at{" "}
+              {status === 'Not Started' ? 'Shift starts at ' : 'Shift started at '}
               <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                {startDisplay}
+                {status === 'Not Started' ? '09:00 AM' : startDisplay}
               </span>
             </h2>
 
             <p className="text-gray-500 text-sm mt-3 font-medium">
-              Scheduled Shift: <span className="font-bold text-gray-700">9 Hrs</span>
+              Scheduled Shift: <span className="font-bold text-gray-700">09:00 AM - 07:00 PM (10 Hrs)</span>
             </p>
           </div>
 
