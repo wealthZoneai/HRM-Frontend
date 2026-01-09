@@ -165,7 +165,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* RIGHT SECTION */}
-        <div className="relative z-10 p-8 md:p-12 flex flex-col justify-center">
+        <div className="relative z-10 p-8 md:p-12 top-[30px] flex flex-col justify-center">
           <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* USERNAME */}
