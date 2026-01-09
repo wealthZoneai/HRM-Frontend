@@ -6,16 +6,22 @@ import StepPersonal from "./StepPersonal";
 import StepKin from "./StepKin";
 import StepBank from "./StepBank";
 import StepDocs from "./StepDocs";
-import { CheckCircle, ArrowLeft, ArrowRight, CornerDownRight } from "lucide-react";
+import {
+  CheckCircle,
+  ArrowLeft,
+  ArrowRight,
+  CornerDownRight,
+} from "lucide-react";
 import { CreateEmployes } from "../../../../Services/apiHelpers";
 import { useNavigate } from "react-router-dom";
 
-const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({ editData, onSuccess }) => {
+const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
+  editData,
+  onSuccess,
+}) => {
   const { state, dispatch } = useAddEmployee();
   const navigate = useNavigate();
-  console.log(state)
 
-  console.log(editData);
   /* ===========================================================
       LOAD EDIT MODE DATA
   ============================================================ */
@@ -37,26 +43,25 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({ edi
   }, [editData, dispatch]);
 
   /* ===========================================================
-      STEP COMPONENT LIST
+      STEP CONFIG
   ============================================================ */
   const steps = [
     { key: "personal", label: "Personal Info", comp: <StepPersonal /> },
     { key: "kin", label: "Job Information", comp: <StepKin /> },
-    { key: "bank", label: "Bank Details", comp: <StepBank /> },
+    { key: "bank", label: "Bank Details (Optional)", comp: <StepBank /> },
     { key: "docs", label: "Documents", comp: <StepDocs /> },
   ];
 
   /* ===========================================================
-      STEP VALIDATION LOGIC
+      STEP VALIDATION
+      (Bank step is OPTIONAL)
   ============================================================ */
   const validateStep = () => {
     const p = state.contact;
     const k = state.kin;
-    const b = state.bankAccounts[0] || {};
-    // const d = state.documents;
 
     switch (state.step) {
-      case 0: // PERSONAL
+      case 0:
         return (
           p.firstName?.trim() &&
           p.lastName?.trim() &&
@@ -68,7 +73,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({ edi
           p.maritalStatus?.trim()
         );
 
-      case 1: // JOB INFO (KIN)
+      case 1:
         return (
           k.startDate?.trim() &&
           k.jobTitle?.trim() &&
@@ -77,28 +82,33 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({ edi
           k.location?.trim()
         );
 
-      case 2: // BANK
-        return (
-          b.bankName?.trim() &&
-          b.accountNumber?.trim() &&
-          b.confirmAccountNumber?.trim() &&
-          b.accountName?.trim() &&
-          b.ifscCode?.trim()
+      case 2: // BANK OPTIONAL
+        return true;
 
-        );
+      case 3:
+        return true;
 
-      case 3: // DOCUMENTS
-        return true; // optional
       default:
-        return false;
+        return true;
     }
   };
 
-
-
+  /* ===========================================================
+      BANK DATA CHECK
+  ============================================================ */
+  const hasBankData = (bank: any) => {
+    return (
+      bank?.bankName ||
+      bank?.accountNumber ||
+      bank?.confirmAccountNumber ||
+      bank?.accountName ||
+      bank?.ifscCode ||
+      bank?.branchName
+    );
+  };
 
   /* ===========================================================
-      STEP INDICATOR BUTTON
+      STEP INDICATOR
   ============================================================ */
   const StepIndicator: React.FC<{ index: number; label: string }> = ({
     index,
@@ -107,61 +117,46 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({ edi
     const isActive = state.step === index;
     const isCompleted = state.step > index;
 
-    const leftConnectorCompleted = state.step >= index;
-    const rightConnectorCompleted = state.step > index;
-
     let icon;
-    let iconBgClass;
-    let textClass;
+    let bg;
+    let text;
 
     if (isCompleted) {
       icon = <CheckCircle size={16} className="text-white" />;
-      iconBgClass = "bg-green-500";
-      textClass = "text-gray-700 font-medium";
+      bg = "bg-green-500";
+      text = "text-gray-700";
     } else if (isActive) {
-      icon = <span className="text-white text-sm font-bold">{index + 1}</span>;
-      iconBgClass = "bg-blue-600 ring-2 ring-blue-300";
-      textClass = "text-blue-600 font-bold";
+      icon = <span className="text-white font-bold">{index + 1}</span>;
+      bg = "bg-blue-600 ring-2 ring-blue-300";
+      text = "text-blue-600 font-bold";
     } else {
-      icon = <span className="text-gray-500 text-sm font-bold">{index + 1}</span>;
-      iconBgClass = "bg-gray-100 border border-gray-300";
-      textClass = "text-gray-500";
+      icon = <span className="text-gray-500">{index + 1}</span>;
+      bg = "bg-gray-200";
+      text = "text-gray-500";
     }
 
     return (
       <button
-        disabled={!isCompleted && !isActive} // Prevent jumping forward
+        disabled={!isCompleted && !isActive}
         onClick={() => dispatch({ type: "SET_STEP", payload: index })}
-        className="flex flex-col items-center flex-1 min-w-0 group"
+        className="flex flex-col items-center flex-1"
       >
-        <div className="flex items-center w-full">
-          <div
-            className={`flex-1 h-1 ${leftConnectorCompleted ? "bg-blue-600" : "bg-gray-300"
-              } ${index === 0 ? "hidden" : "block"}`}
-          ></div>
-
-          <div
-            className={`shrink w-8 h-8 rounded-full flex items-center justify-center ${iconBgClass}`}
-          >
-            {icon}
-          </div>
-
-          <div
-            className={`flex-1 h-1 ${rightConnectorCompleted ? "bg-blue-600" : "bg-gray-300"
-              } ${index === steps.length - 1 ? "hidden" : "block"}`}
-          ></div>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${bg}`}>
+          {icon}
         </div>
-
-        <span className={`mt-2 text-xs md:text-sm ${textClass}`}>{label}</span>
+        <span className={`mt-2 text-sm ${text}`}>{label}</span>
       </button>
     );
   };
 
+  /* ===========================================================
+      API PAYLOAD
+  ============================================================ */
   const convertToApiPayload = (state: any) => {
     const k = state.kin;
-    const b = state.bankAccounts[0]; // only 1 account
+    const b = state.bankAccounts[0] || {};
 
-    return {
+    const payload: any = {
       emp_id: k.employeeId,
       work_email: k.email,
       contact: {
@@ -186,112 +181,96 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({ edi
         location: k.location,
         job_description: k.jobDescription,
       },
-      bank: {
+    };
+
+    // ✅ Send bank only if user entered something
+    if (hasBankData(b)) {
+      payload.bank = {
         bank_name: b.bankName,
         account_number: b.accountNumber,
         confirm_account_number: b.confirmAccountNumber,
         ifsc_code: b.ifscCode,
         branch: b.branchName,
         account_holder_name: b.accountName,
-      },
-    };
+      };
+    }
+
+    return payload;
   };
 
+  /* ===========================================================
+      SUBMIT
+  ============================================================ */
   const handelApiCall = async (state: any) => {
-    const payload = convertToApiPayload(state);
-
-    console.log("Payload sending to API:", payload);
-
     try {
-      const response = await CreateEmployes(payload);
-
-      console.log("API Response:", response.data);
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        navigate('/hr/employees');
-      }
-
+      await CreateEmployes(convertToApiPayload(state));
+      onSuccess ? onSuccess() : navigate("/hr/employees");
     } catch (error: any) {
-      console.error("API Error Entire Object:", error);
-      if (error.response && error.response.data) {
-        console.error("API Validation Errors:", error.response.data);
-        toast.error(`Failed to create employee: ${JSON.stringify(error.response.data)}`);
-      } else {
-        toast.error("Failed to create employee");
-      }
+      console.error("API error:", error.response?.data || error);
+      toast.error("Failed to create employee. Check required fields.");
     }
   };
 
   /* ===========================================================
-      RENDER UI
+      RENDER
   ============================================================ */
   return (
     <div className="w-full bg-white rounded-xl shadow-lg p-6 md:p-8">
-
       {/* STEP INDICATORS */}
-      <div className="flex justify-between items-start mb-10 px-0 md:px-4">
+      <div className="flex justify-between mb-10">
         {steps.map((s, i) => (
           <StepIndicator key={s.key} index={i} label={s.label} />
         ))}
       </div>
 
-      <hr className="mb-6 border-gray-200" />
+      <hr className="mb-6" />
 
-      {/* CURRENT STEP CONTENT */}
-      <div className="pt-4 min-h-[350px]">
-        <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-          <CornerDownRight size={20} className="text-blue-500" />{" "}
+      {/* STEP CONTENT */}
+      <div className="min-h-[350px]">
+        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+          <CornerDownRight size={18} />
           {steps[state.step]?.label}
         </h2>
         {steps[state.step]?.comp}
       </div>
 
-      {/* NAVIGATION BUTTONS */}
-      <div className="mt-8 flex items-center justify-between">
+      {/* NAVIGATION */}
+      <div className="mt-8 flex justify-between">
         {state.step > 0 ? (
           <button
             onClick={() =>
-              dispatch({
-                type: "SET_STEP",
-                payload: Math.max(0, state.step - 1),
-              })
+              dispatch({ type: "SET_STEP", payload: state.step - 1 })
             }
-            className="px-6 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 flex items-center gap-2 shadow-sm"
+            className="px-6 py-2 border rounded-lg"
           >
             <ArrowLeft size={16} /> Previous
           </button>
         ) : (
-          <div></div>
+          <div />
         )}
 
-        {/* NEXT BUTTON WITH VALIDATION */}
         {state.step < steps.length - 1 ? (
           <button
             onClick={() => {
-              if (!validateStep()) {
-                alert("⚠️ Please fill all required fields before proceeding.");
-                return;
-              }
+              if (!validateStep()) return;
               dispatch({
                 type: "SET_STEP",
                 payload: state.step + 1,
               });
             }}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center gap-2 shadow-md"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
             Next <ArrowRight size={16} />
           </button>
         ) : (
           <button
             onClick={() => handelApiCall(state)}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 flex items-center gap-2 shadow-md"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg"
           >
             Submit Employee Data
           </button>
         )}
       </div>
-
     </div>
   );
 };
