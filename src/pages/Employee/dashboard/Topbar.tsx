@@ -1,4 +1,4 @@
-import { Bell } from "lucide-react";
+import { Bell, Headset } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import DefaultAvatar from "../../../assets/my_pic.jpg";
 import { useRef, useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import { useRef, useEffect, useState } from "react";
 import LogoutModal from "../../../components/LogoutModal";
 import server from "../../../Services/index";
 import endpoints from "../../../Services/endpoints";
+import { getNotifications } from "../../../Services/apiHelpers"; // Import API
 // import { useSelector } from "react-redux";
 
 interface TopbarProps {
@@ -47,6 +48,7 @@ export default function Topbar({ name, id }: TopbarProps) {
   // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [imageSrc, setImageSrc] = useState<string>(DefaultAvatar);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -88,6 +90,23 @@ export default function Topbar({ name, id }: TopbarProps) {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, []);
+
+  // Fetch unread notifications
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await getNotifications();
+        const list = res.data?.data || [];
+        const count = list.filter((item: any) => !item.is_read).length;
+        setUnreadCount(count);
+      } catch (err) {
+        console.error("Topbar: Failed to fetch notifications", err);
+      }
+    };
+
+    fetchUnreadCount();
+  }, [location.pathname]);
+
 
   const handleNotification = () => {
     // Toggle between notifications page and dashboard
@@ -174,7 +193,18 @@ export default function Topbar({ name, id }: TopbarProps) {
             className={`h-6 w-6 ${location.pathname === "/employee/notifications" ? "text-blue-600" : ""}`}
             fill={location.pathname === "/employee/notifications" ? "currentColor" : "none"}
           />
-          {/* <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border border-white"></span> */}
+          {/* Badge */}
+          {unreadCount > 0 && (
+            <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border border-white"></span>
+          )}
+        </button>
+
+        {/* HELP BUTTON */}
+        <button
+          className="relative p-2 rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-150"
+          title="Help & Support"
+        >
+          <Headset className="h-6 w-6" />
         </button>
 
         {/* Profile Avatar + Dropdown */}

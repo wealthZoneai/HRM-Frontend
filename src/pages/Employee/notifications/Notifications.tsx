@@ -3,7 +3,7 @@ import NotificationTabs from "../notifications/NotificationTabs";
 import NotificationsList from "../notifications/NotificationsList";
 import NotificationDetailModal from "./NotificationDetailModal";
 import type { NotificationItem } from "./NotificationCard/types";
-import { getNotifications } from "../../../Services/apiHelpers";
+import { getNotifications, markAllNotificationsRead } from "../../../Services/apiHelpers";
 
 /* -------- Time Formatter -------- */
 const timeAgo = (dateString: string) => {
@@ -43,6 +43,10 @@ export default function Notifications() {
         const res = await getNotifications();
         const formatted = res.data.data.map(mapNotification);
         setNotifications(formatted);
+
+        // Mark all as read since the user is viewing the list
+        await markAllNotificationsRead();
+
       } catch (err) {
         console.error("Failed to fetch notifications", err);
       } finally {

@@ -40,6 +40,7 @@ const endpoints = {
     totalAttendance: "api/attendance/days/",
     announcements: "/api/announcements/",
     notifications: "/api/notifications/",
+    markNotificationsRead: "/api/notifications/mark-read/",
     calendar: "api/calendar/events/",
     // todayAttendance:"/api/attendance/today/"
 

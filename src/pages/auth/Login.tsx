@@ -22,6 +22,7 @@ const Login: React.FC = () => {
   const dispatch = useDispatch();
 
   // const [role,] = useState<"employee" | "hr" | "admin">("employee");
+  const [workMode, setWorkMode] = useState<"WFO" | "WFH">("WFO");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -196,6 +197,52 @@ const Login: React.FC = () => {
               </div>
             </div>
 
+
+
+
+
+
+            {/* WORK MODE SELECTION */}
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${workMode === "WFO" ? "border-white" : "border-gray-400 group-hover:border-white"
+                  }`}>
+                  {workMode === "WFO" && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
+                </div>
+                <input
+                  type="radio"
+                  name="workMode"
+                  value="WFO"
+                  checked={workMode === "WFO"}
+                  onChange={() => setWorkMode("WFO")}
+                  className="hidden"
+                />
+                <span className={`text-sm font-medium transition-colors ${workMode === "WFO" ? "text-white" : "text-gray-500 group-hover:text-white"
+                  }`}>
+                  Work From Office
+                </span>
+              </label>
+
+              <label className="flex items-center  gap-2 cursor-pointer group">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${workMode === "WFH" ? "border-white" : "border-gray-400 group-hover:border-white"
+                  }`}>
+                  {workMode === "WFH" && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
+                </div>
+                <input
+                  type="radio"
+                  name="workMode"
+                  value="WFH"
+                  checked={workMode === "WFH"}
+                  onChange={() => setWorkMode("WFH")}
+                  className="hidden"
+                />
+                <span className={`text-sm font-medium transition-colors ${workMode === "WFH" ? "text-white" : "text-gray-500 group-hover:text-white"
+                  }`}>
+                  Work From Home
+                </span>
+              </label>
+            </div>
+
             {/* LOGIN BUTTON */}
             <button
               type="submit"
@@ -210,6 +257,18 @@ const Login: React.FC = () => {
                 Click here
               </span>
             </p>
+
+            <div className="mt-8 text-center pt-4 border-t border-white/20">
+              <p className="text-white/80 text-sm">
+                Have a query?{" "}
+                <a
+                  href="mailto:support@wealthzone.com"
+                  className="text-white font-semibold hover:underline decoration-blue-300"
+                >
+                  Connect with Support
+                </a>
+              </p>
+            </div>
           </form>
         </div>
       </motion.div>

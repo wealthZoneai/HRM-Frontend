@@ -139,6 +139,12 @@ export const getNotifications = () => {
   });
 };
 
+export const markAllNotificationsRead = () => {
+  return server.post(endpoints.markNotificationsRead, {}, {
+    requiresAuth: true,
+  });
+};
+
 
 
 export const getCalendarEvents = (year?: number, month?: number) => {

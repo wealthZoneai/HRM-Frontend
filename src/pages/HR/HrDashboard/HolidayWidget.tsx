@@ -73,9 +73,9 @@ export default function HolidayWidget() {
     const handlePrevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
     const handleNextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-    const getHolidayForDay = (day: number) => {
+    const getEventsForDay = (day: number) => {
         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        return holidays.find(h => h.date === dateStr);
+        return holidays.filter(h => h.date === dateStr);
     };
 
     const formatListDate = (dateStr: string) => {
@@ -87,13 +87,12 @@ export default function HolidayWidget() {
     };
 
     // Color helpers
-    // Color helpers
     const getHolidayColor = (type: Holiday["type"]) => {
         switch (type) {
             case "Federal": return "bg-red-100 text-red-600 border-red-200";
             case "Company": return "bg-blue-100 text-blue-600 border-blue-200";
             case "Optional": return "bg-green-100 text-green-600 border-green-200";
-            case "Announcement": return "bg-purple-100 text-purple-600 border-purple-200";
+            case "Announcement": return "bg-indigo-100 text-indigo-600 border-indigo-200";
             case "Meeting": return "bg-amber-100 text-amber-600 border-amber-200";
             default: return "bg-gray-100 text-gray-600 border-gray-200";
         }
@@ -102,7 +101,7 @@ export default function HolidayWidget() {
     const getHolidayDotColor = (type: Holiday["type"]) => {
         switch (type) {
             case "Federal": return "bg-red-500";
-            case "Announcement": return "bg-purple-500";
+            case "Announcement": return "bg-indigo-500";
             case "Meeting": return "bg-amber-500";
             default: return "bg-blue-400"; // Optional / Company
         }
@@ -197,33 +196,41 @@ export default function HolidayWidget() {
                         {/* Grid Body */}
                         <div className="grid grid-cols-7 border-l border-t border-gray-200">
                             {prevMonthDays.map((d, i) => (
-                                <div key={`prev-${i}`} className="h-16 border-r border-b border-gray-200 p-1 bg-gray-50/50">
+                                <div key={`prev-${i}`} className="min-h-[6rem] border-r border-b border-gray-200 p-1 bg-gray-50/50">
                                     <span className="text-gray-400 text-xs font-medium">{d}</span>
                                 </div>
                             ))}
 
                             {currentMonthDays.map((d) => {
-                                const holiday = getHolidayForDay(d);
+                                const dayEvents = getEventsForDay(d);
                                 const currentDayOfWeek = new Date(year, month, d).getDay();
                                 const isWeekend = currentDayOfWeek === 0;
 
                                 return (
-                                    <div key={`curr-${d}`} className="h-16 border-r border-b border-gray-200 p-1 relative bg-gray-50/30 hover:bg-white transition-colors group">
+                                    <div key={`curr-${d}`} className="min-h-[6rem] border-r border-b border-gray-200 p-1 relative bg-gray-50/30 hover:bg-white transition-colors group flex flex-col gap-1">
                                         <span className={`text-xs font-medium ${isWeekend ? 'text-red-500' : 'text-gray-700'}`}>
                                             {String(d).padStart(2, '0')}
                                         </span>
 
-                                        {holiday && (
-                                            <div className={`mt-1 text-[10px] font-medium px-1.5 py-0.5 rounded border block truncate text-left cursor-pointer ${getHolidayColor(holiday.type)}`} title={holiday.name}>
-                                                {holiday.name}
+                                        {dayEvents.slice(0, 3).map((ev) => (
+                                            <div
+                                                key={ev.id}
+                                                className={`text-[9px] font-medium px-1 py-0.5 rounded border block truncate text-left cursor-pointer ${getHolidayColor(ev.type)}`}
+                                                title={ev.name}
+                                            >
+                                                {ev.name}
                                             </div>
+                                        ))}
+
+                                        {dayEvents.length > 3 && (
+                                            <span className="text-[9px] text-gray-400 pl-1">+{dayEvents.length - 3} more</span>
                                         )}
                                     </div>
                                 );
                             })}
 
                             {nextMonthDays.map((d, i) => (
-                                <div key={`next-${i}`} className="h-16 border-r border-b border-gray-200 p-1 bg-gray-50/50">
+                                <div key={`next-${i}`} className="min-h-[6rem] border-r border-b border-gray-200 p-1 bg-gray-50/50">
                                     <span className="text-gray-400 text-xs font-medium">{String(d).padStart(2, '0')}</span>
                                 </div>
                             ))}

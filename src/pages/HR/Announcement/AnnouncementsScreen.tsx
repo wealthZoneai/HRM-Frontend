@@ -95,13 +95,12 @@ export default function AnnouncementsScreen() {
   const fetchAnnouncements = async () => {
     try {
       const response = await getHrAnnouncements();
-      // Based on Announcements.tsx, the array is in response.data
-      const data = response.data || [];
+      // Access data.data based on API structure seen in Announcements.tsx
+      const data = response.data?.data || response.data || [];
       console.log("Fetched announcements:", data);
 
       const formattedData: Announcement[] = data.map((item: any) => ({
         id: item.id?.toString() || Math.random().toString(),
-        // Map category to iconType loosely, or default to 'company'
         iconType: (item.department || 'company').toLowerCase() as any,
         title: item.title,
         description: item.description,
@@ -109,7 +108,12 @@ export default function AnnouncementsScreen() {
         priority: item.priority || 'Medium',
       }));
 
-      setAnnouncements(formattedData);
+      const priorityOrder = { High: 0, Medium: 1, Low: 2 };
+      const sorted = formattedData.sort(
+        (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
+      );
+
+      setAnnouncements(sorted);
     } catch (error) {
       console.error("Failed to fetch announcements:", error);
     }

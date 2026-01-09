@@ -37,10 +37,25 @@ export default function HRLayout({ children }: HRLayoutProps) {
     }
   }, [location.pathname]);
 
-  const currentUser = {
+  const [currentUser, setCurrentUser] = useState({
     name: localStorage.getItem("userName") || "Raviteja",
     id: localStorage.getItem("empId") || "WZG-AI-0029",
-  };
+  });
+
+  useEffect(() => {
+    // If empId is missing or is the default, try to fetch it from the profile
+    const currentId = localStorage.getItem("empId");
+    if (!currentId || currentId === "WZG-AI-0029") {
+      import("../../Services/apiHelpers").then(api => {
+        api.GetMyProfile().then(res => {
+          if (res.data && res.data.emp_id) {
+            localStorage.setItem("empId", res.data.emp_id);
+            setCurrentUser(prev => ({ ...prev, id: res.data.emp_id }));
+          }
+        }).catch(err => console.error("HRLayout: Failed to fetch profile", err));
+      });
+    }
+  }, []);
 
   const navItems = [
     { name: "Dashboard", icon: <FiHome size={22} />, path: "/hr/dashboard" },

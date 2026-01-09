@@ -33,7 +33,13 @@ const Announcements: React.FC = () => {
         priority: mapPriority(a.priority),
       }));
 
-      setItems(mapped);
+      const priorityOrder = { High: 0, Medium: 1, Low: 2 };
+
+      const sorted = mapped.sort(
+        (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
+      );
+
+      setItems(sorted);
     } catch (err) {
       console.error("Announcements fetch failed:", err);
     } finally {

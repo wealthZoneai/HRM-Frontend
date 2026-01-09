@@ -1,10 +1,11 @@
-import { Bell } from "lucide-react";
+import { Bell, Headset } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import myPic from "../assets/my_pic.jpg";
 // import { GetMyProfile } from "../Services/apiHelpers"; // Removed to use direct call
 import server from "../Services/index";
 import endpoints from "../Services/endpoints";
+import { getNotifications } from "../Services/apiHelpers"; // Import API
 
 interface TopbarProps {
   name: string;
@@ -15,6 +16,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [imageSrc, setImageSrc] = useState<string>(myPic);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -28,10 +30,10 @@ export default function HrTopbar({ name, id }: TopbarProps) {
           params: { t: new Date().getTime() }
         });
 
-        console.log("HrTopbar: Profile Response", profileRes);
+        // console.log("HrTopbar: Profile Response", profileRes);
 
         const photoUrl = profileRes.data?.data?.protected_profile_photo_url || profileRes.data?.protected_profile_photo_url;
-        console.log("HrTopbar: Photo URL", photoUrl);
+        // console.log("HrTopbar: Photo URL", photoUrl);
 
         if (photoUrl) {
           // Fetch image as Blob with auth headers and cache busting
@@ -46,7 +48,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
             setImageSrc(objectUrl);
           }
         } else {
-          console.log("HrTopbar: No photo URL found, using default.");
+          // console.log("HrTopbar: No photo URL found, using default.");
         }
       } catch (error) {
         console.error("HrTopbar: Failed to load profile image", error);
@@ -61,6 +63,23 @@ export default function HrTopbar({ name, id }: TopbarProps) {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, []);
+
+  // Fetch unread notifications count
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await getNotifications();
+        // Assuming res.data.data is the list, as seen in Notifications.tsx
+        const list = res.data?.data || [];
+        const count = list.filter((item: any) => !item.is_read).length;
+        setUnreadCount(count);
+      } catch (err) {
+        console.error("HrTopbar: Failed to fetch notifications", err);
+      }
+    };
+
+    fetchUnreadCount();
+  }, [location.pathname]); // Re-fetch when switching pages (e.g. returning from reading notifications)
 
   const handleNotification = () => {
     // Toggle between notifications page and dashboard
@@ -114,11 +133,17 @@ export default function HrTopbar({ name, id }: TopbarProps) {
               className={`text-gray-700 ${location.pathname === "/hr/notifications" ? "text-blue-600" : ""}`}
               fill={location.pathname === "/hr/notifications" ? "currentColor" : "none"}
             />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border border-white"></span>
+            )}
+          </button>
 
-            {/* Badge */}
-            {/* <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] px-1.5 py-px rounded-full">
-              3
-            </span> */}
+          {/* HELP BUTTON */}
+          <button
+            className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition text-gray-700"
+            title="Help & Support"
+          >
+            <Headset size={20} />
           </button>
 
           {/* PROFILE */}
