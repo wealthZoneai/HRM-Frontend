@@ -67,8 +67,8 @@ export default function EmployeeDashboard() {
     }
   };
 
-  const displayClockIn = clockInTime ? formatTime(clockInTime) : "09:00 AM";
-  const displayClockOut = clockOutTime ? formatTime(clockOutTime) : "07:00 PM";
+  const displayClockIn = clockInTime ? formatTime(clockInTime) : "00:00";
+  const displayClockOut = clockOutTime ? formatTime(clockOutTime) : "00:00";
 
   const handleClockIn = async () => {
     const result = await dispatch(clockIn());
