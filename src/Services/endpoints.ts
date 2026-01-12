@@ -16,6 +16,9 @@ const endpoints = {
     hrDashboardStats: 'api/hr/dashboard/stats/',
     hrLeaveDashboardStats: 'api/leave-dashboard/stats/',
     hrMonthlyAttendance: "api/attendance/",
+    updateEmployeeJobBank: (id: string | number) => `api/employees/${id}/job&bank/`,
+    updateEmployeeRole: (id: string | number) => `api/hr/employees/${id}/role/`,
+    updateEmployeeContact: (id: string | number) => `api/hr/employees/${id}/contact/`,
 
 
     //employee endpoints

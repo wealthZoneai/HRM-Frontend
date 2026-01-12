@@ -92,6 +92,27 @@ export function HRLeaveAction(id: string | number, action: 'approve' | 'reject',
   return server.post((endpoints as any).hrLeaveAction(id), { action, remarks }, { requiresAuth: true });
 }
 
+// 1. Update Job Description & Bank Details
+export function UpdateEmployeeJobAndBank(id: string | number, body: any) {
+  return server.patch((endpoints as any).updateEmployeeJobBank(id), body, {
+    requiresAuth: true,
+  });
+}
+
+// 2. Update Role, Name & Department
+export function UpdateEmployeeRole(id: string | number, body: any) {
+  return server.patch((endpoints as any).updateEmployeeRole(id), body, {
+    requiresAuth: true,
+  });
+}
+
+// 3. Update Contact Information
+export function UpdateEmployeeContact(id: string | number, body: any) {
+  return server.patch((endpoints as any).updateEmployeeContact(id), body, {
+    requiresAuth: true,
+  });
+}
+
 //employees
 
 export function ForgotPassword(email: string) {
