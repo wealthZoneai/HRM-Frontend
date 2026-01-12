@@ -11,7 +11,7 @@ interface Employee {
   role: string;
   employeeId: string;
   status: 'Active' | 'Inactive';
-  imageUrl: string;
+  profile_photo: string;
 }
 
 const EmployeeCard: React.FC<{
@@ -29,9 +29,14 @@ const EmployeeCard: React.FC<{
       onClick={() => onClick(employee)}
     >
       <img
-        src={employee.imageUrl}
+        src={employee.profile_photo}
         alt={employee.name}
         className="w-20 h-20 rounded-full object-cover mb-3 ring-2 ring-gray-100"
+        onError={(e) => {
+          // Double fallback safety in case the URL (even the fallback one) fails
+          console.warn("Avatar load failed", e);
+          e.currentTarget.src = "https://ui-avatars.com/api/?background=random&name=" + encodeURIComponent(employee.name);
+        }}
       />
       <h3 className="text-lg font-semibold text-gray-800">
         {employee.name}
@@ -68,16 +73,24 @@ export default function EmployeeScreen() {
       const response = await GetAllEmployes();
       const rawData = response?.data?.results || [];
       console.log("Fetched Employees:", rawData);
-      // Map backend → UI
-      const fallbackAvatar = "https://ui-avatars.com/api/?background=random&name=";
-      const formattedData: Employee[] = rawData.map((emp: any) => ({
-        id: emp.id || emp.emp_id,
-        name: `${emp.first_name} ${emp.last_name}`.trim(),
-        role: emp.job_title || emp.role || "Employee",
-        employeeId: emp.emp_id,
-        status: "Active",
-        imageUrl: emp.profile_photo_url || `${fallbackAvatar}${emp.first_name}+${emp.last_name}`,
-      }));
+
+      const formattedData: Employee[] = rawData.map((emp: any) => {
+        const fullName = `${emp.first_name} ${emp.last_name}`.trim();
+        const fallbackAvatar = `https://ui-avatars.com/api/?background=random&name=${encodeURIComponent(fullName)}`;
+
+        // Use profile_photo from backend (if available) or fallback
+        // Backend key is usually 'profile_photo' or 'profile_photo_url', check both
+        const photoUrl = emp.profile_photo || emp.profile_photo_url;
+
+        return {
+          id: emp.id || emp.emp_id,
+          name: fullName,
+          role: emp.job_title || emp.role || "Employee",
+          employeeId: emp.emp_id,
+          status: "Active",
+          profile_photo: photoUrl ? photoUrl : fallbackAvatar,
+        };
+      });
 
       setEmployeeData(formattedData);
     } catch (error) {

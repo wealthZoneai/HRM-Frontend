@@ -1,24 +1,72 @@
-import  { useEffect, useState } from "react";
-import { getPolicies, CreatePolicy } from "../../../Services/apiHelpers";
+import { useEffect, useState } from "react";
+import { getPolicies, CreatePolicy, deletePolicy } from "../../../Services/apiHelpers";
 import AddPolicyModal from "./AddPolicyModal";
-import type { PolicyItem } from "../../../pages/Employee/policies/types";
-import { FiPlus, FiAlertCircle } from "react-icons/fi";
+import { FiPlus, FiAlertCircle, FiChevronDown, FiChevronUp, FiTrash2 } from "react-icons/fi";
 import { toast } from "react-toastify";
+import DeleteConfirmationModal from "../Announcement/DeleteConfirmationModal";
+
+// Define locally since we are adding fields that might not be in the shared type yet
+interface PolicyItem {
+  id: string;
+  title: string;
+  description: string;
+  content: string[];
+  policy_type: string;
+}
+
+const POLICY_TYPES_MAP: { [key: string]: string } = {
+  'policy': 'Company Policies',
+  'terms': 'Terms & Conditions',
+  'resignation': 'Resignation Rules',
+  'termination': 'Termination Rules'
+};
 
 export default function HRPolicies() {
   const [open, setOpen] = useState(false);
   const [policies, setPolicies] = useState<PolicyItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingPolicy, setDeletingPolicy] = useState<PolicyItem | null>(null);
+
+  // Accordion state: keep track of which sections are open. default: all closed or first open?
+  // Let's keep 'policy' (Company Policies) open by default as per screenshot style
+  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
+    'policy': true,
+    'terms': false,
+    'resignation': false,
+    'termination': false
+  });
+
+  const toggleSection = (type: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [type]: !prev[type]
+    }));
+  };
 
   const fetchPolicies = async () => {
     setLoading(true);
     try {
       const res = await getPolicies();
-      const data = res.data?.data || res.data || [];
+      let rawData = res.data;
+      console.log(rawData.results)
+
+      // Handle standard DRF pagination
+      if (rawData?.results && Array.isArray(rawData.results)) {
+        rawData = rawData.results;
+      }
+      // Handle custom { data: [] } wrapper
+      else if (rawData?.data && Array.isArray(rawData.data)) {
+        rawData = rawData.data;
+      }
+
+      const data = Array.isArray(rawData) ? rawData : [];
+
       const formatted: PolicyItem[] = data.map((p: any) => ({
         id: p.id?.toString() || Math.random().toString(),
         title: p.title,
-        content: Array.isArray(p.content) ? p.content : (p.content ? [p.content] : []),
+        description: p.description,
+        content: [],
+        policy_type: p.policy_type || 'policy'
       }));
       setPolicies(formatted);
     } catch (err) {
@@ -33,15 +81,37 @@ export default function HRPolicies() {
     fetchPolicies();
   }, []);
 
-  const handleCreate = async (form: { title: string; content: string[] }) => {
+  const handleCreate = async (form: { title: string; content: string[]; policy_type: string }) => {
     try {
-      await CreatePolicy({ title: form.title, content: form.content });
+      // Backend expects 'description' as a string, not 'content' array
+      await CreatePolicy({
+        title: form.title,
+        description: form.content.join('\n'),
+        policy_type: form.policy_type
+      });
       toast.success("Policy created");
       fetchPolicies();
     } catch (err) {
       console.error("Create policy failed", err);
       const errorMsg = (err as any).response?.data ? JSON.stringify((err as any).response.data) : "Failed to create policy";
       toast.error(errorMsg);
+    }
+  };
+
+  const handleDeleteClick = (policy: PolicyItem) => {
+    setDeletingPolicy(policy);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingPolicy) return;
+    try {
+      await deletePolicy(deletingPolicy.id);
+      toast.success("Policy deleted successfully");
+      setDeletingPolicy(null);
+      fetchPolicies();
+    } catch (err) {
+      console.error("Delete policy failed", err);
+      toast.error("Failed to delete policy");
     }
   };
 
@@ -67,18 +137,68 @@ export default function HRPolicies() {
           {loading ? (
             <div className="text-center py-20 text-gray-400 animate-pulse">Loading policies...</div>
           ) : policies.length > 0 ? (
-            policies.map((policy) => (
-              <div key={policy.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-gray-900">{policy.title}</h3>
+            // Group policies by type and render accordions
+            Object.keys(POLICY_TYPES_MAP).map((typeKey) => {
+              const policiesOfType = policies.filter(p => p.policy_type === typeKey);
+              // If no policies for this type, do we show empty accordion? Let's show it so they can see structure.
+
+              const isOpen = openSections[typeKey];
+
+              return (
+                <div key={typeKey} className="border border-blue-100 rounded-xl overflow-hidden shadow-xs hover:shadow-sm transition-all duration-200">
+                  {/* Accordion Header */}
+                  <button
+                    onClick={() => toggleSection(typeKey)}
+                    className={`w-full flex items-center justify-between p-4 text-left transition-colors duration-200 ${isOpen ? 'bg-blue-50 text-blue-700' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                  >
+                    <span className="font-semibold text-lg">{POLICY_TYPES_MAP[typeKey]}</span>
+                    {isOpen ? <FiChevronUp /> : <FiChevronDown />}
+                  </button>
+
+                  {/* Accordion Body */}
+                  {isOpen && (
+                    <div className="bg-white p-5 space-y-4">
+                      {policiesOfType.length > 0 ? (
+                        <div className="space-y-6">
+                          {policiesOfType.map((policy, index) => (
+                            <div key={policy.id} className="text-gray-700">
+                              {/* 
+                                                  The screenshot shows numbered list. 
+                                                  If we treat each POLICY object as one item, we number them. 
+                                                  If each policy object has multiple lines, we can iterate them too.
+                                                  Let's assume each Policy Object is a major bullet point.
+                                               */}
+                              <div className="flex gap-3 relative group">
+                                <span className="font-bold text-blue-600 shrink-0">{index + 1}.</span>
+                                <div className="space-y-2 flex-1">
+                                  {/* If we want to show title, uncomment next line */}
+                                  {/* <h4 className="font-semibold">{policy.title}</h4> */}
+
+                                  {policy.description.split('\n').map((line, lIdx) => (
+                                    <p key={lIdx} className="leading-relaxed">{line}</p>
+                                  ))}
+                                </div>
+
+                                {/* Delete Button - Visible on Hover or Always? Let's make it subtle */}
+                                <button
+                                  onClick={() => handleDeleteClick(policy)}
+                                  className="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg absolute right-0 top-0"
+                                  title="Delete Policy"
+                                >
+                                  <FiTrash2 size={16} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-400 italic text-sm text-center py-4">No policies of this type added yet.</p>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <ol className="list-decimal pl-5 mt-3 text-sm text-gray-700 space-y-1">
-                  {policy.content.map((c, i) => (
-                    <li key={i}>{c}</li>
-                  ))}
-                </ol>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
               <FiAlertCircle className="mx-auto h-10 w-10 text-gray-300 mb-3" />
@@ -93,6 +213,14 @@ export default function HRPolicies() {
         isOpen={open}
         onClose={() => setOpen(false)}
         onSubmit={handleCreate}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={!!deletingPolicy}
+        onClose={() => setDeletingPolicy(null)}
+        onConfirm={confirmDelete}
+        title="Delete Policy"
+        message={`Are you sure you want to delete "${deletingPolicy?.title || 'this policy'}"? This action cannot be undone.`}
       />
     </div>
   );

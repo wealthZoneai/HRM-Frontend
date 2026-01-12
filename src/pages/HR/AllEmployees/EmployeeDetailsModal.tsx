@@ -15,22 +15,22 @@ import {
 } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { Save, DollarSign, Loader2, XCircle } from "lucide-react";
-import { 
-    GetEmployeeById, 
-    UpdateEmployeeContact, 
-    UpdateEmployeeJobAndBank 
-} from "../../../Services/apiHelpers"; 
+import {
+    GetEmployeeById,
+    UpdateEmployeeContact,
+    UpdateEmployeeJobAndBank
+} from "../../../Services/apiHelpers";
 
 // --- HELPER COMPONENT ---
-const EditableField = ({ 
-    label, 
-    name, 
-    value, 
-    icon: Icon, 
-    placeholder, 
+const EditableField = ({
+    label,
+    name,
+    value,
+    icon: Icon,
+    placeholder,
     fullWidth = false,
-    isEditing,       
-    onChange         
+    isEditing,
+    onChange
 }: any) => {
     return (
         <div className={`p-3 bg-white shadow-sm rounded-xl ${fullWidth ? 'col-span-1 sm:col-span-2' : ''}`}>
@@ -71,7 +71,7 @@ const InfoCard = ({ icon: Icon, title, value, className = "" }: any) => (
 
 export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
     const [fullData, setFullData] = useState<any>(null);
-    const [formData, setFormData] = useState<any>({}); 
+    const [formData, setFormData] = useState<any>({});
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -80,7 +80,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
     useEffect(() => {
         if (open && employee?.id) {
             fetchEmployeeDetails(employee.id);
-            setIsEditing(false); 
+            setIsEditing(false);
         } else {
             setFullData(null);
             setFormData({});
@@ -121,20 +121,20 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 // Note: Your backend serializer expects 'personal_email' but UI shows 'work_email'.
                 // If you want to update work_email, you must add it to the backend serializer fields.
                 // For now, I'm sending it in case you fixed the backend.
-                work_email: formData.work_email, 
+                work_email: formData.work_email,
             };
 
             // 2. Job & Bank Payload (Matches EmployeeJobBankUpdateSerializer)
             const jobBankPayload = {
                 // LOCATION is in this serializer in your backend, NOT in Contact
-                location: formData.location, 
-                
+                location: formData.location,
+
                 // Bank Details
                 bank_name: formData.bank_name,
                 account_number: formData.account_number,
                 ifsc_code: formData.ifsc_code,
                 branch: formData.branch, // Added Branch
-                
+
                 // Job Description
                 job_description: formData.job_description,
             };
@@ -145,7 +145,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 UpdateEmployeeJobAndBank(employee.id, jobBankPayload),
             ]);
 
-            setFullData(formData); 
+            setFullData(formData);
             setIsEditing(false);
             console.log("Details updated successfully");
         } catch (error) {
@@ -157,7 +157,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
     };
 
     const handleCancelEdit = () => {
-        setFormData(fullData); 
+        setFormData(fullData);
         setIsEditing(false);
         setError(null);
     };
@@ -180,7 +180,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             {/* MODAL WRAPPER */}
             <div className="bg-white rounded-3xl overflow-hidden shadow-2xl w-full max-w-6xl h-[95vh] flex flex-col transform transition-all duration-300 scale-100">
-                
+
                 {/* HEADER */}
                 <div className="p-6 flex items-center justify-between bg-white shadow-sm sticky top-0 z-10 border-b">
                     <div className="flex items-center gap-4">
@@ -188,7 +188,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                             {isEditing ? "Editing Profile" : `Employee Profile: ${employee.name}`}
                         </h2>
                         {!loading && !error && !isEditing && (
-                            <button 
+                            <button
                                 onClick={() => setIsEditing(true)}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm font-semibold border border-blue-200"
                             >
@@ -214,22 +214,22 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 ) : (
                     /* MAIN CONTENT */
                     <div className="flex-1 overflow-y-auto no-scrollbar grid grid-cols-1 lg:grid-cols-3">
-                        
+
                         {/* LEFT COLUMN: PROFILE SUMMARY */}
                         <div className="lg:col-span-1 bg-gray-100 p-6 space-y-8 shadow-inner-r">
                             <div className="text-center">
                                 <img
-                                    src={fullData?.protected_profile_photo_url || employee.imageUrl || fallbackAvatar}
+                                    src={fullData?.protected_profile_photo_url || fullData?.profile_photo || employee.profile_photo || fallbackAvatar}
                                     className="w-36 h-36 mx-auto rounded-full object-cover ring-4 ring-blue-500 shadow-xl"
                                     alt={employee.name}
                                 />
-                                
+
                                 {/* READ-ONLY Name & Role */}
                                 <div className="mt-4 space-y-2">
                                     <h3 className="text-3xl font-extrabold text-gray-900">{fullData?.name || employee.name}</h3>
                                     <p className="text-blue-600 text-xl font-medium">{fullData?.job_title || employee.role}</p>
                                 </div>
-                                
+
                                 <p className="text-sm text-gray-500 mt-1">Employee ID: <span className="font-bold text-gray-800">{fullData?.emp_id || employee.employeeId}</span></p>
 
                                 <div className="mt-4 inline-block">
@@ -278,7 +278,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
 
                         {/* RIGHT COLUMN: DETAILED INFO */}
                         <div className="lg:col-span-2 p-6 space-y-8">
-                            
+
                             {/* METRICS (READ-ONLY) */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                 <InfoCard icon={FiClock} title="Work Type" value={fullData?.employment_type?.replace("_", " ").toUpperCase()} />
@@ -293,30 +293,30 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                     <FiPhone className="text-blue-600" /> Contact & Location
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <EditableField 
-                                        icon={FiMail} 
-                                        label="Work Email" 
-                                        name="work_email" 
-                                        value={formData?.work_email} 
-                                        isEditing={isEditing} 
+                                    <EditableField
+                                        icon={FiMail}
+                                        label="Work Email"
+                                        name="work_email"
+                                        value={formData?.work_email}
+                                        isEditing={isEditing}
                                         onChange={handleInputChange}
                                     />
-                                    <EditableField 
-                                        icon={FiPhone} 
-                                        label="Phone Number" 
-                                        name="phone_number" 
-                                        value={formData?.phone_number} 
-                                        isEditing={isEditing} 
+                                    <EditableField
+                                        icon={FiPhone}
+                                        label="Phone Number"
+                                        name="phone_number"
+                                        value={formData?.phone_number}
+                                        isEditing={isEditing}
                                         onChange={handleInputChange}
                                     />
                                     {/* Location moved here in UI but sent to JobBank API in background */}
-                                    <EditableField 
-                                        icon={FiMapPin} 
-                                        label="Current Location" 
-                                        name="location" 
-                                        value={formData?.location} 
+                                    <EditableField
+                                        icon={FiMapPin}
+                                        label="Current Location"
+                                        name="location"
+                                        value={formData?.location}
                                         fullWidth={true}
-                                        isEditing={isEditing} 
+                                        isEditing={isEditing}
                                         onChange={handleInputChange}
                                     />
                                 </div>
@@ -328,34 +328,34 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                     <DollarSign className="text-blue-600" /> Banking Details
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <EditableField 
-                                        label="Bank Name" 
-                                        name="bank_name" 
-                                        value={formData?.bank_name} 
-                                        isEditing={isEditing} 
+                                    <EditableField
+                                        label="Bank Name"
+                                        name="bank_name"
+                                        value={formData?.bank_name}
+                                        isEditing={isEditing}
                                         onChange={handleInputChange}
                                     />
                                     {/* Removed Account Holder Name (Missing in Backend) */}
                                     {/* Added Branch (Required in Backend) */}
-                                    <EditableField 
-                                        label="Branch Name" 
-                                        name="branch" 
-                                        value={formData?.branch} 
-                                        isEditing={isEditing} 
+                                    <EditableField
+                                        label="Branch Name"
+                                        name="branch"
+                                        value={formData?.branch}
+                                        isEditing={isEditing}
                                         onChange={handleInputChange}
                                     />
-                                    <EditableField 
-                                        label="Account Number" 
-                                        name="account_number" 
-                                        value={formData?.account_number} 
-                                        isEditing={isEditing} 
+                                    <EditableField
+                                        label="Account Number"
+                                        name="account_number"
+                                        value={formData?.account_number}
+                                        isEditing={isEditing}
                                         onChange={handleInputChange}
                                     />
-                                    <EditableField 
-                                        label="IFSC Code" 
-                                        name="ifsc_code" 
-                                        value={formData?.ifsc_code} 
-                                        isEditing={isEditing} 
+                                    <EditableField
+                                        label="IFSC Code"
+                                        name="ifsc_code"
+                                        value={formData?.ifsc_code}
+                                        isEditing={isEditing}
                                         onChange={handleInputChange}
                                     />
                                 </div>
@@ -416,7 +416,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                 disabled={loading}
                                 className="px-6 py-2 bg-green-600 text-white rounded-xl flex items-center gap-2 font-medium hover:bg-green-700 transition shadow-md disabled:opacity-70"
                             >
-                                {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} 
+                                {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
                                 Save Changes
                             </button>
                         </>

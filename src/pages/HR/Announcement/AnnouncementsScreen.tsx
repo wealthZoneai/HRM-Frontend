@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { getHrAnnouncements, CreateAnnouncement } from '../../../Services/apiHelpers';
-import { FiCalendar, FiBriefcase, FiAlertCircle, FiGift, FiHome, FiPlus, FiClock, FiMapPin } from 'react-icons/fi';
+import { getHrAnnouncements, CreateAnnouncement, DeleteAnnouncement, UpdateAnnouncement } from '../../../Services/apiHelpers';
+import { FiCalendar, FiBriefcase, FiAlertCircle, FiGift, FiHome, FiPlus, FiClock, FiMapPin, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import AddAnnouncementModal from './AddAnnouncementModal';
 import AnnouncementSuccessModal from './AnnouncementSuccessModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 
 // Define the data structure for an announcement
 interface Announcement {
@@ -57,7 +58,7 @@ const getTagColors = (category: string, priority: string) => {
 };
 
 // Announcement Card Component
-const AnnouncementCard: React.FC<{ announcement: Announcement }> = ({ announcement }) => {
+const AnnouncementCard: React.FC<{ announcement: Announcement; onDelete: (id: string) => void; onEdit: (announcement: Announcement) => void }> = ({ announcement, onDelete, onEdit }) => {
   const { categoryClasses, priorityClasses } = getTagColors(announcement.category, announcement.priority);
 
   // Format Date & Time
@@ -73,7 +74,7 @@ const AnnouncementCard: React.FC<{ announcement: Announcement }> = ({ announceme
     <div className="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-all duration-300 relative overflow-hidden">
       {/* Left Accent Bar based on Priority */}
       <div className={`absolute left-0 top-0 bottom-0 w-1 ${announcement.priority === 'High' ? 'bg-red-500' :
-          announcement.priority === 'Medium' ? 'bg-amber-500' : 'bg-green-500'
+        announcement.priority === 'Medium' ? 'bg-amber-500' : 'bg-green-500'
         }`}></div>
 
       <div className="flex flex-col sm:flex-row gap-4 pl-3">
@@ -87,14 +88,34 @@ const AnnouncementCard: React.FC<{ announcement: Announcement }> = ({ announceme
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
             <h3 className="text-lg font-bold text-gray-900 leading-snug">{announcement.title}</h3>
 
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2 text-[11px] uppercase tracking-wide font-semibold shrink-0">
-              <span className={`px-2 py-1 rounded-md ${categoryClasses}`}>
-                {announcement.category}
-              </span>
-              <span className={`px-2 py-1 rounded-md ${priorityClasses}`}>
-                {announcement.priority}
-              </span>
+            <div className="flex items-center gap-3">
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 text-[11px] uppercase tracking-wide font-semibold shrink-0">
+                <span className={`px-2 py-1 rounded-md ${categoryClasses}`}>
+                  {announcement.category}
+                </span>
+                <span className={`px-2 py-1 rounded-md ${priorityClasses}`}>
+                  {announcement.priority}
+                </span>
+              </div>
+
+              {/* Edit Button */}
+              <button
+                onClick={() => onEdit(announcement)}
+                className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                title="Edit Announcement"
+              >
+                <FiEdit2 size={16} />
+              </button>
+
+              {/* Delete Button */}
+              <button
+                onClick={() => onDelete(announcement.id)}
+                className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                title="Delete Announcement"
+              >
+                <FiTrash2 size={16} />
+              </button>
             </div>
           </div>
 
@@ -135,6 +156,14 @@ export default function AnnouncementsScreen() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [announcementToDelete, setAnnouncementToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Edit State
+  const [editingAnnouncement, setEditingAnnouncement] = useState<any | null>(null);
+
   const fetchAnnouncements = async () => {
     setLoading(true);
     try {
@@ -168,6 +197,61 @@ export default function AnnouncementsScreen() {
     }
   };
 
+  const handleDelete = (id: string) => {
+    setAnnouncementToDelete(id);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!announcementToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      await DeleteAnnouncement(announcementToDelete);
+      toast.success("Announcement deleted successfully");
+      fetchAnnouncements(); // Refresh list
+      setDeleteModalOpen(false);
+    } catch (error) {
+      console.error("Failed to delete announcement:", error);
+      toast.error("Failed to delete announcement");
+    } finally {
+      setIsDeleting(false);
+      setAnnouncementToDelete(null);
+    }
+  };
+
+  const handleEdit = (announcement: Announcement) => {
+    setEditingAnnouncement({
+      title: announcement.title,
+      description: announcement.description,
+      department: announcement.category, // category maps to department
+      priority: announcement.priority,
+      date: announcement.date,
+      time: announcement.time,
+      location: announcement.location || ""
+    });
+    // We need the ID for the update call, so store it or use a separate state if needed. 
+    // Here I'll attach it to the form data temporarily or use a separate state.
+    // Better strategy: Keep original announcement object or id.
+    // Let's attach id to the editingAnnouncement object for convenience in submit
+    setEditingAnnouncement({
+      id: announcement.id,
+      title: announcement.title,
+      description: announcement.description,
+      department: announcement.category,
+      priority: announcement.priority,
+      date: announcement.date,
+      time: announcement.time,
+      location: announcement.location || ""
+    });
+    setOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setOpen(false);
+    setEditingAnnouncement(null);
+  };
+
   useEffect(() => {
     fetchAnnouncements();
   }, []);
@@ -191,7 +275,10 @@ export default function AnnouncementsScreen() {
               px-5 py-2.5 rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-0.5
               hover:bg-blue-700 transition-all duration-200 font-medium
             "
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              setEditingAnnouncement(null); // Ensure we are in "Create" mode
+              setOpen(true);
+            }}
           >
             <FiPlus size={18} className="mr-2" />
             New Announcement
@@ -204,7 +291,12 @@ export default function AnnouncementsScreen() {
             <div className="text-center py-20 text-gray-400 animate-pulse">Loading updates...</div>
           ) : announcements.length > 0 ? (
             announcements.map((announcement) => (
-              <AnnouncementCard key={announcement.id} announcement={announcement} />
+              <AnnouncementCard
+                key={announcement.id}
+                announcement={announcement}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
             ))
           ) : (
             <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
@@ -218,16 +310,22 @@ export default function AnnouncementsScreen() {
 
       <AddAnnouncementModal
         isOpen={open}
-        onClose={() => setOpen(false)}
+        onClose={handleModalClose}
+        initialData={editingAnnouncement}
         onSubmit={async (data) => {
           try {
-            await CreateAnnouncement(data);
-            setOpen(false);
-            setShowSuccessModal(true);
+            if (editingAnnouncement?.id) {
+              await UpdateAnnouncement(editingAnnouncement.id, data);
+              toast.success("Announcement updated successfully");
+            } else {
+              await CreateAnnouncement(data);
+              setShowSuccessModal(true);
+            }
+            handleModalClose();
             fetchAnnouncements();
           } catch (error) {
-            console.error("Failed to create announcement:", error);
-            toast.error("Failed to create announcement.");
+            console.error("Failed to save announcement:", error);
+            toast.error("Failed to save announcement.");
           }
         }}
       />
@@ -235,6 +333,14 @@ export default function AnnouncementsScreen() {
       <AnnouncementSuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
       />
     </div>
   );
