@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, User, FileText, Info, Loader2 } from "lucide-react";
+import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, FileText, Info, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
@@ -173,7 +173,7 @@ export default function LeaveRequests() {
             <>
               {/* Backdrop */}
               <motion.div
-                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -182,7 +182,7 @@ export default function LeaveRequests() {
 
               {/* Modal */}
               <motion.div
-                className="fixed top-1/2 left-1/2 z-[101] w-[95%] max-w-2xl bg-white rounded-2xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2"
+                className="fixed top-1/2 left-1/2 z-101 w-[95%] max-w-2xl bg-white rounded-2xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}

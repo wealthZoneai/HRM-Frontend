@@ -15,40 +15,115 @@ import {
 } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { Save, DollarSign, Loader2, XCircle } from "lucide-react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { 
     GetEmployeeById, 
     UpdateEmployeeContact, 
     UpdateEmployeeJobAndBank 
 } from "../../../Services/apiHelpers"; 
 
-// --- HELPER COMPONENT ---
+// --- 1. YUP VALIDATION SCHEMA ---
+const validationSchema = Yup.object({
+    // Contact Info
+    work_email: Yup.string().email("Invalid email format").required("Work Email is required"),
+    phone_number: Yup.string()
+        .matches(/^[0-9]+$/, "Must be only digits")
+        .min(10, "Must be at least 10 digits")
+        .required("Phone Number is required"),
+    location: Yup.string().required("Location is required"),
+
+    // Bank Info
+    bank_name: Yup.string()
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets allowed")
+        .required("Bank Name is required"),
+    branch: Yup.string()
+        .matches(/^[a-zA-Z\s]+$/, "Only alphabets allowed")
+        .required("Branch Name is required"),
+    account_number: Yup.string()
+        .matches(/^[0-9]+$/, "Must be only digits")
+        .min(8, "Account number too short")
+        .required("Account Number is required"),
+    ifsc_code: Yup.string()
+        .matches(/^[A-Z0-9]+$/, "Invalid IFSC format")
+        .required("IFSC Code is required"),
+    
+    // Job Info
+    job_description: Yup.string().nullable()
+});
+
+// --- 2. HELPER COMPONENT (UPDATED FOR DROPDOWN SUPPORT) ---
 const EditableField = ({ 
     label, 
     name, 
-    value, 
     icon: Icon, 
     placeholder, 
     fullWidth = false,
-    isEditing,       
-    onChange         
+    isEditing, 
+    formik,
+    inputType = "text", // 'numeric', 'alpha', or 'text'
+    options = null // New Prop: If array is passed, renders Select
 }: any) => {
+
+    // Custom Change Handler for Input Masking
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        if (inputType === "numeric") {
+            value = value.replace(/[^0-9]/g, "");
+        } else if (inputType === "alpha") {
+            value = value.replace(/[^a-zA-Z\s]/g, "");
+        }
+        formik.setFieldValue(name, value);
+    };
+
     return (
         <div className={`p-3 bg-white shadow-sm rounded-xl ${fullWidth ? 'col-span-1 sm:col-span-2' : ''}`}>
-            <div className="flex items-center gap-3">
-                {Icon && <Icon className="text-blue-500 shrink-0" />}
+            <div className="flex items-start gap-3">
+                {Icon && <Icon className="text-blue-500 shrink-0 mt-1" />}
                 <div className="w-full">
                     <p className="text-xs text-gray-500 mb-0.5">{label}</p>
                     {isEditing ? (
-                        <input
-                            type="text"
-                            name={name}
-                            value={value || ""}
-                            onChange={onChange}
-                            placeholder={placeholder}
-                            className="w-full border-b border-blue-300 focus:border-blue-600 outline-none py-1 text-gray-800 bg-blue-50/50 px-2 rounded-lg transition-colors"
-                        />
+                        <div>
+                            {/* CHECK: Render SELECT if options exist, otherwise INPUT */}
+                            {options ? (
+                                <select
+                                    name={name}
+                                    value={formik.values[name] || ""}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    className={`w-full border-b outline-none py-1 text-gray-800 bg-blue-50/50 px-2 rounded-lg transition-colors cursor-pointer
+                                        ${formik.touched[name] && formik.errors[name] 
+                                            ? "border-red-500 focus:border-red-500" 
+                                            : "border-blue-300 focus:border-blue-600"}`}
+                                >
+                                    {options.map((opt: any) => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    type="text"
+                                    name={name}
+                                    value={formik.values[name] || ""}
+                                    onChange={handleInputChange} 
+                                    onBlur={formik.handleBlur}
+                                    placeholder={placeholder}
+                                    className={`w-full border-b outline-none py-1 text-gray-800 bg-blue-50/50 px-2 rounded-lg transition-colors
+                                        ${formik.touched[name] && formik.errors[name] 
+                                            ? "border-red-500 focus:border-red-500" 
+                                            : "border-blue-300 focus:border-blue-600"}`}
+                                />
+                            )}
+                            
+                            {/* Validation Error Message */}
+                            {formik.touched[name] && formik.errors[name] && (
+                                <p className="text-xs text-red-500 mt-1 font-medium">{formik.errors[name]}</p>
+                            )}
+                        </div>
                     ) : (
-                        <p className="text-gray-700 font-medium truncate">{value || "—"}</p>
+                        <p className="text-gray-700 font-medium truncate">
+                            {formik.values[name] || "—"}
+                        </p>
                     )}
                 </div>
             </div>
@@ -71,11 +146,63 @@ const InfoCard = ({ icon: Icon, title, value, className = "" }: any) => (
 
 export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
     const [fullData, setFullData] = useState<any>(null);
-    const [formData, setFormData] = useState<any>({}); 
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [apiError, setApiError] = useState<string | null>(null);
     const [status, setStatus] = useState("Active");
+
+    // --- 3. FORMIK SETUP ---
+    const formik = useFormik({
+        initialValues: {
+            work_email: "",
+            phone_number: "",
+            location: "",
+            bank_name: "",
+            branch: "",
+            account_number: "",
+            ifsc_code: "",
+            job_description: ""
+        },
+        validationSchema: validationSchema,
+        onSubmit: async (values) => {
+            try {
+                setLoading(true);
+                setApiError(null);
+
+                // 1. Contact Payload
+                const contactPayload = {
+                    phone_number: values.phone_number,
+                    work_email: values.work_email,
+                };
+
+                // 2. Job & Bank Payload
+                const jobBankPayload = {
+                    location: values.location,
+                    bank_name: values.bank_name,
+                    account_number: values.account_number,
+                    ifsc_code: values.ifsc_code,
+                    branch: values.branch,
+                    job_description: values.job_description,
+                };
+
+                // 3. API CALLS
+                await Promise.all([
+                    UpdateEmployeeContact(employee.id, contactPayload),
+                    UpdateEmployeeJobAndBank(employee.id, jobBankPayload),
+                ]);
+
+                setFullData((prev: any) => ({ ...prev, ...values }));
+                
+                setIsEditing(false);
+                console.log("Details updated successfully");
+            } catch (error) {
+                console.error("Failed to save", error);
+                setApiError("Failed to save changes. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        },
+    });
 
     useEffect(() => {
         if (open && employee?.id) {
@@ -83,83 +210,55 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
             setIsEditing(false); 
         } else {
             setFullData(null);
-            setFormData({});
-            setError(null);
+            formik.resetForm();
+            setApiError(null);
         }
     }, [open, employee?.id]);
 
     const fetchEmployeeDetails = async (id: string) => {
         try {
             setLoading(true);
-            setError(null);
+            setApiError(null);
             const response = await GetEmployeeById(id);
-            setFullData(response.data);
-            setFormData(response.data);
-            setStatus(response.data.status || "Active");
+            const data = response.data;
+            setFullData(data);
+            setStatus(data.status || "Active");
+
+            formik.setValues({
+                work_email: data.work_email || "",
+                phone_number: data.phone_number || "",
+                location: data.location || "",
+                bank_name: data.bank_name || "",
+                branch: data.branch || "",
+                account_number: data.account_number || "",
+                ifsc_code: data.ifsc_code || "",
+                job_description: data.job_description || ""
+            });
+
         } catch (err: any) {
             console.error("Error fetching employee details:", err);
-            setError("Failed to load employee details.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev: any) => ({ ...prev, [name]: value }));
-    };
-
-    // --- UPDATED SAVE LOGIC TO MATCH BACKEND ---
-    const handleSave = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            // 1. Contact Payload (Matches EmployeeHRContactUpdateSerializer)
-            const contactPayload = {
-                phone_number: formData.phone_number,
-                // Note: Your backend serializer expects 'personal_email' but UI shows 'work_email'.
-                // If you want to update work_email, you must add it to the backend serializer fields.
-                // For now, I'm sending it in case you fixed the backend.
-                work_email: formData.work_email, 
-            };
-
-            // 2. Job & Bank Payload (Matches EmployeeJobBankUpdateSerializer)
-            const jobBankPayload = {
-                // LOCATION is in this serializer in your backend, NOT in Contact
-                location: formData.location, 
-                
-                // Bank Details
-                bank_name: formData.bank_name,
-                account_number: formData.account_number,
-                ifsc_code: formData.ifsc_code,
-                branch: formData.branch, // Added Branch
-                
-                // Job Description
-                job_description: formData.job_description,
-            };
-
-            // 3. API CALLS
-            await Promise.all([
-                UpdateEmployeeContact(employee.id, contactPayload),
-                UpdateEmployeeJobAndBank(employee.id, jobBankPayload),
-            ]);
-
-            setFullData(formData); 
-            setIsEditing(false);
-            console.log("Details updated successfully");
-        } catch (error) {
-            console.error("Failed to save", error);
-            setError("Failed to save changes.");
+            setApiError("Failed to load employee details.");
         } finally {
             setLoading(false);
         }
     };
 
     const handleCancelEdit = () => {
-        setFormData(fullData); 
+        formik.resetForm(); 
+        if (fullData) {
+            formik.setValues({
+                work_email: fullData.work_email || "",
+                phone_number: fullData.phone_number || "",
+                location: fullData.location || "",
+                bank_name: fullData.bank_name || "",
+                branch: fullData.branch || "",
+                account_number: fullData.account_number || "",
+                ifsc_code: fullData.ifsc_code || "",
+                job_description: fullData.job_description || ""
+            });
+        }
         setIsEditing(false);
-        setError(null);
+        setApiError(null);
     };
 
     if (!open || !employee) return null;
@@ -169,12 +268,16 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
         setStatus(newStatus);
     };
 
-    const statusColor =
-        status === "Active"
-            ? "bg-green-500 text-white"
-            : "bg-red-500 text-white";
-
+    const statusColor = status === "Active" ? "bg-green-500 text-white" : "bg-red-500 text-white";
     const fallbackAvatar = `https://ui-avatars.com/api/?background=random&name=${employee.name.replace(" ", "+")}`;
+
+    // --- OPTIONS FOR LOCATION DROPDOWN ---
+    const locationOptions = [
+        { value: "", label: "Select Location" },
+        { value: "Head Office", label: "Head Office" },
+        { value: "Branch Office", label: "Branch Office" },
+        { value: "Remote", label: "Remote" },
+    ];
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -187,7 +290,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                         <h2 className="text-2xl font-bold text-gray-800">
                             {isEditing ? "Editing Profile" : `Employee Profile: ${employee.name}`}
                         </h2>
-                        {!loading && !error && !isEditing && (
+                        {!loading && !apiError && !isEditing && (
                             <button 
                                 onClick={() => setIsEditing(true)}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm font-semibold border border-blue-200"
@@ -201,14 +304,14 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                     </button>
                 </div>
 
-                {loading ? (
+                {loading && !fullData ? (
                     <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 gap-4">
                         <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
                         <p className="text-gray-500 font-medium">Processing...</p>
                     </div>
-                ) : error ? (
+                ) : apiError ? (
                     <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
-                        <p className="text-red-600 font-semibold">{error}</p>
+                        <p className="text-red-600 font-semibold">{apiError}</p>
                         <button onClick={() => fetchEmployeeDetails(employee.id)} className="mt-4 text-blue-600 underline">Try Again</button>
                     </div>
                 ) : (
@@ -296,28 +399,28 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                     <EditableField 
                                         icon={FiMail} 
                                         label="Work Email" 
-                                        name="work_email" 
-                                        value={formData?.work_email} 
+                                        name="work_email"
+                                        formik={formik}
                                         isEditing={isEditing} 
-                                        onChange={handleInputChange}
                                     />
                                     <EditableField 
                                         icon={FiPhone} 
                                         label="Phone Number" 
                                         name="phone_number" 
-                                        value={formData?.phone_number} 
+                                        inputType="numeric"
+                                        formik={formik}
                                         isEditing={isEditing} 
-                                        onChange={handleInputChange}
                                     />
-                                    {/* Location moved here in UI but sent to JobBank API in background */}
+                                    
+                                    {/* --- UPDATED LOCATION FIELD WITH DROPDOWN --- */}
                                     <EditableField 
                                         icon={FiMapPin} 
                                         label="Current Location" 
                                         name="location" 
-                                        value={formData?.location} 
                                         fullWidth={true}
-                                        isEditing={isEditing} 
-                                        onChange={handleInputChange}
+                                        formik={formik}
+                                        isEditing={isEditing}
+                                        options={locationOptions} // Passed the options here
                                     />
                                 </div>
                             </div>
@@ -331,32 +434,29 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                     <EditableField 
                                         label="Bank Name" 
                                         name="bank_name" 
-                                        value={formData?.bank_name} 
+                                        inputType="alpha"
+                                        formik={formik}
                                         isEditing={isEditing} 
-                                        onChange={handleInputChange}
                                     />
-                                    {/* Removed Account Holder Name (Missing in Backend) */}
-                                    {/* Added Branch (Required in Backend) */}
                                     <EditableField 
                                         label="Branch Name" 
                                         name="branch" 
-                                        value={formData?.branch} 
+                                        inputType="alpha"
+                                        formik={formik}
                                         isEditing={isEditing} 
-                                        onChange={handleInputChange}
                                     />
                                     <EditableField 
                                         label="Account Number" 
                                         name="account_number" 
-                                        value={formData?.account_number} 
+                                        inputType="numeric"
+                                        formik={formik}
                                         isEditing={isEditing} 
-                                        onChange={handleInputChange}
                                     />
                                     <EditableField 
                                         label="IFSC Code" 
                                         name="ifsc_code" 
-                                        value={formData?.ifsc_code} 
+                                        formik={formik}
                                         isEditing={isEditing} 
-                                        onChange={handleInputChange}
                                     />
                                 </div>
                             </div>
@@ -370,14 +470,14 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                     {isEditing ? (
                                         <textarea
                                             name="job_description"
-                                            value={formData?.job_description || ""}
-                                            onChange={handleInputChange}
+                                            value={formik.values.job_description || ""}
+                                            onChange={formik.handleChange}
                                             rows={5}
                                             className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm text-gray-700"
                                         />
                                     ) : (
                                         <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
-                                            {formData?.job_description || "No job description added."}
+                                            {formik.values.job_description || "No job description added."}
                                         </p>
                                     )}
                                 </div>
@@ -407,13 +507,15 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                         <>
                             <button
                                 onClick={handleCancelEdit}
+                                type="button"
                                 className="px-6 py-2 border border-red-300 text-red-600 rounded-xl hover:bg-red-50 transition font-medium flex items-center gap-2"
                             >
                                 <XCircle size={18} /> Cancel
                             </button>
                             <button
-                                onClick={handleSave}
+                                onClick={() => formik.handleSubmit()}
                                 disabled={loading}
+                                type="button"
                                 className="px-6 py-2 bg-green-600 text-white rounded-xl flex items-center gap-2 font-medium hover:bg-green-700 transition shadow-md disabled:opacity-70"
                             >
                                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} 

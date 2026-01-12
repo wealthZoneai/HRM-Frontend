@@ -75,7 +75,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
         {/* Icon */}
         <div
           className={`
-            flex-shrink-0 w-12 h-12 rounded-lg 
+            shrink-0 w-12 h-12 rounded-lg 
             flex items-center justify-center text-xl 
             ${iconBgClasses}
           `}
