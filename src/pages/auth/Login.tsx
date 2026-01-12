@@ -87,8 +87,8 @@ const Login: React.FC = () => {
       }
 
     } catch (error) {
-      console.error(error);
       showLoginError("Invalid credentials. Please check your email and password.");
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
