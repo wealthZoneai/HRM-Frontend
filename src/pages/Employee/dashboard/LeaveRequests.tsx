@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, FileText, Info, Loader2 } from "lucide-react";
+import { CalendarDays, Clock, CheckCircle2, XCircle, AlertCircle, X, FileText, Info, Loader2, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store";
