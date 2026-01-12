@@ -42,6 +42,8 @@ const endpoints = {
     notifications: "/api/notifications/",
     markNotificationsRead: "/api/notifications/mark-read/",
     calendar: "api/calendar/events/",
+    policies: "api/policies/",
+    createPolicy: "api/policy/create/",
     // todayAttendance:"/api/attendance/today/"
 
 }

@@ -10,6 +10,7 @@ import {
   FiBell,
   FiLogOut,
   FiMenu,
+  FiBook,
 } from "react-icons/fi";
 
 import Logo from "../../assets/white_logo.png";
@@ -65,6 +66,7 @@ export default function HRLayout({ children }: HRLayoutProps) {
     { name: "Salary", icon: <FiDollarSign size={22} />, path: "/hr/salary" },
     { name: "Announcements", icon: <FiBell size={22} />, path: "/hr/announcements" },
     { name: "Calendar", icon: <FiCalendar size={22} />, path: "/hr/holidays" },
+    { name: "Policy", icon: <FiBook size={22} />, path: "/hr/policy" },
   ];
 
   return (

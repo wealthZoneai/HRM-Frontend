@@ -30,6 +30,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import HRLayout from "../pages/HR/HRLayout";
 import LeadStatus from "../pages/Team Lead/LeadStatus";
 import HRProfile from "../pages/HR/Profile/HRProfile";
+import HRPolicies from "../pages/HR/Policy/HRPolicies";
 // import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
 
 function AppRouters() {
@@ -140,6 +141,7 @@ function AppRouters() {
         <Route path="leave-management" element={<HrLeaveManagement />} />
         <Route path="addEmployeeWizard" element={<AddEmployeeWizard />} />
         <Route path="notifications" element={<Notifications />} />
+        <Route path="policy" element={<HRPolicies />} />
         <Route path="profile" element={<HRProfile />} />
       </Route>
 
