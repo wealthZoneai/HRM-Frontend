@@ -154,6 +154,19 @@ export const getAnnouncements = () => {
   });
 };
 
+// Policies
+export const getPolicies = () => {
+  return server.get(endpoints.policies, { requiresAuth: true });
+};
+
+export const CreatePolicy = (data: any) => {
+  // Ensure backend receives JSON; some clients default to text/plain
+  return server.post(endpoints.createPolicy, data, {
+    requiresAuth: true,
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
 export const getNotifications = () => {
   return server.get(endpoints.notifications, {
     requiresAuth: true,

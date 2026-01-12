@@ -1,7 +1,7 @@
 import { Bell, Headset } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import myPic from "../assets/my_pic.jpg";
+import myPic from "../assets/user.png";
 // import { GetMyProfile } from "../Services/apiHelpers"; // Removed to use direct call
 import server from "../Services/index";
 import endpoints from "../Services/endpoints";

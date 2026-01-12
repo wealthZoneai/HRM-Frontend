@@ -1,8 +1,7 @@
 import { Bell, Headset } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import DefaultAvatar from "../../../assets/my_pic.jpg";
+import DefaultAvatar from "../../../assets/user.png";
 import { useRef, useEffect, useState } from "react";
-// import myPic from "../../../assets/my_pic.jpg";
 import LogoutModal from "../../../components/LogoutModal";
 import server from "../../../Services/index";
 import endpoints from "../../../Services/endpoints";

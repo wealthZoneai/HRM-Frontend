@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Briefcase, IdCard, MapPin, Calendar } from 'lucide-react';
-import Pic from '../../../assets/my_pic.jpg';
+import Pic from '../../../assets/user.png';
 
 const HRProfileHeader = () => {
     const userName = localStorage.getItem("userName") || "HR Manager";

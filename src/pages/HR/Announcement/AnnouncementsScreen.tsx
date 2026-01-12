@@ -78,7 +78,7 @@ const AnnouncementCard: React.FC<{ announcement: Announcement }> = ({ announceme
 
       <div className="flex flex-col sm:flex-row gap-4 pl-3">
         {/* Icon Box */}
-        <div className="hidden sm:flex flex-shrink-0 w-12 h-12 bg-gray-50 rounded-lg items-center justify-center text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+        <div className="hidden sm:flex shrink-0 w-12 h-12 bg-gray-50 rounded-lg items-center justify-center text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
           {getIcon(announcement.iconType)}
         </div>
 

@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Briefcase, IdCard, MapPin, Calendar, Camera } from 'lucide-react';
-import Pic from '../../../assets/my_pic.jpg';
+import Pic from '../../../assets/user.png';
 import { UpdateMyProfileImage } from '../../../Services/apiHelpers';
 import server from '../../../Services/index';
 import { showSuccess, showError } from '../../../utils/toast';
