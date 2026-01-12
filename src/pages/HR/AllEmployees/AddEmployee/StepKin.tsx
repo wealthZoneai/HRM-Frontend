@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAddEmployee } from "./AddEmployeeContext";
 
 /* ==========================
@@ -28,7 +28,11 @@ const InputField = ({
       onChange={(e) => onChange(e.target.value)}
       className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
         focus:outline-none focus:ring-2 
-        ${error ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500 focus:border-blue-500"}
+        ${
+          error
+            ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+            : "focus:ring-blue-500 focus:border-blue-500"
+        }
       `}
     />
     {error && <span className="text-red-500 text-xs">{error}</span>}
@@ -38,7 +42,8 @@ const InputField = ({
 /* ==========================
    MAIN COMPONENT
 ========================== */
-const StepKin: React.FC = () => {
+// Updated to accept showErrors prop
+const StepKin = ({ showErrors }: { showErrors: boolean }) => {
   const { state, dispatch } = useAddEmployee();
   const kin = state.kin;
 
@@ -108,22 +113,32 @@ const StepKin: React.FC = () => {
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           {/* JOB TITLE */}
           <InputField
             label="Job Title *"
             value={kin.jobTitle}
-            error={errors.jobTitle}
+            // Check both internal error state AND external showErrors trigger
+            error={
+              errors.jobTitle ||
+              (showErrors && !kin.jobTitle ? "Job Title is required" : "")
+            }
             onChange={(v) => updateField("jobTitle", v.replace(/[0-9]/g, ""))}
           />
 
           {/* DEPARTMENT */}
           <div className="flex flex-col gap-1">
-            <label className="text-gray-700 font-medium text-sm">Department *</label>
+            <label className="text-gray-700 font-medium text-sm">
+              Department *
+            </label>
             <select
               value={kin.department || ""}
               onChange={(e) => updateField("department", e.target.value)}
-              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
+                ${
+                  showErrors && !kin.department
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "focus:ring-blue-500 focus:border-blue-500"
+                }`}
             >
               <option value="">Select Department</option>
               <option value="Python">Python</option>
@@ -138,6 +153,9 @@ const StepKin: React.FC = () => {
               <option value="Networking">Networking</option>
               <option value="Cloud">Cloud (AWS / DevOps)</option>
             </select>
+            {showErrors && !kin.department && (
+              <span className="text-red-500 text-xs">Department is required</span>
+            )}
           </div>
 
           {/* TEAM LEAD */}
@@ -150,19 +168,26 @@ const StepKin: React.FC = () => {
 
           {/* EMPLOYMENT TYPE */}
           <div className="flex flex-col gap-1">
-            <label className="text-gray-700 font-medium text-sm">Employment Type *</label>
+            <label className="text-gray-700 font-medium text-sm">
+              Employment Type *
+            </label>
             <select
               value={kin.employmentType || ""}
               onChange={(e) => updateField("employmentType", e.target.value)}
-              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
+                ${
+                  showErrors && !kin.employmentType
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "focus:ring-blue-500 focus:border-blue-500"
+                }`}
             >
               <option value="">Select Type</option>
               <option value="full_time">Full time</option>
               <option value="contract">Contract</option>
-              {/* Backend currently only supports full_time and contract */}
-              {/* <option value="part_time">Part time</option>
-              <option value="internship">Internship</option> */}
             </select>
+            {showErrors && !kin.employmentType && (
+              <span className="text-red-500 text-xs">Employment Type is required</span>
+            )}
           </div>
 
           {/* START DATE */}
@@ -170,50 +195,46 @@ const StepKin: React.FC = () => {
             type="date"
             label="Start Date *"
             value={kin.startDate}
-            error={errors.startDate}
+            error={
+              errors.startDate ||
+              (showErrors && !kin.startDate ? "Start date is required" : "")
+            }
             max={new Date().toISOString().split("T")[0]}
             onChange={(v) => updateField("startDate", v)}
           />
 
           {/* LOCATION */}
           <div className="flex flex-col gap-1">
-            <label className="text-gray-700 font-medium text-sm">Location *</label>
+            <label className="text-gray-700 font-medium text-sm">
+              Location *
+            </label>
             <select
               value={kin.location || ""}
               onChange={(e) => updateField("location", e.target.value)}
-              className="w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
+                ${
+                  showErrors && !kin.location
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "focus:ring-blue-500 focus:border-blue-500"
+                }`}
             >
               <option value="">Select Location</option>
               <option value="Head Office">Head Office</option>
               <option value="Branch Office">Branch Office</option>
               <option value="Remote">Remote</option>
             </select>
+            {showErrors && !kin.location && (
+              <span className="text-red-500 text-xs">Location is required</span>
+            )}
           </div>
-
-          {/* WORK EMAIL */}
-          {/* <InputField
-            label="Work Email *"
-            value={kin.email}
-            error={errors.email}
-            onChange={(v) => updateField("email", v)}
-          /> */}
-
-          {/* EMPLOYEE ID */}
-          {/* <InputField
-            label="Employee ID *"
-            value={kin.employeeId}
-            error={errors.employeeId}
-            onChange={(v) => updateField("employeeId", v)}
-          /> */}
-
-          {/* SYSTEM ROLE (HIDDEN or OPTIONAL?) - Keeping it out as per request, but can be added if needed */}
-
         </div>
 
         {/* JOB DESCRIPTION */}
         <div className="mt-6">
           <div className="flex flex-col gap-1">
-            <label className="text-gray-700 font-medium text-sm">Job Description</label>
+            <label className="text-gray-700 font-medium text-sm">
+              Job Description
+            </label>
             <textarea
               value={kin.jobDescription || ""}
               onChange={(e) => updateField("jobDescription", e.target.value)}
@@ -222,7 +243,6 @@ const StepKin: React.FC = () => {
             />
           </div>
         </div>
-
       </div>
     </div>
   );

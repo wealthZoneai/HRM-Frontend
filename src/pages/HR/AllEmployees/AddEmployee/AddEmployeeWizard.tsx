@@ -1,5 +1,5 @@
 // WizardInner.tsx
-import React from "react";
+import React, { useState } from "react"; // 1. Added useState
 import { toast } from "react-toastify";
 import { useAddEmployee } from "./AddEmployeeContext";
 import StepPersonal from "./StepPersonal";
@@ -21,6 +21,9 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
 }) => {
   const { state, dispatch } = useAddEmployee();
   const navigate = useNavigate();
+
+  // 2. NEW STATE: To track if we should show validation errors
+  const [showErrors, setShowErrors] = useState(false);
 
   /* ===========================================================
       LOAD EDIT MODE DATA
@@ -44,12 +47,33 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
 
   /* ===========================================================
       STEP CONFIG
+      3. UPDATED: Passing 'showErrors' prop to child components
   ============================================================ */
   const steps = [
-    { key: "personal", label: "Personal Info", comp: <StepPersonal /> },
-    { key: "kin", label: "Job Information", comp: <StepKin /> },
-    { key: "bank", label: "Bank Details (Optional)", comp: <StepBank /> },
-    { key: "docs", label: "Documents", comp: <StepDocs /> },
+    { 
+      key: "personal", 
+      label: "Personal Info", 
+      // @ts-ignore - Assuming StepPersonal accepts showErrors prop
+      comp: <StepPersonal showErrors={showErrors} /> 
+    },
+    { 
+      key: "kin", 
+      label: "Job Information", 
+      // @ts-ignore
+      comp: <StepKin showErrors={showErrors} /> 
+    },
+    { 
+      key: "bank", 
+      label: "Bank Details (Optional)", 
+      // @ts-ignore
+      comp: <StepBank showErrors={showErrors} /> 
+    },
+    { 
+      key: "docs", 
+      label: "Documents", 
+      // @ts-ignore
+      comp: <StepDocs showErrors={showErrors} /> 
+    },
   ];
 
   /* ===========================================================
@@ -138,7 +162,10 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
     return (
       <button
         disabled={!isCompleted && !isActive}
-        onClick={() => dispatch({ type: "SET_STEP", payload: index })}
+        onClick={() => {
+            // Optional: You might want to validate before jumping via header too
+            dispatch({ type: "SET_STEP", payload: index })
+        }}
         className="flex flex-col items-center flex-1"
       >
         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${bg}`}>
@@ -202,6 +229,13 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       SUBMIT
   ============================================================ */
   const handelApiCall = async (state: any) => {
+    // 4. UPDATED: Validate before final submit
+    if (!validateStep()) {
+        setShowErrors(true);
+        toast.error("Please fill in all required fields.");
+        return;
+    }
+
     try {
       await CreateEmployes(convertToApiPayload(state));
       onSuccess ? onSuccess() : navigate("/hr/employees");
@@ -238,9 +272,10 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       <div className="mt-8 flex justify-between">
         {state.step > 0 ? (
           <button
-            onClick={() =>
+            onClick={() => {
+              setShowErrors(false); // Reset errors when going back
               dispatch({ type: "SET_STEP", payload: state.step - 1 })
-            }
+            }}
             className="px-6 py-2 border rounded-lg"
           >
             <ArrowLeft size={16} /> Previous
@@ -251,8 +286,16 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
 
         {state.step < steps.length - 1 ? (
           <button
+            // 5. UPDATED: Validation Logic here
             onClick={() => {
-              if (!validateStep()) return;
+              const isValid = validateStep();
+              if (!isValid) {
+                setShowErrors(true); // Trigger red fields
+                toast.error("Please fill in all required fields.");
+                return;
+              }
+              // If valid, proceed and hide errors for the next step
+              setShowErrors(false);
               dispatch({
                 type: "SET_STEP",
                 payload: state.step + 1,

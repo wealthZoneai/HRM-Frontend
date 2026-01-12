@@ -10,6 +10,7 @@ const TextField = ({
   onChange,
   type = "text",
   prefix,
+  error, // New prop to trigger red border
   ...props
 }: {
   label: string;
@@ -17,10 +18,13 @@ const TextField = ({
   onChange: (v: string) => void;
   type?: string;
   prefix?: string;
+  error?: boolean; // Type definition
   [key: string]: any;
 }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-gray-700 font-medium text-sm">{label}</label>
+    <label className="text-gray-700 font-medium text-sm">
+      {label} {error && <span className="text-red-500">*</span>}
+    </label>
     <div className="relative">
       {prefix && (
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium pointer-events-none">
@@ -33,13 +37,19 @@ const TextField = ({
         onChange={(e) => onChange(e.target.value)}
         className={`
           w-full py-2 bg-white border rounded-lg
-          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+          focus:outline-none focus:ring-2 
           transition-all shadow-sm
           ${prefix ? "pl-12 pr-4" : "px-4"}
+          ${
+            error
+              ? "border-red-500 focus:border-red-500 focus:ring-red-200"
+              : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+          }
         `}
         {...props}
       />
     </div>
+    {error && <span className="text-xs text-red-500">This field is required</span>}
   </div>
 );
 
@@ -48,40 +58,55 @@ const SelectField = ({
   value,
   onChange,
   children,
+  error, // New prop
 }: {
   label: string;
   value: any;
   onChange: (v: string) => void;
   children: React.ReactNode;
+  error?: boolean;
 }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-gray-700 font-medium text-sm">{label}</label>
+    <label className="text-gray-700 font-medium text-sm">
+      {label} {error && <span className="text-red-500">*</span>}
+    </label>
     <select
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
-      className="
+      className={`
         w-full px-4 py-2 bg-white border rounded-lg
-        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+        focus:outline-none focus:ring-2 
         transition-all shadow-sm
-      "
+        ${
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-red-200"
+            : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+        }
+      `}
     >
       {children}
     </select>
+    {error && <span className="text-xs text-red-500">Selection required</span>}
   </div>
 );
 
 /* ===================
    MAIN COMPONENT
 =================== */
-const StepPersonal: React.FC = () => {
+// Accept showErrors prop from WizardInner
+const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
   const { state, dispatch } = useAddEmployee();
   const personal = state.contact;
 
   // Calculate max date (18 years ago from today)
   const getMaxDob = () => {
     const today = new Date();
-    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
-    return maxDate.toISOString().split('T')[0];
+    const maxDate = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    );
+    return maxDate.toISOString().split("T")[0];
   };
 
   const maxDate = getMaxDob();
@@ -105,6 +130,8 @@ const StepPersonal: React.FC = () => {
           <TextField
             label="First Name *"
             value={personal.firstName}
+            // Error if showErrors is true AND value is empty
+            error={showErrors && !personal.firstName}
             onChange={(v) => {
               if (/^[^0-9]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { firstName: v } });
@@ -115,6 +142,7 @@ const StepPersonal: React.FC = () => {
           <TextField
             label="Middle Name"
             value={personal.middleName}
+            // Optional field, no error logic needed typically
             onChange={(v) => {
               if (/^[^0-9]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { middleName: v } });
@@ -125,6 +153,7 @@ const StepPersonal: React.FC = () => {
           <TextField
             label="Last Name *"
             value={personal.lastName}
+            error={showErrors && !personal.lastName}
             onChange={(v) => {
               if (/^[^0-9]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { lastName: v } });
@@ -133,8 +162,9 @@ const StepPersonal: React.FC = () => {
           />
 
           <TextField
-            label="Personal Email"
+            label="Personal Email *"
             value={personal.personalEmail}
+            error={showErrors && !personal.personalEmail}
             onChange={(v) =>
               dispatch({ type: "SET_PERSONAL", payload: { personalEmail: v } })
             }
@@ -145,6 +175,8 @@ const StepPersonal: React.FC = () => {
             value={personal.phone}
             prefix="+91"
             maxLength={10}
+            // Error if empty OR not 10 digits
+            error={showErrors && (!personal.phone || personal.phone.length !== 10)}
             onChange={(v) => {
               if (/^\d*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { phone: v } });
@@ -157,17 +189,27 @@ const StepPersonal: React.FC = () => {
             value={personal.alternativeNumber}
             prefix="+91"
             maxLength={10}
+            // Error only if they entered something but it's invalid (less than 10 digits)
+            error={
+              showErrors &&
+              !!personal.alternativeNumber &&
+              personal.alternativeNumber.length !== 10
+            }
             onChange={(v) => {
               if (/^\d*$/.test(v)) {
-                dispatch({ type: "SET_PERSONAL", payload: { alternativeNumber: v } });
+                dispatch({
+                  type: "SET_PERSONAL",
+                  payload: { alternativeNumber: v },
+                });
               }
             }}
           />
 
           <TextField
-            label="Date of Birth"
+            label="Date of Birth *"
             type="date"
             value={personal.dob}
+            error={showErrors && !personal.dob}
             onChange={handleDobChange}
             max={maxDate}
           />
@@ -181,8 +223,9 @@ const StepPersonal: React.FC = () => {
           />
 
           <SelectField
-            label="Gender"
+            label="Gender *"
             value={personal.gender}
+            error={showErrors && !personal.gender}
             onChange={(v) =>
               dispatch({ type: "SET_PERSONAL", payload: { gender: v } })
             }
@@ -194,8 +237,9 @@ const StepPersonal: React.FC = () => {
           </SelectField>
 
           <SelectField
-            label="Marital Status"
+            label="Marital Status *"
             value={personal.maritalStatus}
+            error={showErrors && !personal.maritalStatus}
             onChange={(v) =>
               dispatch({ type: "SET_PERSONAL", payload: { maritalStatus: v } })
             }
@@ -206,8 +250,6 @@ const StepPersonal: React.FC = () => {
             <option value="divorced">Divorced</option>
             <option value="widowed">Widowed</option>
           </SelectField>
-
-
         </div>
       </div>
     </div>
