@@ -243,43 +243,43 @@ const ProfileDetails = ({ allowFullEdit = false, data }: { allowFullEdit?: boole
     };
 
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        // Only validate the fields that are actually being edited/updated (Alternative Number)
+    const {
+        alternativeNumber = "",
+        phone = "",
+    } = dataState;
 
-        // Check for EXACT 10 digits for the OPTIONAL alternative number, IF it is provided
-        if (data.alternativeNumber.trim() && data.alternativeNumber.length !== 10) {
-            alert("Alternative number must be exactly 10 digits if provided.");
-            return;
-        }
+    // Optional alternative number → must be exactly 10 digits if provided
+    if (alternativeNumber.trim() && alternativeNumber.length !== 10) {
+        showError("Alternative number must be exactly 10 digits if provided.");
+        return;
+    }
 
-        if (allowFullEdit && data.phone.trim() && data.phone.length !== 10) {
-            alert("Phone number must be exactly 10 digits.");
-            return;
-        }
+    // Phone validation only when full edit is allowed
+    if (allowFullEdit && phone.trim() && phone.length !== 10) {
+        showError("Phone number must be exactly 10 digits.");
+        return;
+    }
 
-        // Middle Name and Blood Group have no special validation (just text inputs)
-
-        // If all validation passes
-
-        const payload = {
-            phone_number: dataState.phone,
-            alternate_number: dataState.alternativeNumber,
-            marital_status: dataState.maritalStatus,
-            // Add other fields only if allowed to edit full profile, but for now specific fields
-        };
-
-        UpdateContactDetails(payload)
-            .then(() => {
-                showSuccess("Profile updated successfully");
-                setIsEditing(false);
-                setBackup(dataState);
-            })
-            .catch((err) => {
-                console.error(err);
-                showError("Failed to update profile");
-            });
+    const payload = {
+        phone_number: phone,
+        alternate_number: alternativeNumber,
+        marital_status: dataState.maritalStatus,
     };
+
+    UpdateContactDetails(payload)
+        .then(() => {
+            showSuccess("Profile updated successfully");
+            setIsEditing(false);
+            setBackup(dataState);
+        })
+        .catch((err) => {
+            console.error(err);
+            showError("Failed to update profile");
+        });
+};
+
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">

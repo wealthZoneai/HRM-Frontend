@@ -12,7 +12,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const response = await GetMyProfile();
-        console.log("Profile: GetMyProfile response:", response);
+        // console.log("Profile: GetMyProfile response:", response);
 
         if (response.data) {
           setEmployeeData(response.data);

@@ -137,7 +137,9 @@ const JobInformation = ({ data }: { data?: any }) => {
 
       {/* --- Component Header --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
-        <h2 className="text-base sm:text-xl font-semibold text-slate-800">Job Information</h2>
+        <h2 className="text-base sm:text-xl font-semibold text-slate-800">
+          Job Information
+        </h2>
 
         {!isEditing && (
           <button
@@ -202,25 +204,41 @@ const JobInformation = ({ data }: { data?: any }) => {
           <div className="flex flex-col sm:flex-row gap-6">
             {/* Front Side */}
             <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-slate-700">Front Side</span>
+              <span className="text-sm font-medium text-slate-700">
+                Front Side
+              </span>
               <div className="relative w-64 h-40 rounded-xl overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-50 group">
-                <img
-                  src={formData.idCardFront}
-                  alt="ID Card Front"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
+                {formData.idCardFront ? (
+                  <img
+                    src={formData.idCardFront}
+                    alt="ID Card Front"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full text-sm text-slate-400">
+                    No image uploaded
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Back Side */}
             <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-slate-700">Back Side</span>
+              <span className="text-sm font-medium text-slate-700">
+                Back Side
+              </span>
               <div className="relative w-64 h-40 rounded-xl overflow-hidden border-2 border-slate-100 shadow-sm bg-slate-50 group">
-                <img
-                  src={formData.idCardBack}
-                  alt="ID Card Back"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
+                {formData.idCardBack ? (
+                  <img
+                    src={formData.idCardBack}
+                    alt="ID Card Back"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full text-sm text-slate-400">
+                    No image uploaded
+                  </div>
+                )}
               </div>
             </div>
           </div>
