@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, X, Calendar, Bell, Info, Clock } from "lucide-react";
+import { X, Calendar, Info } from "lucide-react";
 import { getAnnouncements } from "../../../Services/apiHelpers";
 
 /* ----------------------------------------------------
@@ -8,21 +8,16 @@ import { getAnnouncements } from "../../../Services/apiHelpers";
 ---------------------------------------------------- */
 interface Announcement {
   id: number;
-  day: string;
-  date: string;
-  month: string;
-  year: string;
-  event: string;
-  time: string;
+  title: string;
   description: string;
-  location: string;
-  type: string;
+  category: string;
   priority: "High" | "Medium" | "Low";
-}
-
-interface ListItemProps {
-  item: Announcement;
-  onClick: () => void;
+  date: string;       // "Jan 12, 2026"
+  rawDate: Date;      // For sorting
+  month: string;      // "Jan"
+  day: string;        // "12"
+  year: string;
+  time: string;
 }
 
 interface DetailModalProps {
@@ -38,40 +33,32 @@ const formatAnnouncement = (item: any): Announcement => {
 
   return {
     id: item.id,
-    day: d.toLocaleDateString("en-US", { weekday: "short" }),
-    date: d.getDate().toString().padStart(2, "0"),
-    month: d.toLocaleDateString("en-US", { month: "short" }),
-    year: d.getFullYear().toString(),
-    event: item.title,
-    time: new Date(`1970-01-01T${item.time}`).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
+    title: item.title,
     description: item.description,
-    location: item.department || "Office",
-    type: item.department,
-    priority:
-      item.priority === "HIGH"
-        ? "High"
-        : item.priority === "MEDIUM"
-        ? "Medium"
-        : "Low",
+    category: item.department || "General",
+    priority: item.priority && ["High", "Medium", "Low"].includes(item.priority) ? item.priority : "Medium",
+    date: d.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
+    rawDate: d,
+    month: d.toLocaleDateString("en-US", { month: "short" }),
+    day: d.getDate().toString().padStart(2, '0'),
+    year: d.getFullYear().toString(),
+    time: item.time ? new Date(`1970-01-01T${item.time}`).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "",
   };
 };
 
 /* ----------------------------------------------------
-   PRIORITY STYLES
+   STYLES HELPERS (Copied from HR Dashboard)
 ---------------------------------------------------- */
 const getPriorityStyles = (priority: string) => {
   switch (priority) {
     case "High":
-      return "bg-red-50 text-red-600 border-red-100";
+      return "bg-red-50 text-red-600 border border-red-100";
     case "Medium":
-      return "bg-amber-50 text-amber-600 border-amber-100";
+      return "bg-amber-50 text-amber-600 border border-amber-100";
     case "Low":
-      return "bg-slate-50 text-slate-500 border-slate-100";
+      return "bg-slate-50 text-slate-500 border border-slate-100";
     default:
-      return "bg-stone-50 text-stone-500 border-stone-100";
+      return "bg-gray-50 text-gray-500 border border-gray-100";
   }
 };
 
@@ -87,8 +74,17 @@ export default function Announcements() {
     const fetchAnnouncements = async () => {
       try {
         const res = await getAnnouncements();
-        const formatted = res.data.data.map(formatAnnouncement);
-        setAnnouncements(formatted);
+        // Handle API response structure
+        const data = res.data.data || res.data || [];
+        const formatted = Array.isArray(data) ? data.map(formatAnnouncement) : [];
+
+        // Sort by Priority like HR Dashboard
+        const priorityOrder = { High: 0, Medium: 1, Low: 2 };
+        const sorted = formatted.sort(
+          (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
+        );
+
+        setAnnouncements(sorted);
       } catch (error) {
         console.error("Failed to fetch announcements", error);
       } finally {
@@ -99,41 +95,32 @@ export default function Announcements() {
     fetchAnnouncements();
   }, []);
 
-  return (
-    <div className="max-h-[500px] bg-white flex items-center justify-center font-sans text-stone-800">
-      <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-6 md:px-8 border-b border-stone-100 flex justify-between items-end">
-          <h1 className="text-2xl md:text-xl font-bold text-stone-900">
-            Announcements
-          </h1>
-          <div className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-stone-50 border border-stone-100 text-stone-400">
-            <Bell size={18} />
-          </div>
-        </div>
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg p-6 flex items-center justify-center font-sans text-stone-500 h-[420px] border border-gray-100">
+        Loading announcements…
+      </div>
+    );
+  }
 
-        {/* List */}
-        <div className="max-h-[380px] overflow-y-auto custom-scrollbar">
-          <ul className="divide-y divide-stone-50">
-            {loading ? (
-              <li className="p-6 text-center text-stone-400">
-                Loading announcements…
-              </li>
-            ) : announcements.length === 0 ? (
-              <li className="p-6 text-center text-stone-400">
-                No announcements available
-              </li>
-            ) : (
-              announcements.map((item) => (
-                <ListItem
-                  key={item.id}
-                  item={item}
-                  onClick={() => setSelected(item)}
-                />
-              ))
-            )}
-          </ul>
-        </div>
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 h-[420px] flex flex-col font-sans">
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Announcements</h3>
+
+      <div className="space-y-3 flex-1 overflow-y-auto min-h-0 scrollbar-hide">
+        {announcements.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 text-sm">
+            <p>No announcements found</p>
+          </div>
+        ) : (
+          announcements.map((item) => (
+            <ListItem
+              key={item.id}
+              item={item}
+              onClick={() => setSelected(item)}
+            />
+          ))
+        )}
       </div>
 
       <DetailModal selected={selected} onClose={() => setSelected(null)} />
@@ -142,104 +129,90 @@ export default function Announcements() {
 }
 
 /* ----------------------------------------------------
-   LIST ITEM
+   LIST ITEM (Matches HR Dashboard Widget)
 ---------------------------------------------------- */
-function ListItem({ item, onClick }: ListItemProps) {
-  const priorityStyle = getPriorityStyles(item.priority);
+function ListItem({ item, onClick }: { item: Announcement; onClick: () => void }) {
+  const badgeClass = getPriorityStyles(item.priority);
 
   return (
-    <motion.li
+    <motion.div
       layoutId={`card-${item.id}`}
       onClick={onClick}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group flex items-center gap-4 p-6 md:px-8 hover:bg-blue-50/30 cursor-pointer transition-all"
+      className="group flex items-center gap-3 p-3 rounded-md hover:bg-gray-50 cursor-pointer transition-all duration-300"
     >
-      <div className="flex flex-col items-center w-14">
-        <span className="text-xs font-bold text-stone-400 uppercase">
-          {item.day}
+      <div className="flex flex-col items-center justify-center w-12 min-w-12">
+        <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+          {item.month}
         </span>
-        <span className="text-2xl font-bold text-stone-800">
-          {item.date}
-        </span>
+        <span className="text-xl font-bold text-gray-800">{item.day}</span>
       </div>
 
+      <div className="h-8 w-px bg-gray-200 hidden md:block mx-1"></div>
+
       <div className="flex-1 min-w-0">
-        <div className="flex justify-between">
-          <h3 className="text-lg font-medium truncate">{item.event}</h3>
-          <span
-            className={`hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${priorityStyle}`}
-          >
+        <div className="flex justify-between items-start">
+          <p className="font-medium text-gray-800 truncate">
+            {item.title}
+          </p>
+
+          <span className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wide ml-2 ${badgeClass}`}>
             {item.priority}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-stone-500 mt-1">
-          <Clock size={14} />
-          {item.time}
-          <span className="hidden sm:inline">• {item.type}</span>
-        </div>
+        <p className="text-xs text-gray-400 mt-0.5 truncate">
+          {item.description || item.date}
+        </p>
       </div>
 
-      <Info size={20} className="text-stone-300 group-hover:text-blue-600" />
-    </motion.li>
+      <div className="text-gray-300">
+        <Info size={18} />
+      </div>
+    </motion.div>
   );
 }
 
 /* ----------------------------------------------------
-   DETAIL MODAL
+   DETAIL MODAL (Matches HR Dashboard Widget)
 ---------------------------------------------------- */
 function DetailModal({ selected, onClose }: DetailModalProps) {
   if (!selected) return null;
-  const priorityStyle = getPriorityStyles(selected.priority);
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-stone-900/20 backdrop-blur-sm z-40" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40" onClick={onClose} />
 
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <motion.div
           layoutId={`card-${selected.id}`}
-          className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+          className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
         >
-          <div className="h-24 bg-linear-to-r from-stone-100 to-stone-200 flex justify-between p-6">
-            <div>
-              <div className="text-4xl font-bold text-stone-400">
-                {selected.date}
-              </div>
-              <div className="text-xs uppercase font-bold">
-                {selected.month}, {selected.year}
-              </div>
-            </div>
-            <button onClick={onClose}>
-              <X />
+          <div className="h-20 bg-gray-100 flex items-center justify-between px-6">
+            <span className="text-3xl font-bold text-gray-400 opacity-50">
+              {selected.date}
+            </span>
+
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+              <X size={20} />
             </button>
           </div>
 
           <div className="p-6">
-            <div className="flex gap-2 mb-3">
-              <span className="px-3 py-1 text-xs font-bold bg-blue-50 text-blue-800 rounded-full">
-                {selected.type}
-              </span>
-              <span
-                className={`px-3 py-1 text-xs font-bold rounded-full border ${priorityStyle}`}
-              >
-                {selected.priority} Priority
-              </span>
-            </div>
+            <h2 className="text-xl font-bold mb-2 text-gray-900">{selected.title}</h2>
 
-            <h2 className="text-2xl font-bold mb-4">{selected.event}</h2>
-            <p className="text-stone-600 mb-6">{selected.description}</p>
+            <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${getPriorityStyles(selected.priority)}`}>
+              {selected.priority}
+            </span>
 
-            <div className="space-y-4 border-t pt-4">
-              <div className="flex gap-3">
-                <Calendar size={18} />
-                {selected.day}, {selected.month} {selected.date} at {selected.time}
-              </div>
-              <div className="flex gap-3">
-                <MapPin size={18} />
-                {selected.location}
-              </div>
+            <p className="mt-4 text-gray-600 leading-relaxed whitespace-pre-line">
+              {selected.description}
+            </p>
+
+            <div className="mt-4 flex items-center gap-2 text-gray-500 text-sm">
+              <Calendar size={18} />
+              <span>{selected.date} {selected.time && `at ${selected.time}`}</span>
             </div>
           </div>
         </motion.div>

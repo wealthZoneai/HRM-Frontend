@@ -4,6 +4,7 @@ import { FiX, FiPlus, FiTrash2 } from "react-icons/fi";
 interface FormData {
   title: string;
   content: string[];
+  policy_type: string;
 }
 
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const AddPolicyModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
-  const [form, setForm] = React.useState<FormData>({ title: "", content: [""] });
+  const [form, setForm] = React.useState<FormData>({ title: "", content: [""], policy_type: "policy" });
   const [errors, setErrors] = React.useState<{ [k: string]: string }>({});
 
   if (!isOpen) return null;
@@ -43,7 +44,7 @@ const AddPolicyModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
     if (!validate()) return;
     onSubmit(form);
     onClose();
-    setForm({ title: "", content: [""] });
+    setForm({ title: "", content: [""], policy_type: "policy" });
     setErrors({});
   };
 
@@ -62,6 +63,20 @@ const AddPolicyModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
         </div>
 
         <div className="p-6">
+          <div className="mb-5">
+            <label className="text-sm font-medium text-gray-700">Policy Type <span className="text-red-500">*</span></label>
+            <select
+              value={form.policy_type}
+              onChange={(e) => setForm({ ...form, policy_type: e.target.value })}
+              className="mt-2 w-full px-4 py-2.5 rounded-xl border bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            >
+              <option value="policy">Company Policy</option>
+              <option value="terms">Terms & Conditions</option>
+              <option value="resignation">Resignation Rules</option>
+              <option value="termination">Termination Rules</option>
+            </select>
+          </div>
+
           <div className="mb-5">
             <label className="text-sm font-medium text-gray-700">Policy Title <span className="text-red-500">*</span></label>
             <input

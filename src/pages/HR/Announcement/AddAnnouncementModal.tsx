@@ -15,9 +15,10 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (form: AnnouncementFormData) => void;
+    initialData?: AnnouncementFormData | null;
 }
 
-const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
+const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, initialData }) => {
     const [form, setForm] = React.useState<AnnouncementFormData>({
         title: "",
         description: "",
@@ -29,6 +30,22 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) =>
     });
 
     const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+
+    React.useEffect(() => {
+        if (isOpen && initialData) {
+            setForm(initialData);
+        } else if (isOpen && !initialData) {
+            setForm({
+                title: "",
+                description: "",
+                department: "",
+                priority: "",
+                date: "",
+                time: "",
+                location: "",
+            });
+        }
+    }, [isOpen, initialData]);
 
     if (!isOpen) return null;
 
@@ -94,8 +111,8 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) =>
                 {/* Header Gradient */}
                 <div className="bg-linear-to-r from-blue-600 to-indigo-600 p-5 text-white flex justify-between items-center sticky top-0 z-10">
                     <div>
-                        <h2 className="text-2xl font-semibold">Add New Announcement</h2>
-                        <p className="text-sm opacity-80">Send updates to the selected departments</p>
+                        <h2 className="text-2xl font-semibold">{initialData ? "Edit Announcement" : "Add New Announcement"}</h2>
+                        <p className="text-sm opacity-80">{initialData ? "Update the announcement details below" : "Send updates to the selected departments"}</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -230,7 +247,7 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) =>
                             onClick={handleSubmit}
                             className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-md transition"
                         >
-                            Send Announcement
+                            {initialData ? "Update Announcement" : "Send Announcement"}
                         </button>
 
                     </div>

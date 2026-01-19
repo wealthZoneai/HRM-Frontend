@@ -13,12 +13,19 @@ const endpoints = {
     employees: 'api/employees/',
     hrAnnouncements: '/api/announcement/list/',
     createAnnouncement: 'api/announcement/create/',
+    deleteAnnouncement: (id: string | number) => `api/announcement/${id}/delete/`,
+    updateAnnouncement: (id: string | number) => `api/announcement/${id}/update/`,
     hrDashboardStats: 'api/hr/dashboard/stats/',
     hrLeaveDashboardStats: 'api/leave-dashboard/stats/',
     hrMonthlyAttendance: "api/attendance/",
     updateEmployeeJobBank: (id: string | number) => `api/employees/${id}/job&bank/`,
     updateEmployeeRole: (id: string | number) => `api/hr/employees/${id}/role/`,
     updateEmployeeContact: (id: string | number) => `api/hr/employees/${id}/contact/`,
+
+    // tl endpoints
+    tlCreateAnnouncement: 'api/tl/announcement/create/',
+
+
 
 
     //employee endpoints
@@ -45,8 +52,9 @@ const endpoints = {
     notifications: "/api/notifications/",
     markNotificationsRead: "/api/notifications/mark-read/",
     calendar: "api/calendar/events/",
-    policies: "api/policies/",
+    policies: "api/policy/",
     createPolicy: "api/policy/create/",
+    deletePolicy: (id: string | number) => `api/policy/delete/${id}/`,
     // todayAttendance:"/api/attendance/today/"
 
 }

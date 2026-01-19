@@ -167,6 +167,12 @@ export const CreatePolicy = (data: any) => {
   });
 };
 
+export const deletePolicy = (id: string | number) => {
+  return server.delete((endpoints as any).deletePolicy(id), {
+    requiresAuth: true,
+  });
+};
+
 export const getNotifications = () => {
   return server.get(endpoints.notifications, {
     requiresAuth: true,
@@ -204,6 +210,24 @@ export const getHrAnnouncements = () => {
 
 export const CreateAnnouncement = (data: any) => {
   return server.post(endpoints.createAnnouncement, data, {
+    requiresAuth: true,
+  });
+};
+
+export const DeleteAnnouncement = (id: string | number) => {
+  return server.delete((endpoints as any).deleteAnnouncement(id), {
+    requiresAuth: true,
+  });
+};
+
+export const UpdateAnnouncement = (id: string | number, data: any) => {
+  return server.put((endpoints as any).updateAnnouncement(id), data, {
+    requiresAuth: true,
+  });
+};
+
+export const CreateTLAnnouncement = (data: any) => {
+  return server.post(endpoints.tlCreateAnnouncement, data, {
     requiresAuth: true,
   });
 };

@@ -207,7 +207,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
     useEffect(() => {
         if (open && employee?.id) {
             fetchEmployeeDetails(employee.id);
-            setIsEditing(false); 
+            setIsEditing(false);
         } else {
             setFullData(null);
             formik.resetForm();
@@ -283,7 +283,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             {/* MODAL WRAPPER */}
             <div className="bg-white rounded-3xl overflow-hidden shadow-2xl w-full max-w-6xl h-[95vh] flex flex-col transform transition-all duration-300 scale-100">
-                
+
                 {/* HEADER */}
                 <div className="p-6 flex items-center justify-between bg-white shadow-sm sticky top-0 z-10 border-b">
                     <div className="flex items-center gap-4">
@@ -317,22 +317,22 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 ) : (
                     /* MAIN CONTENT */
                     <div className="flex-1 overflow-y-auto no-scrollbar grid grid-cols-1 lg:grid-cols-3">
-                        
+
                         {/* LEFT COLUMN: PROFILE SUMMARY */}
                         <div className="lg:col-span-1 bg-gray-100 p-6 space-y-8 shadow-inner-r">
                             <div className="text-center">
                                 <img
-                                    src={fullData?.protected_profile_photo_url || employee.imageUrl || fallbackAvatar}
+                                    src={fullData?.protected_profile_photo_url || fullData?.profile_photo || employee.profile_photo || fallbackAvatar}
                                     className="w-36 h-36 mx-auto rounded-full object-cover ring-4 ring-blue-500 shadow-xl"
                                     alt={employee.name}
                                 />
-                                
+
                                 {/* READ-ONLY Name & Role */}
                                 <div className="mt-4 space-y-2">
                                     <h3 className="text-3xl font-extrabold text-gray-900">{fullData?.name || employee.name}</h3>
                                     <p className="text-blue-600 text-xl font-medium">{fullData?.job_title || employee.role}</p>
                                 </div>
-                                
+
                                 <p className="text-sm text-gray-500 mt-1">Employee ID: <span className="font-bold text-gray-800">{fullData?.emp_id || employee.employeeId}</span></p>
 
                                 <div className="mt-4 inline-block">
@@ -381,7 +381,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
 
                         {/* RIGHT COLUMN: DETAILED INFO */}
                         <div className="lg:col-span-2 p-6 space-y-8">
-                            
+
                             {/* METRICS (READ-ONLY) */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                 <InfoCard icon={FiClock} title="Work Type" value={fullData?.employment_type?.replace("_", " ").toUpperCase()} />
@@ -518,7 +518,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                 type="button"
                                 className="px-6 py-2 bg-green-600 text-white rounded-xl flex items-center gap-2 font-medium hover:bg-green-700 transition shadow-md disabled:opacity-70"
                             >
-                                {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} 
+                                {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
                                 Save Changes
                             </button>
                         </>

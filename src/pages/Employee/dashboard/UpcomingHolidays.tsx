@@ -1,7 +1,5 @@
-
-import { Calendar, CalendarDays, } from "lucide-react";
+import { Calendar, CalendarDays, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 import { useSelector } from "react-redux";
 import { selectAllCalendarEvents } from "../../../store/slice/calendarSlice";
 
@@ -11,16 +9,19 @@ export default function UpcomingHolidays() {
 
   const upcomingHolidays = allEvents
     .filter(e => new Date(e.date) >= new Date()) // Future only
-    .filter(e => ["Federal", "Company", "Optional", "Holiday"].includes(e.type)) // Only holidays, assuming we don't want meetings here? User said "public holidays"
+    .filter(e => ["Federal", "Company", "Optional", "Holiday"].includes(e.type))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 5)
     .map(e => {
       const d = new Date(e.date);
       return {
         name: e.title,
-        date: d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
+        date: d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }), // "Jan 1"
+        rawDate: d,
         day: d.toLocaleDateString('en-US', { weekday: 'long' }),
-        type: e.type === "Federal" ? "National" : e.type
+        type: e.type === "Federal" ? "National" : e.type,
+        month: d.toLocaleDateString('en-US', { month: 'short' }),
+        dayNum: d.getDate().toString().padStart(2, '0')
       };
     });
 
@@ -29,71 +30,59 @@ export default function UpcomingHolidays() {
   }
 
   return (
-    <div className="max-h-[700px] bg-white flex items-center justify-center font-sans text-stone-800" >
+    <div className="h-[420px] bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex flex-col font-sans text-gray-800">
 
-      {/* Main Card */}
-      <div className="w-full max-w-2xl h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 overflow-hidden">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h1 className="text-lg font-semibold text-gray-800">Upcoming Holidays</h1>
+        </div>
+        <button onClick={handleClick} className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors">
+          <CalendarDays size={20} />
+        </button>
+      </div>
 
-        {/* Header */}
-        <div className="px-6 pt-8 pb-6 flex justify-between items-start">
-          <div>
-            {/* <h2 className="text-xs font-bold tracking-widest uppercase text-blue-900/60 mb-1">Calendar</h2> */}
-            <h1 className="text-2xl md:text-xl font-bold text-stone-900 tracking-tight">Upcoming Holidays</h1>
+      {/* List Section */}
+      <div className="flex-1 overflow-y-auto min-h-0 scrollbar-hide space-y-3">
+        {upcomingHolidays.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 text-sm">
+            <p>No upcoming holidays</p>
           </div>
-          <button onClick={handleClick} className="p-2 rounded-full hover:bg-stone-50 text-stone-400 hover:text-blue-900 transition-colors">
-            <CalendarDays size={20} />
-          </button>
-        </div>
+        ) : (
+          upcomingHolidays.map((h, i) => (
+            <div
+              key={i}
+              className="group flex items-center gap-3 p-3 rounded-md hover:bg-gray-50 cursor-default transition-all duration-300"
+            >
+              {/* Date Box (Matches Announcements) */}
+              <div className="flex flex-col items-center justify-center w-12 min-w-12">
+                <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                  {h.month}
+                </span>
+                <span className="text-xl font-bold text-gray-800">{h.dayNum}</span>
+              </div>
 
-        {/* List Section */}
-        <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-          <ul className="divide-y divide-stone-50">
-            {upcomingHolidays.map((h, i) => (
-              <li
-                key={i}
-                className="group flex items-center justify-between p-6 hover:bg-stone-50 cursor-default transition-colors duration-200"
-              >
-                <div className="flex items-center gap-4">
-                  {/* Icon Box */}
-                  <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center text-stone-400 group-hover:bg-white group-hover:text-blue-900 group-hover:shadow-sm transition-all duration-300 border border-transparent group-hover:border-stone-100">
-                    <Calendar size={20} strokeWidth={2} />
-                  </div>
+              <div className="h-8 w-px bg-gray-200 hidden md:block mx-1"></div>
 
-                  {/* Text Content */}
-                  <div>
-                    <h3 className="text-lg font-medium text-stone-900 truncate pr-4 group-hover:text-blue-900 transition-colors">
-                      {h.name}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs font-semibold text-stone-500 uppercase tracking-wide">{h.day}</span>
-                      <span className="w-1 h-1 rounded-full bg-stone-300"></span>
-                      <span className="text-xs font-medium text-blue-900/70">{h.type}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Date Pill */}
-                <div className="flex flex-col items-end">
-                  <span className="text-lg font-bold text-stone-800 tabular-nums tracking-tight">
-                    {h.date.split(' ')[0]}
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
-                    {h.date.split(' ')[1]}
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start">
+                  <h3 className="font-medium text-gray-800 truncate pr-2">
+                    {h.name}
+                  </h3>
+                  {/* Badge */}
+                  <span className="text-[10px] px-2 py-0.5 rounded font-semibold uppercase tracking-wide bg-blue-50 text-blue-600 border border-blue-100 shrink-0">
+                    {h.type}
                   </span>
                 </div>
-              </li>
-            ))}
-          </ul>
-        </div>
 
-        {/* Footer Action */}
-        {/* <div className="px-6 py-4 border-t border-stone-100 bg-stone-50/50 flex justify-center">
-          <button className="text-sm font-semibold text-stone-500 hover:text-blue-900 flex items-center gap-2 transition-colors group">
-            View Full 2025 Schedule
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div> */}
-
+                <p className="text-xs text-gray-400 mt-0.5 truncate">
+                  {h.day}
+                </p>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
