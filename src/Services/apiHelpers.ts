@@ -226,6 +226,12 @@ export const UpdateAnnouncement = (id: string | number, data: any) => {
   });
 };
 
+export const CreateTLAnnouncement = (data: any) => {
+  return server.post(endpoints.tlCreateAnnouncement, data, {
+    requiresAuth: true,
+  });
+};
+
 export const GetMonthlyAttendance = (year: string, month: string) => {
   const url = `${endpoints.hrMonthlyAttendance}?month=${year}-${month}`;
 

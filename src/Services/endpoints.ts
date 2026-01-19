@@ -22,6 +22,9 @@ const endpoints = {
     updateEmployeeRole: (id: string | number) => `api/hr/employees/${id}/role/`,
     updateEmployeeContact: (id: string | number) => `api/hr/employees/${id}/contact/`,
 
+    // tl endpoints
+    tlCreateAnnouncement: 'api/tl/announcement/create/',
+
 
 
 
