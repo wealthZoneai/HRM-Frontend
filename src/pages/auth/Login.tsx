@@ -55,6 +55,10 @@ const Login: React.FC = () => {
           navigate(`/employee/dashboard`);
         } else if (response.data.role === "employee" || response.data.role === "intern") {
           navigate(`/employee/dashboard`);
+        } else if (response.data.role === "dm") {
+          navigate(`/dm/dashboard`);
+        } else if (response.data.role === "pm") {
+          navigate(`/pm/dashboard`);
         }
         dispatch(setUserData({
           token: response.data.access,

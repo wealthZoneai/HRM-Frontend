@@ -1,4 +1,4 @@
-import { Bell, Headset } from "lucide-react";
+ import { Bell, Headset, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import DefaultAvatar from "../../../assets/user.png";
 import { useRef, useEffect, useState } from "react";
@@ -48,6 +48,8 @@ export default function Topbar({ name, id }: TopbarProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [imageSrc, setImageSrc] = useState<string>(DefaultAvatar);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
+  const helpDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -157,6 +159,23 @@ export default function Topbar({ name, id }: TopbarProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Close help dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (helpDropdownRef.current && !helpDropdownRef.current.contains(event.target as Node)) {
+        setIsHelpDropdownOpen(false);
+      }
+    };
+
+    if (isHelpDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isHelpDropdownOpen]);
+
   const formattedName = toTitleCase(name);
   // const userInitials = getInitials(formattedName);
   const greeting = getGreeting();
@@ -198,13 +217,56 @@ export default function Topbar({ name, id }: TopbarProps) {
           )}
         </button>
 
-        {/* HELP BUTTON */}
-        <button
-          className="relative p-2 rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-150"
-          title="Help & Support"
-        >
-          <Headset className="h-6 w-6" />
-        </button>
+        {/* HELP DROPDOWN */}
+        <div className="relative" ref={helpDropdownRef}>
+          <button
+            onClick={() => setIsHelpDropdownOpen(!isHelpDropdownOpen)}
+            className="flex items-center gap-1 px-3 py-2 rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 transition-all duration-150"
+            title="Help & Support"
+          >
+            <Headset className="h-6 w-6" />
+            <ChevronDown size={16} className={`transition-transform ${isHelpDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Dropdown Menu */}
+          {isHelpDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+              <button
+                onClick={() => {
+                  setIsHelpDropdownOpen(false);
+                  // Navigate or handle HR help action
+                  console.log("Help from HR clicked");
+                }}
+                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition flex items-center gap-3"
+              >
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <Headset size={16} className="text-blue-600" />
+                </div>
+                <div>
+                  <div className="font-medium text-gray-800">Help from HR</div>
+                  <div className="text-xs text-gray-500">Contact HR Department</div>
+                </div>
+              </button>
+              <div className="h-px bg-gray-100 my-1"></div>
+              <button
+                onClick={() => {
+                  setIsHelpDropdownOpen(false);
+                  // Navigate or handle IT support action
+                  console.log("IT Support clicked");
+                }}
+                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition flex items-center gap-3"
+              >
+                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                  <Headset size={16} className="text-purple-600" />
+                </div>
+                <div>
+                  <div className="font-medium text-gray-800">IT Support</div>
+                  <div className="text-xs text-gray-500">Technical Assistance</div>
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Profile Avatar + Dropdown */}
         <div className="relative" ref={dropdownRef}>

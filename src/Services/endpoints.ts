@@ -4,8 +4,8 @@
 const endpoints = {
 
     //authentication
-    login: 'api/login/',
-    register: 'api/auth/candidateSignup',
+    login: '/api/login/',
+    register: '/api/auth/candidateSignup',
 
     //hr endpoints
 
@@ -55,8 +55,18 @@ const endpoints = {
     policies: "api/policy/",
     createPolicy: "api/policy/create/",
     deletePolicy: (id: string | number) => `api/policy/delete/${id}/`,
-    // todayAttendance:"/api/attendance/today/"
+    // Manager (DM/PM/TL) Endpoints
+    createProject: 'api/dm/project/create/',
+    assignPM: (projectId: string | number) => `api/dm/project/${projectId}/assign-pm/`,
 
+    createModule: (projectId: string | number) => `api/pm/project/${projectId}/module/create/`,
+
+    pmProjects: 'api/pm/projects/',
+    dmProjects: 'api/dm/projects/',
+    tlModules: 'api/tl/modules/',
+    createTask: (moduleId: string | number) => `api/tl/module/${moduleId}/task/create/`,
+    employeeProjectStatus: 'api/employee/project-status/',
+    employeeTasks: 'api/employee/tasks/',
 }
 
 export default endpoints

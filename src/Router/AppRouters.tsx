@@ -32,6 +32,10 @@ import LeadStatus from "../pages/Team Lead/LeadStatus";
 import HRProfile from "../pages/HR/Profile/HRProfile";
 import HRPolicies from "../pages/HR/Policy/HRPolicies";
 // import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
+import ManagerLayout from "../pages/Manager/ManagerLayout";
+import ManagerDashboard from "../pages/Manager/ManagerDashboard";
+import CreateProject from "../pages/Manager/CreateProject";
+import CreateModule from "../pages/Manager/CreateModule";
 
 function AppRouters() {
   return (
@@ -143,6 +147,35 @@ function AppRouters() {
         <Route path="notifications" element={<Notifications />} />
         <Route path="policy" element={<HRPolicies />} />
         <Route path="profile" element={<HRProfile />} />
+        <Route path="profile" element={<HRProfile />} />
+      </Route>
+
+      {/* DM ROUTES */}
+      <Route
+        path="/dm/*"
+        element={
+          <ManagerLayout>
+            <Outlet />
+          </ManagerLayout>
+        }
+      >
+        <Route path="dashboard" element={<ManagerDashboard />} />
+        <Route path="create-project" element={<CreateProject />} />
+        <Route path="create-module" element={<CreateModule />} />
+      </Route>
+
+      {/* PM ROUTES */}
+      <Route
+        path="/pm/*"
+        element={
+          <ManagerLayout>
+            <Outlet />
+          </ManagerLayout>
+        }
+      >
+        <Route path="dashboard" element={<ManagerDashboard />} />
+        <Route path="create-project" element={<CreateProject />} />
+        <Route path="create-module" element={<CreateModule />} />
       </Route>
 
       {/* ADMIN ROUTES */}

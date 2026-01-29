@@ -16,9 +16,12 @@ export function CreateEmployes(body: ICreateEmployesBody) {
 }
 
 // Used by HR Dashboard to list all employees
-export function GetAllEmployes() {
-  return server.get(endpoints.employees, { requiresAuth: true });
-}
+export const GetAllEmployes = (params?: any) => {
+  return server.get(endpoints.employees, {
+    requiresAuth: true,
+    params: params
+  });
+};
 
 export function GetEmployeeById(id: string) {
   return server.get(`${endpoints.employees}${id}/`, { requiresAuth: true });
@@ -250,4 +253,38 @@ export const getLeaveDashboardStats = () => {
   return server.get(endpoints.hrLeaveDashboardStats, {
     requiresAuth: true,
   });
+};
+
+// --- Manager Helpers ---
+
+export const CreateProject = (data: any) => {
+  return server.post(endpoints.createProject, data, { requiresAuth: true });
+};
+
+export const GetPMProjects = () => {
+  return server.get(endpoints.pmProjects, { requiresAuth: true });
+};
+
+export const GetDMProjects = () => {
+  return server.get(endpoints.dmProjects, { requiresAuth: true });
+};
+
+export const CreateModule = (projectId: string | number, data: any) => {
+  return server.post((endpoints as any).createModule(projectId), data, { requiresAuth: true });
+};
+
+export const GetTLModules = () => {
+  return server.get(endpoints.tlModules, { requiresAuth: true });
+};
+
+export const CreateTask = (moduleId: string | number, data: any) => {
+  return server.post((endpoints as any).createTask(moduleId), data, { requiresAuth: true });
+};
+
+export const GetEmployeeProjectStatus = () => {
+  return server.get(endpoints.employeeProjectStatus, { requiresAuth: true });
+};
+
+export const GetEmployeeTasks = () => {
+  return server.get(endpoints.employeeTasks, { requiresAuth: true });
 };

@@ -84,7 +84,7 @@ const LeadDashboardTab: React.FC = () => {
                     <div className="space-y-4">
                         {activities.map((activity) => (
                             <div key={activity.id} className="flex items-start space-x-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
-                                <div className="w-2 h-2 mt-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+                                <div className="w-2 h-2 mt-2 rounded-full bg-blue-500 shrink-0"></div>
                                 <div>
                                     <p className="text-sm text-gray-800">
                                         <span className="font-semibold">{activity.text}</span>{" "}

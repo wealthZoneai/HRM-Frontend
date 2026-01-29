@@ -67,7 +67,7 @@ const JobInformation = ({ data }: { data?: any }) => {
       const mappedData = {
         jobTitle: jobData.job_title || '',
         department: jobData.department || '',
-        teamLead: jobData.team_lead || '',
+        teamLead: jobData.team_lead?.display || '',
         employmentType: jobData.employment_type || '',
         startDate: jobData.start_date || '',
         location: jobData.location || '',

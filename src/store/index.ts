@@ -6,6 +6,7 @@ import teamReducer from './slice/teamSlice';
 import dashboardReducer from './slice/dashboardSlice';
 import announcementReducer from './slice/announcementSlice';
 import calendarReducer from './slice/calendarSlice';
+import projectReducer from './slice/projectSlice';
 
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     announcements: announcementReducer,
     calendar: calendarReducer,
+    project: projectReducer,
   },
   devTools: true,
 });
