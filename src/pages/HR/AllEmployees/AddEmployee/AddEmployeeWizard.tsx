@@ -1,5 +1,4 @@
-// WizardInner.tsx
-import React, { useState } from "react"; // 1. Added useState
+import React, { useState } from "react"; 
 import { toast } from "react-toastify";
 import { useAddEmployee } from "./AddEmployeeContext";
 import StepPersonal from "./StepPersonal";
@@ -22,14 +21,14 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
   const { state, dispatch } = useAddEmployee();
   const navigate = useNavigate();
 
-  // 2. NEW STATE: To track if we should show validation errors
   const [showErrors, setShowErrors] = useState(false);
 
   /* ===========================================================
       LOAD EDIT MODE DATA
   ============================================================ */
   React.useEffect(() => {
-    if (editData) {
+    // Loop protection: Only set data if it's new
+    if (editData && editData.id !== state.editId) {
       dispatch({
         type: "SET_EDIT",
         payload: {
@@ -43,17 +42,16 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
         },
       });
     }
-  }, [editData, dispatch]);
+  }, [editData, dispatch, state.editId]);
 
   /* ===========================================================
       STEP CONFIG
-      3. UPDATED: Passing 'showErrors' prop to child components
   ============================================================ */
   const steps = [
     { 
       key: "personal", 
       label: "Personal Info", 
-      // @ts-ignore - Assuming StepPersonal accepts showErrors prop
+      // @ts-ignore 
       comp: <StepPersonal showErrors={showErrors} /> 
     },
     { 
@@ -78,7 +76,6 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
 
   /* ===========================================================
       STEP VALIDATION
-      (Bank step is OPTIONAL)
   ============================================================ */
   const validateStep = () => {
     const p = state.contact;
@@ -99,6 +96,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
 
       case 1:
         return (
+          (k.role || "").trim() && 
           k.startDate?.trim() &&
           k.jobTitle?.trim() &&
           k.department?.trim() &&
@@ -163,7 +161,6 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       <button
         disabled={!isCompleted && !isActive}
         onClick={() => {
-            // Optional: You might want to validate before jumping via header too
             dispatch({ type: "SET_STEP", payload: index })
         }}
         className="flex flex-col items-center flex-1"
@@ -184,6 +181,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
     const b = state.bankAccounts[0] || {};
 
     const payload: any = {
+      role: k.role, 
       emp_id: k.employeeId,
       work_email: k.email,
       contact: {
@@ -203,14 +201,12 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
         department: k.department,
         employment_type: k.employmentType,
         start_date: k.startDate,
-        role: "employee",
         team_lead: k.teamLead,
         location: k.location,
         job_description: k.jobDescription,
       },
     };
 
-    // ✅ Send bank only if user entered something
     if (hasBankData(b)) {
       payload.bank = {
         bank_name: b.bankName,
@@ -229,7 +225,6 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       SUBMIT
   ============================================================ */
   const handelApiCall = async (state: any) => {
-    // 4. UPDATED: Validate before final submit
     if (!validateStep()) {
         setShowErrors(true);
         toast.error("Please fill in all required fields.");
@@ -249,7 +244,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       RENDER
   ============================================================ */
   return (
-    <div className="w-full bg-white rounded-xl shadow-lg p-6 md:p-8">
+    <div className="w-full bg-white p-6 md:p-8">
       {/* STEP INDICATORS */}
       <div className="flex justify-between mb-10">
         {steps.map((s, i) => (
@@ -273,10 +268,11 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
         {state.step > 0 ? (
           <button
             onClick={() => {
-              setShowErrors(false); // Reset errors when going back
+              setShowErrors(false); 
               dispatch({ type: "SET_STEP", payload: state.step - 1 })
             }}
-            className="px-6 py-2 border rounded-lg"
+            // ADDED: flex items-center gap-2 to fix double line issue
+            className="flex items-center gap-2 px-6 py-2 border rounded-lg hover:bg-gray-50 transition"
           >
             <ArrowLeft size={16} /> Previous
           </button>
@@ -286,29 +282,28 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
 
         {state.step < steps.length - 1 ? (
           <button
-            // 5. UPDATED: Validation Logic here
             onClick={() => {
               const isValid = validateStep();
               if (!isValid) {
-                setShowErrors(true); // Trigger red fields
+                setShowErrors(true); 
                 toast.error("Please fill in all required fields.");
                 return;
               }
-              // If valid, proceed and hide errors for the next step
               setShowErrors(false);
               dispatch({
                 type: "SET_STEP",
                 payload: state.step + 1,
               });
             }}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+            // ADDED: flex items-center gap-2 to fix double line issue
+            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Next <ArrowRight size={16} />
           </button>
         ) : (
           <button
             onClick={() => handelApiCall(state)}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
           >
             Submit Employee Data
           </button>

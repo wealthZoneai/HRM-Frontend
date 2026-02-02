@@ -1,26 +1,9 @@
-import React from "react";
 import { useAddEmployee } from "./AddEmployeeContext";
 
 /* ===================
-   Reusable Components
+   Reusable Components (Same as before)
 =================== */
-const TextField = ({
-  label,
-  value,
-  onChange,
-  type = "text",
-  prefix,
-  error, // New prop to trigger red border
-  ...props
-}: {
-  label: string;
-  value: any;
-  onChange: (v: string) => void;
-  type?: string;
-  prefix?: string;
-  error?: boolean; // Type definition
-  [key: string]: any;
-}) => (
+const TextField = ({ label, value, onChange, type = "text", prefix, error, ...props }: any) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">
       {label} {error && <span className="text-red-500">*</span>}
@@ -40,11 +23,7 @@ const TextField = ({
           focus:outline-none focus:ring-2 
           transition-all shadow-sm
           ${prefix ? "pl-12 pr-4" : "px-4"}
-          ${
-            error
-              ? "border-red-500 focus:border-red-500 focus:ring-red-200"
-              : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-          }
+          ${error ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}
         `}
         {...props}
       />
@@ -53,19 +32,7 @@ const TextField = ({
   </div>
 );
 
-const SelectField = ({
-  label,
-  value,
-  onChange,
-  children,
-  error, // New prop
-}: {
-  label: string;
-  value: any;
-  onChange: (v: string) => void;
-  children: React.ReactNode;
-  error?: boolean;
-}) => (
+const SelectField = ({ label, value, onChange, children, error }: any) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">
       {label} {error && <span className="text-red-500">*</span>}
@@ -77,11 +44,7 @@ const SelectField = ({
         w-full px-4 py-2 bg-white border rounded-lg
         focus:outline-none focus:ring-2 
         transition-all shadow-sm
-        ${
-          error
-            ? "border-red-500 focus:border-red-500 focus:ring-red-200"
-            : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-        }
+        ${error ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}
       `}
     >
       {children}
@@ -93,12 +56,10 @@ const SelectField = ({
 /* ===================
    MAIN COMPONENT
 =================== */
-// Accept showErrors prop from WizardInner
 const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
   const { state, dispatch } = useAddEmployee();
   const personal = state.contact;
 
-  // Calculate max date (18 years ago from today)
   const getMaxDob = () => {
     const today = new Date();
     const maxDate = new Date(
@@ -121,18 +82,23 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
 
   return (
     <div className="w-full">
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-800 mb-6">
-          Personal Information
-        </h3>
+      {/* Removed Redundant Header 'Personal Information' */}
+      
+      {/* Removed Shadow/Border here too if you want it completely flat, 
+          but keeping the border for the form grouping is usually good.
+          Adjust based on preference. */}
+      <div className="bg-white p-0 md:p-0 rounded-none border-none shadow-none"> 
+      
+      {/* NOTE: If you want the fields inside a box, keep the styling below. 
+          If you want it purely flat like the wizard wrapper, use the classes above.
+          Based on "Remove space", I removed padding/shadow/border from this wrapper. */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TextField
             label="First Name *"
             value={personal.firstName}
-            // Error if showErrors is true AND value is empty
             error={showErrors && !personal.firstName}
-            onChange={(v) => {
+            onChange={(v: string) => {
               if (/^[^0-9]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { firstName: v } });
               }
@@ -142,8 +108,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           <TextField
             label="Middle Name"
             value={personal.middleName}
-            // Optional field, no error logic needed typically
-            onChange={(v) => {
+            onChange={(v: string) => {
               if (/^[^0-9]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { middleName: v } });
               }
@@ -154,7 +119,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             label="Last Name *"
             value={personal.lastName}
             error={showErrors && !personal.lastName}
-            onChange={(v) => {
+            onChange={(v: string) => {
               if (/^[^0-9]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { lastName: v } });
               }
@@ -165,7 +130,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             label="Personal Email *"
             value={personal.personalEmail}
             error={showErrors && !personal.personalEmail}
-            onChange={(v) =>
+            onChange={(v: string) =>
               dispatch({ type: "SET_PERSONAL", payload: { personalEmail: v } })
             }
           />
@@ -175,9 +140,8 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             value={personal.phone}
             prefix="+91"
             maxLength={10}
-            // Error if empty OR not 10 digits
             error={showErrors && (!personal.phone || personal.phone.length !== 10)}
-            onChange={(v) => {
+            onChange={(v: string) => {
               if (/^\d*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { phone: v } });
               }
@@ -189,13 +153,12 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             value={personal.alternativeNumber}
             prefix="+91"
             maxLength={10}
-            // Error only if they entered something but it's invalid (less than 10 digits)
             error={
               showErrors &&
               !!personal.alternativeNumber &&
               personal.alternativeNumber.length !== 10
             }
-            onChange={(v) => {
+            onChange={(v: string) => {
               if (/^\d*$/.test(v)) {
                 dispatch({
                   type: "SET_PERSONAL",
@@ -217,7 +180,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           <TextField
             label="Blood Group"
             value={personal.bloodGroup}
-            onChange={(v) =>
+            onChange={(v: string) =>
               dispatch({ type: "SET_PERSONAL", payload: { bloodGroup: v } })
             }
           />
@@ -226,7 +189,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             label="Gender *"
             value={personal.gender}
             error={showErrors && !personal.gender}
-            onChange={(v) =>
+            onChange={(v: string) =>
               dispatch({ type: "SET_PERSONAL", payload: { gender: v } })
             }
           >
@@ -240,7 +203,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             label="Marital Status *"
             value={personal.maritalStatus}
             error={showErrors && !personal.maritalStatus}
-            onChange={(v) =>
+            onChange={(v: string) =>
               dispatch({ type: "SET_PERSONAL", payload: { maritalStatus: v } })
             }
           >

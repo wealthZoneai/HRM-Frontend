@@ -42,7 +42,6 @@ const InputField = ({
 /* ==========================
    MAIN COMPONENT
 ========================== */
-// Updated to accept showErrors prop
 const StepKin = ({ showErrors }: { showErrors: boolean }) => {
   const { state, dispatch } = useAddEmployee();
   const kin = state.kin;
@@ -51,6 +50,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
       FORM VALIDATION STATE
   -------------------------- */
   const [errors, setErrors] = useState({
+    role: "", 
     email: "",
     employeeId: "",
     startDate: "",
@@ -68,6 +68,10 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
     let errorMsg = "";
 
     switch (field) {
+      case "role": 
+        if (!value.trim()) errorMsg = "Role is required";
+        break;
+
       case "email":
         if (!value.trim()) errorMsg = "Work Email is required";
         else if (!/^\S+@\S+\.\S+$/.test(value))
@@ -113,11 +117,39 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          {/* --- NEW ROLE DROPDOWN --- */}
+          <div className="flex flex-col gap-1">
+            <label className="text-gray-700 font-medium text-sm">
+              Role *
+            </label>
+            <select
+              value={kin.role || ""}
+              onChange={(e) => updateField("role", e.target.value)}
+              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
+                ${
+                  showErrors && !kin.role
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "focus:ring-blue-500 focus:border-blue-500"
+                }`}
+            >
+              <option value="">Select Role</option>
+              <option value="employee">Employee</option>
+              <option value="hr">HR</option>
+              <option value="delivery_manager">Delivery Manager</option>
+              <option value="project_manager">Project Manager</option>
+              <option value="team_leader">Team Leader</option>
+              <option value="intern">Intern</option>
+            </select>
+            {showErrors && !kin.role && (
+              <span className="text-red-500 text-xs">Role is required</span>
+            )}
+          </div>
+
           {/* JOB TITLE */}
           <InputField
             label="Job Title *"
             value={kin.jobTitle}
-            // Check both internal error state AND external showErrors trigger
             error={
               errors.jobTitle ||
               (showErrors && !kin.jobTitle ? "Job Title is required" : "")

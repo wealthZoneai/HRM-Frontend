@@ -290,14 +290,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                         <h2 className="text-2xl font-bold text-gray-800">
                             {isEditing ? "Editing Profile" : `Employee Profile: ${employee.name}`}
                         </h2>
-                        {!loading && !apiError && !isEditing && (
-                            <button 
-                                onClick={() => setIsEditing(true)}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm font-semibold border border-blue-200"
-                            >
-                                <FiEdit2 size={14} /> Edit
-                            </button>
-                        )}
+                        {/* EDIT BUTTON REMOVED FROM HERE */}
                     </div>
                     <button className="text-gray-500 hover:text-red-500 transition" onClick={onClose}>
                         <FiX size={28} />

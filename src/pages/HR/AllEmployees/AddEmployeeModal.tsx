@@ -30,19 +30,19 @@ const AddEmployeeModal: React.FC<Props> = ({ open, onClose, editData, onSuccess 
         className="
           relative w-full max-w-5xl mx-auto 
           rounded-2xl overflow-hidden shadow-2xl
-          bg-linear-to-br from-white via-white/90 to-gray-100
+          bg-white
           border border-gray-200
           transform transition-all
           animate-[fadeIn_0.25s_ease-out]
           max-h-[95vh] flex flex-col
         "
       >
-        {/* Header (UNIC STYLE) */}
+        {/* Header */}
         <div className="
           px-6 py-4 border-b
-          bg-white/80 backdrop-blur-xl
+          bg-white
           flex justify-between items-center 
-          shadow-sm
+          shadow-sm z-10
         ">
           <h2 className="text-xl md:text-2xl font-bold text-gray-800 tracking-wide">
             {editData ? "Edit Employee" : "Add New Employee"}
@@ -60,8 +60,8 @@ const AddEmployeeModal: React.FC<Props> = ({ open, onClose, editData, onSuccess 
           </button>
         </div>
 
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 bg-white/40 no-scrollbar">
+        {/* Body - REMOVED PADDING HERE to fix gaps */}
+        <div className="flex-1 overflow-y-auto bg-gray-50 no-scrollbar p-0">
           <AddEmployeeProvider>
             <WizardInner editData={editData} onSuccess={onSuccess} />
           </AddEmployeeProvider>
