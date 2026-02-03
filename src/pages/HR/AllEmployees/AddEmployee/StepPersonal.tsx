@@ -1,7 +1,7 @@
 import { useAddEmployee } from "./AddEmployeeContext";
 
 /* ===================
-   Reusable Components (Same as before)
+   Reusable Components
 =================== */
 const TextField = ({ label, value, onChange, type = "text", prefix, error, ...props }: any) => (
   <div className="flex flex-col gap-1">
@@ -28,7 +28,12 @@ const TextField = ({ label, value, onChange, type = "text", prefix, error, ...pr
         {...props}
       />
     </div>
-    {error && <span className="text-xs text-red-500">This field is required</span>}
+    {/* UPDATED: Now displays custom error string if provided, otherwise shows default message */}
+    {error && (
+      <span className="text-xs text-red-500">
+        {typeof error === "string" ? error : "This field is required"}
+      </span>
+    )}
   </div>
 );
 
@@ -80,22 +85,26 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
     dispatch({ type: "SET_PERSONAL", payload: { dob: v } });
   };
 
+  // --- VALIDATION LOGIC ---
+  const getEmailError = () => {
+    if (!showErrors) return false;
+    if (!personal.personalEmail) return true; // Returns "This field is required" (default)
+    
+    // Check for .com
+    if (!personal.personalEmail.toLowerCase().includes(".com")) {
+      return "Email must contain '.com'";
+    }
+    
+    return false;
+  };
+
   return (
     <div className="w-full">
-      {/* Removed Redundant Header 'Personal Information' */}
-      
-      {/* Removed Shadow/Border here too if you want it completely flat, 
-          but keeping the border for the form grouping is usually good.
-          Adjust based on preference. */}
       <div className="bg-white p-0 md:p-0 rounded-none border-none shadow-none"> 
-      
-      {/* NOTE: If you want the fields inside a box, keep the styling below. 
-          If you want it purely flat like the wizard wrapper, use the classes above.
-          Based on "Remove space", I removed padding/shadow/border from this wrapper. */}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
           <TextField
-            label="First Name *"
+            label="First Name"
             value={personal.firstName}
             error={showErrors && !personal.firstName}
             onChange={(v: string) => {
@@ -116,7 +125,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           />
 
           <TextField
-            label="Last Name *"
+            label="Last Name"
             value={personal.lastName}
             error={showErrors && !personal.lastName}
             onChange={(v: string) => {
@@ -126,17 +135,18 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             }}
           />
 
+          {/* UPDATED EMAIL FIELD */}
           <TextField
-            label="Personal Email *"
+            label="Personal Email"
             value={personal.personalEmail}
-            error={showErrors && !personal.personalEmail}
+            error={getEmailError()} 
             onChange={(v: string) =>
               dispatch({ type: "SET_PERSONAL", payload: { personalEmail: v } })
             }
           />
 
           <TextField
-            label="Phone Number *"
+            label="Phone Number"
             value={personal.phone}
             prefix="+91"
             maxLength={10}
@@ -169,7 +179,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           />
 
           <TextField
-            label="Date of Birth *"
+            label="Date of Birth"
             type="date"
             value={personal.dob}
             error={showErrors && !personal.dob}
@@ -186,7 +196,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           />
 
           <SelectField
-            label="Gender *"
+            label="Gender"
             value={personal.gender}
             error={showErrors && !personal.gender}
             onChange={(v: string) =>
@@ -196,11 +206,12 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             <option value="">Select</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
+            <option value="prefer_not_to_say">Prefer not to say</option>
             <option value="other">Other</option>
           </SelectField>
 
           <SelectField
-            label="Marital Status *"
+            label="Marital Status"
             value={personal.maritalStatus}
             error={showErrors && !personal.maritalStatus}
             onChange={(v: string) =>

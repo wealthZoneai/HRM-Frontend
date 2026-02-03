@@ -136,7 +136,7 @@ const UploadCard = ({
     label: string;
 }) => {
     return (
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[140px] sm:min-w-[180px]">
             <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">{label}</span>
                 {file && <CheckCircle size={16} className="text-green-500" />}
@@ -215,7 +215,7 @@ const DocumentRow = ({
     };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm h-full flex flex-col">
             {/* Top: Centered Heading */}
             <div className="flex flex-col items-center mb-6 border-b border-gray-100 pb-4">
                 <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -229,8 +229,8 @@ const DocumentRow = ({
                 </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <div className="w-full sm:max-w-md flex gap-6">
+            <div className="flex flex-col grow justify-center">
+                <div className="flex flex-row gap-4 justify-center w-full">
                     <UploadCard
                         label="Front Side"
                         file={state.front}
@@ -269,6 +269,8 @@ const Identification = ({ data }: { data?: any }) => {
         passport: { front: null, back: null },
     });
 
+    const [hasChanges, setHasChanges] = useState(false);
+
     useEffect(() => {
         if (data) {
             const createDoc = (url?: string, name?: string): UploadedFile | null =>
@@ -277,7 +279,7 @@ const Identification = ({ data }: { data?: any }) => {
             setDocState({
                 aadhar: {
                     front: createDoc(data.protected_aadhaar_image_url, "Aadhaar Front"),
-                    back: null // Assuming single file or front only for now based on API list
+                    back: null
                 },
                 pan: {
                     front: createDoc(data.protected_pan_image_url, "PAN Front"),
@@ -288,17 +290,14 @@ const Identification = ({ data }: { data?: any }) => {
                     back: null
                 },
             });
+            setHasChanges(false); // Reset changes when new data loads
         }
     }, [data]);
 
     const [previewFile, setPreviewFile] = useState<UploadedFile | null>(null);
 
-    // Mock upload function
     const handleUpload = (docId: string, side: UploadSide, file: File) => {
-        // In a real app, upload to server here.
-        // We'll create a fake URL for preview.
         const fakeUrl = URL.createObjectURL(file);
-
         setDocState(prev => ({
             ...prev,
             [docId]: {
@@ -310,6 +309,7 @@ const Identification = ({ data }: { data?: any }) => {
                 }
             }
         }));
+        setHasChanges(true); // Mark form as dirty
     };
 
     const handleRemove = (docId: string, side: UploadSide) => {
@@ -320,6 +320,7 @@ const Identification = ({ data }: { data?: any }) => {
                 [side]: null
             }
         }));
+        setHasChanges(true); // Mark form as dirty
     };
 
     // Check if all mandatory documents are uploaded
@@ -331,8 +332,11 @@ const Identification = ({ data }: { data?: any }) => {
         return hasFront && hasBack;
     });
 
+    // Button is enabled ONLY if form is valid AND there are changes
+    const isSubmitEnabled = isFormValid && hasChanges;
+
     return (
-        <div className="max-w-5xl mx-auto space-y-8 pb-10">
+        <div className="max-w-340 mx-auto space-y-8 pb-10">
 
             {/* Header */}
             <div className="flex flex-col gap-2">
@@ -340,7 +344,7 @@ const Identification = ({ data }: { data?: any }) => {
                 <p className="text-gray-500">Upload your government issued identification documents for verification.</p>
             </div>
 
-            {/* Common Guidelines */}
+            {/* Guidelines */}
             <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
                     <AlertCircle size={20} />
@@ -356,8 +360,8 @@ const Identification = ({ data }: { data?: any }) => {
                 </ul>
             </div>
 
-            {/* Document Rows */}
-            <div className="space-y-6">
+            {/* Document Rows Grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 {documents.map(doc => (
                     <DocumentRow
                         key={doc.id}
@@ -370,19 +374,18 @@ const Identification = ({ data }: { data?: any }) => {
                 ))}
             </div>
 
-            {/* Submit Action */}
-            <div className="flex justify-end pt-4 border-t border-gray-200">
+            {/* Footer Actions - CENTERED BUTTON */}
+            <div className="flex justify-center pt-4 border-t border-gray-200">
                 <button
-                    disabled={!isFormValid}
-                    className={`px-8 py-3 rounded-xl font-semibold shadow-lg transition-all transform 
-                        ${isFormValid
+                    disabled={!isSubmitEnabled}
+                    className={`px-12 py-3 rounded-xl font-semibold shadow-lg transition-all transform min-w-60
+                        ${isSubmitEnabled
                             ? "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
                             : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
                         }`}
                     onClick={() => {
-                        if (isFormValid) {
+                        if (isSubmitEnabled) {
                             console.log("Submitting documents:", docState);
-                            // Add actual submit logic here
                         }
                     }}
                 >

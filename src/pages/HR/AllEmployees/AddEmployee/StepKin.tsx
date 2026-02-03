@@ -112,16 +112,13 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
   return (
     <div className="w-full">
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-800 mb-6">
-          Job Information
-        </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* --- NEW ROLE DROPDOWN --- */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Role *
+              Role
             </label>
             <select
               value={kin.role || ""}
@@ -148,7 +145,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
 
           {/* JOB TITLE */}
           <InputField
-            label="Job Title *"
+            label="Job Title"
             value={kin.jobTitle}
             error={
               errors.jobTitle ||
@@ -160,7 +157,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
           {/* DEPARTMENT */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Department *
+              Department
             </label>
             <select
               value={kin.department || ""}
@@ -201,7 +198,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
           {/* EMPLOYMENT TYPE */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Employment Type *
+              Employment Type
             </label>
             <select
               value={kin.employmentType || ""}
@@ -216,6 +213,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
               <option value="">Select Type</option>
               <option value="full_time">Full time</option>
               <option value="contract">Contract</option>
+              <option value="internship">Internship</option>
             </select>
             {showErrors && !kin.employmentType && (
               <span className="text-red-500 text-xs">Employment Type is required</span>
@@ -225,7 +223,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
           {/* START DATE */}
           <InputField
             type="date"
-            label="Start Date *"
+            label="Start Date"
             value={kin.startDate}
             error={
               errors.startDate ||
@@ -238,7 +236,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
           {/* LOCATION */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Location *
+              Location
             </label>
             <select
               value={kin.location || ""}
