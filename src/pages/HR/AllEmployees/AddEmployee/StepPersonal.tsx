@@ -3,10 +3,13 @@ import { useAddEmployee } from "./AddEmployeeContext";
 /* ===================
    Reusable Components
 =================== */
-const TextField = ({ label, value, onChange, type = "text", prefix, error, ...props }: any) => (
+/* ===================
+   Reusable Components
+=================== */
+const TextField = ({ label, value, onChange, type = "text", prefix, error, required, ...props }: any) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">
-      {label} {error && <span className="text-red-500">*</span>}
+      {label} {required && <span className="text-red-500">*</span>}
     </label>
     <div className="relative">
       {prefix && (
@@ -28,7 +31,7 @@ const TextField = ({ label, value, onChange, type = "text", prefix, error, ...pr
         {...props}
       />
     </div>
-    {/* UPDATED: Now displays custom error string if provided, otherwise shows default message */}
+    {/* Display custom error string if provided */}
     {error && (
       <span className="text-xs text-red-500">
         {typeof error === "string" ? error : "This field is required"}
@@ -37,10 +40,10 @@ const TextField = ({ label, value, onChange, type = "text", prefix, error, ...pr
   </div>
 );
 
-const SelectField = ({ label, value, onChange, children, error }: any) => (
+const SelectField = ({ label, value, onChange, children, error, required }: any) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">
-      {label} {error && <span className="text-red-500">*</span>}
+      {label} {required && <span className="text-red-500">*</span>}
     </label>
     <select
       value={value || ""}
@@ -89,23 +92,24 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
   const getEmailError = () => {
     if (!showErrors) return false;
     if (!personal.personalEmail) return true; // Returns "This field is required" (default)
-    
-    // Check for .com
-    if (!personal.personalEmail.toLowerCase().includes(".com")) {
-      return "Email must contain '.com'";
+
+    // Check for @gmail.com
+    if (!personal.personalEmail.toLowerCase().includes("@gmail.com")) {
+      return "Email must contain '@gmail.com'";
     }
-    
+
     return false;
   };
 
   return (
     <div className="w-full">
-      <div className="bg-white p-0 md:p-0 rounded-none border-none shadow-none"> 
+      <div className="bg-white p-0 md:p-0 rounded-none border-none shadow-none">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           <TextField
             label="First Name"
             value={personal.firstName}
+            required
             error={showErrors && !personal.firstName}
             onChange={(v: string) => {
               if (/^[^0-9]*$/.test(v)) {
@@ -127,6 +131,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           <TextField
             label="Last Name"
             value={personal.lastName}
+            required
             error={showErrors && !personal.lastName}
             onChange={(v: string) => {
               if (/^[^0-9]*$/.test(v)) {
@@ -139,7 +144,8 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           <TextField
             label="Personal Email"
             value={personal.personalEmail}
-            error={getEmailError()} 
+            required
+            error={getEmailError()}
             onChange={(v: string) =>
               dispatch({ type: "SET_PERSONAL", payload: { personalEmail: v } })
             }
@@ -148,6 +154,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           <TextField
             label="Phone Number"
             value={personal.phone}
+            required
             prefix="+91"
             maxLength={10}
             error={showErrors && (!personal.phone || personal.phone.length !== 10)}
@@ -181,6 +188,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           <TextField
             label="Date of Birth"
             type="date"
+            required
             value={personal.dob}
             error={showErrors && !personal.dob}
             onChange={handleDobChange}
@@ -197,6 +205,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
 
           <SelectField
             label="Gender"
+            required
             value={personal.gender}
             error={showErrors && !personal.gender}
             onChange={(v: string) =>
@@ -213,6 +222,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           <SelectField
             label="Marital Status"
             value={personal.maritalStatus}
+            required
             error={showErrors && !personal.maritalStatus}
             onChange={(v: string) =>
               dispatch({ type: "SET_PERSONAL", payload: { maritalStatus: v } })
