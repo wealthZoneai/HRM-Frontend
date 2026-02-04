@@ -10,6 +10,7 @@ import {
     AlertCircle,
     Image as ImageIcon
 } from "lucide-react";
+import { showError } from "../../../../utils/toast"; 
 
 // --- TYPES ---
 
@@ -206,9 +207,19 @@ const DocumentRow = ({
     onRemove: (side: UploadSide) => void;
     onPreview: (file: UploadedFile) => void;
 }) => {
+    // --- UPDATED HANDLER WITH VALIDATION ---
     const handleFileChange = (side: UploadSide) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            // 5MB Limit Calculation (5 * 1024 * 1024 bytes)
+            const MAX_SIZE = 5 * 1024 * 1024;
+            
+            if (file.size > MAX_SIZE) {
+                showError("File size exceeds 5MB. Please upload a smaller file."); // Updated to use toast
+                e.target.value = ''; // Reset the input so they can try again
+                return;
+            }
+
             onUpload(side, file);
             e.target.value = ''; // Reset input
         }
@@ -317,7 +328,10 @@ const Identification = ({ data }: { data?: any }) => {
             ...prev,
             [docId]: {
                 ...prev[docId],
-                [side]: null
+                [side]: {
+                    ...prev[docId][side], // Keep other side intact
+                    [side]: null         // Remove specific side
+                }
             }
         }));
         setHasChanges(true); // Mark form as dirty
