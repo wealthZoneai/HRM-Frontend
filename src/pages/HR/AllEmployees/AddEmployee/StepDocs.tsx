@@ -87,7 +87,7 @@ const StepDocs: React.FC = () => {
 
           {/* Aadhar Front */}
           <UploadBox
-            label="Aadhar Card (Front) *"
+            label="Aadhaar Card (Front)"
             value={(docs as any).aadharFront}
             accept="image/*,.pdf"
             error={errors.aadharFront}
@@ -96,7 +96,7 @@ const StepDocs: React.FC = () => {
 
           {/* Aadhar Back */}
           <UploadBox
-            label="Aadhar Card (Back) *"
+            label="Aadhaar Card (Back)"
             value={(docs as any).aadharBack}
             accept="image/*,.pdf"
             error={errors.aadharBack}
@@ -105,7 +105,7 @@ const StepDocs: React.FC = () => {
 
           {/* PAN Card */}
           <UploadBox
-            label="PAN Card *"
+            label="PAN Card"
             value={(docs as any).panCard}
             accept="image/*,.pdf"
             error={errors.panCard}
@@ -114,7 +114,7 @@ const StepDocs: React.FC = () => {
 
           {/* Company ID Card */}
           <UploadBox
-            label="Company ID Card *"
+            label="Company ID Card"
             value={(docs as any).idCard}
             accept="image/*,.pdf"
             error={errors.idCard}

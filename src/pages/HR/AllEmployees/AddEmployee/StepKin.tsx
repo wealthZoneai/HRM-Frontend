@@ -4,13 +4,15 @@ import { useAddEmployee } from "./AddEmployeeContext";
 /* ==========================
    Reusable Input Component
 ========================== */
-const InputField = ({  
+const InputField = ({
   label,
   value,
   onChange,
   type = "text",
   error,
   max,
+  disabled, // Added disabled prop
+  required, // Added required
 }: {
   label: string;
   value: string | undefined;
@@ -18,20 +20,25 @@ const InputField = ({
   type?: string;
   error?: string | null;
   max?: string;
+  disabled?: boolean;
+  required?: boolean;
 }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-gray-700 font-medium text-sm">{label}</label>
+    <label className="text-gray-700 font-medium text-sm">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
     <input
       type={type}
       max={max}
+      disabled={disabled} // Applied disabled
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
         focus:outline-none focus:ring-2 
-        ${
-          error
-            ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-            : "focus:ring-blue-500 focus:border-blue-500"
+        ${disabled ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""} 
+        ${error
+          ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+          : "focus:ring-blue-500 focus:border-blue-500"
         }
       `}
     />
@@ -50,7 +57,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
       FORM VALIDATION STATE
   -------------------------- */
   const [errors, setErrors] = useState({
-    role: "", 
+    role: "",
     email: "",
     employeeId: "",
     startDate: "",
@@ -68,7 +75,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
     let errorMsg = "";
 
     switch (field) {
-      case "role": 
+      case "role":
         if (!value.trim()) errorMsg = "Role is required";
         break;
 
@@ -105,6 +112,22 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
       UPDATE FIELD + VALIDATE
   -------------------------- */
   const updateField = (field: string, value: string) => {
+    // UPDATED: Auto-select employment type if Role is Intern
+    if (field === "role" && value === "intern") {
+      dispatch({ type: "SET_KIN", payload: { role: value, employmentType: "internship" } });
+      validate("role", value);
+      setErrors(prev => ({ ...prev, role: "", employmentType: "" }));
+      return;
+    }
+
+    // UPDATED: Clear Team Lead if Role is TL
+    if (field === "role" && value === "tl") {
+      dispatch({ type: "SET_KIN", payload: { role: value, teamLead: "" } }); // Clear team lead
+      validate("role", value);
+      setErrors(prev => ({ ...prev, role: "" }));
+      return;
+    }
+
     dispatch({ type: "SET_KIN", payload: { [field]: value } });
     validate(field, value);
   };
@@ -114,20 +137,19 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           {/* --- NEW ROLE DROPDOWN --- */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Role
+              Role <span className="text-red-500">*</span>
             </label>
             <select
               value={kin.role || ""}
               onChange={(e) => updateField("role", e.target.value)}
               className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
-                ${
-                  showErrors && !kin.role
-                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                    : "focus:ring-blue-500 focus:border-blue-500"
+                ${showErrors && !kin.role
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                  : "focus:ring-blue-500 focus:border-blue-500"
                 }`}
             >
               <option value="">Select Role</option>
@@ -135,7 +157,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
               <option value="hr">HR</option>
               <option value="delivery_manager">Delivery Manager</option>
               <option value="project_manager">Project Manager</option>
-              <option value="team_leader">Team Leader</option>
+              <option value="tl">Team Leader</option>
               <option value="intern">Intern</option>
             </select>
             {showErrors && !kin.role && (
@@ -147,6 +169,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
           <InputField
             label="Job Title"
             value={kin.jobTitle}
+            required
             error={
               errors.jobTitle ||
               (showErrors && !kin.jobTitle ? "Job Title is required" : "")
@@ -157,21 +180,20 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
           {/* DEPARTMENT */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Department
+              Department <span className="text-red-500">*</span>
             </label>
             <select
               value={kin.department || ""}
               onChange={(e) => updateField("department", e.target.value)}
               className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
-                ${
-                  showErrors && !kin.department
-                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                    : "focus:ring-blue-500 focus:border-blue-500"
+                ${showErrors && !kin.department
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                  : "focus:ring-blue-500 focus:border-blue-500"
                 }`}
             >
               <option value="">Select Department</option>
               <option value="Python">Python</option>
-              <option value="Testing">Testing</option>
+              <option value="QA">QA</option>
               <option value="Java">Java</option>
               <option value="UI/UX">UI/UX</option>
               <option value="React">React</option>
@@ -187,34 +209,44 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
             )}
           </div>
 
-          {/* TEAM LEAD */}
-          <InputField
-            label="Team Lead"
-            value={kin.teamLead}
-            error={errors.teamLead}
-            onChange={(v) => updateField("teamLead", v.replace(/[0-9]/g, ""))}
-          />
+          {/* TEAM LEAD - Hidden if Role is Team Leader */}
+          {kin.role !== "tl" && (
+            <InputField
+              label="Team Lead"
+              value={kin.teamLead}
+              error={errors.teamLead}
+              onChange={(v) => updateField("teamLead", v.replace(/[0-9]/g, ""))}
+            />
+          )}
 
           {/* EMPLOYMENT TYPE */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Employment Type
+              Employment Type <span className="text-red-500">*</span>
             </label>
-            <select
-              value={kin.employmentType || ""}
-              onChange={(e) => updateField("employmentType", e.target.value)}
-              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
-                ${
-                  showErrors && !kin.employmentType
+            {kin.role === "intern" ? (
+              <input
+                type="text"
+                value="Intern"
+                disabled
+                className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg shadow-sm text-gray-500 cursor-not-allowed focus:outline-none"
+              />
+            ) : (
+              <select
+                value={kin.employmentType || ""}
+                onChange={(e) => updateField("employmentType", e.target.value)}
+                className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
+                  ${showErrors && !kin.employmentType
                     ? "border-red-500 focus:ring-red-500 focus:border-red-500"
                     : "focus:ring-blue-500 focus:border-blue-500"
-                }`}
-            >
-              <option value="">Select Type</option>
-              <option value="full_time">Full time</option>
-              <option value="contract">Contract</option>
-              <option value="internship">Internship</option>
-            </select>
+                  }`}
+              >
+                <option value="">Select Type</option>
+                <option value="full_time">Full time</option>
+                <option value="contract">Contract</option>
+                {kin.role !== "tl" && <option value="internship">Intern</option>}
+              </select>
+            )}
             {showErrors && !kin.employmentType && (
               <span className="text-red-500 text-xs">Employment Type is required</span>
             )}
@@ -225,6 +257,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
             type="date"
             label="Start Date"
             value={kin.startDate}
+            required
             error={
               errors.startDate ||
               (showErrors && !kin.startDate ? "Start date is required" : "")
@@ -236,16 +269,15 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
           {/* LOCATION */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
-              Location
+              Location <span className="text-red-500">*</span>
             </label>
             <select
               value={kin.location || ""}
               onChange={(e) => updateField("location", e.target.value)}
               className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
-                ${
-                  showErrors && !kin.location
-                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                    : "focus:ring-blue-500 focus:border-blue-500"
+                ${showErrors && !kin.location
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                  : "focus:ring-blue-500 focus:border-blue-500"
                 }`}
             >
               <option value="">Select Location</option>

@@ -17,11 +17,11 @@ import { useState, useEffect } from "react";
 import { Save, DollarSign, Loader2, XCircle } from "lucide-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { 
-    GetEmployeeById, 
-    UpdateEmployeeContact, 
-    UpdateEmployeeJobAndBank 
-} from "../../../Services/apiHelpers"; 
+import {
+    GetEmployeeById,
+    UpdateEmployeeContact,
+    UpdateEmployeeJobAndBank
+} from "../../../Services/apiHelpers";
 
 // --- 1. YUP VALIDATION SCHEMA ---
 const validationSchema = Yup.object({
@@ -29,7 +29,7 @@ const validationSchema = Yup.object({
     work_email: Yup.string().email("Invalid email format").required("Work Email is required"),
     phone_number: Yup.string()
         .matches(/^[0-9]+$/, "Must be only digits")
-        .min(10, "Must be at least 10 digits")
+        .length(10, "Must be exactly 10 digits")
         .required("Phone Number is required"),
     location: Yup.string().required("Location is required"),
 
@@ -47,22 +47,25 @@ const validationSchema = Yup.object({
     ifsc_code: Yup.string()
         .matches(/^[A-Z0-9]+$/, "Invalid IFSC format")
         .required("IFSC Code is required"),
-    
+
     // Job Info
-    job_description: Yup.string().nullable()
+    job_description: Yup.string().nullable(),
+    reports_to: Yup.string().nullable()
 });
 
 // --- 2. HELPER COMPONENT (UPDATED FOR DROPDOWN SUPPORT) ---
-const EditableField = ({ 
-    label, 
-    name, 
-    icon: Icon, 
-    placeholder, 
+const EditableField = ({
+    label,
+    name,
+    icon: Icon,
+    placeholder,
     fullWidth = false,
-    isEditing, 
+    isEditing,
     formik,
     inputType = "text", // 'numeric', 'alpha', or 'text'
-    options = null // New Prop: If array is passed, renders Select
+    options = null, // New Prop: If array is passed, renders Select
+    prefix = null,
+    maxLength
 }: any) => {
 
     // Custom Change Handler for Input Masking
@@ -92,8 +95,8 @@ const EditableField = ({
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     className={`w-full border-b outline-none py-1 text-gray-800 bg-blue-50/50 px-2 rounded-lg transition-colors cursor-pointer
-                                        ${formik.touched[name] && formik.errors[name] 
-                                            ? "border-red-500 focus:border-red-500" 
+                                        ${formik.touched[name] && formik.errors[name]
+                                            ? "border-red-500 focus:border-red-500"
                                             : "border-blue-300 focus:border-blue-600"}`}
                                 >
                                     {options.map((opt: any) => (
@@ -101,20 +104,29 @@ const EditableField = ({
                                     ))}
                                 </select>
                             ) : (
-                                <input
-                                    type="text"
-                                    name={name}
-                                    value={formik.values[name] || ""}
-                                    onChange={handleInputChange} 
-                                    onBlur={formik.handleBlur}
-                                    placeholder={placeholder}
-                                    className={`w-full border-b outline-none py-1 text-gray-800 bg-blue-50/50 px-2 rounded-lg transition-colors
-                                        ${formik.touched[name] && formik.errors[name] 
-                                            ? "border-red-500 focus:border-red-500" 
-                                            : "border-blue-300 focus:border-blue-600"}`}
-                                />
+                                <div className="relative">
+                                    {prefix && (
+                                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 font-medium z-10 pointer-events-none">
+                                            {prefix}
+                                        </span>
+                                    )}
+                                    <input
+                                        type="text"
+                                        name={name}
+                                        value={formik.values[name] || ""}
+                                        onChange={handleInputChange}
+                                        onBlur={formik.handleBlur}
+                                        placeholder={placeholder}
+                                        maxLength={maxLength} // Apply maxLength
+                                        className={`w-full border-b outline-none py-1 text-gray-800 bg-blue-50/50 rounded-lg transition-colors
+                                            ${prefix ? "pl-10 pr-2" : "px-2"}
+                                            ${formik.touched[name] && formik.errors[name]
+                                                ? "border-red-500 focus:border-red-500"
+                                                : "border-blue-300 focus:border-blue-600"}`}
+                                    />
+                                </div>
                             )}
-                            
+
                             {/* Validation Error Message */}
                             {formik.touched[name] && formik.errors[name] && (
                                 <p className="text-xs text-red-500 mt-1 font-medium">{formik.errors[name]}</p>
@@ -122,7 +134,7 @@ const EditableField = ({
                         </div>
                     ) : (
                         <p className="text-gray-700 font-medium truncate">
-                            {formik.values[name] || "—"}
+                            {prefix && formik.values[name] ? `${prefix} ` : ""}{formik.values[name] || "—"}
                         </p>
                     )}
                 </div>
@@ -161,7 +173,8 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
             branch: "",
             account_number: "",
             ifsc_code: "",
-            job_description: ""
+            job_description: "",
+            reports_to: ""
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
@@ -192,7 +205,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 ]);
 
                 setFullData((prev: any) => ({ ...prev, ...values }));
-                
+
                 setIsEditing(false);
                 console.log("Details updated successfully");
             } catch (error) {
@@ -206,6 +219,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
 
     useEffect(() => {
         if (open && employee?.id) {
+            console.log("Employee clicked:", employee);
             fetchEmployeeDetails(employee.id);
             setIsEditing(false);
         } else {
@@ -224,6 +238,8 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
             setFullData(data);
             setStatus(data.status || "Active");
 
+            console.log("Fetched employee details:", data);
+
             formik.setValues({
                 work_email: data.work_email || "",
                 phone_number: data.phone_number || "",
@@ -232,7 +248,8 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 branch: data.branch || "",
                 account_number: data.account_number || "",
                 ifsc_code: data.ifsc_code || "",
-                job_description: data.job_description || ""
+                job_description: data.job_description || "",
+                reports_to: data.team_lead?.display || ""
             });
 
         } catch (err: any) {
@@ -244,7 +261,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
     };
 
     const handleCancelEdit = () => {
-        formik.resetForm(); 
+        formik.resetForm();
         if (fullData) {
             formik.setValues({
                 work_email: fullData.work_email || "",
@@ -254,7 +271,8 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 branch: fullData.branch || "",
                 account_number: fullData.account_number || "",
                 ifsc_code: fullData.ifsc_code || "",
-                job_description: fullData.job_description || ""
+                job_description: fullData.job_description || "",
+                reports_to: fullData.team_lead?.display || ""
             });
         }
         setIsEditing(false);
@@ -353,9 +371,22 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                 </div>
                                 <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
                                     <FiBriefcase className="w-5 h-5 text-gray-500" />
-                                    <div>
-                                        <p className="text-sm text-gray-500">Reports To</p>
-                                        <p className="font-medium text-gray-800">{fullData?.team_lead?.display || "—"}</p>
+                                    <div className="w-full">
+                                        <div className="flex flex-col">
+                                            <p className="text-xs text-gray-500 mb-0.5">Reports To</p>
+                                            {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    name="reports_to"
+                                                    value={formik.values.reports_to || ""}
+                                                    onChange={formik.handleChange}
+                                                    className="w-full border-b border-blue-300 focus:border-blue-600 outline-none text-gray-800 bg-transparent py-0.5"
+                                                    placeholder="Reports To"
+                                                />
+                                            ) : (
+                                                <p className="font-medium text-gray-800">{fullData?.team_lead?.display || "—"}</p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -377,7 +408,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
 
                             {/* METRICS (READ-ONLY) */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                                <InfoCard icon={FiClock} title="Work Type" value={fullData?.employment_type?.replace("_", " ").toUpperCase()} />
+                                <InfoCard icon={FiClock} title="Work Type" value={fullData?.employment_type} />
                                 <InfoCard icon={FiAward} title="Gender" value={fullData?.gender} />
                                 <InfoCard icon={FiFolder} title="Marital Status" value={fullData?.marital_status} />
                                 <InfoCard icon={DollarSign} title="Blood Group" value={fullData?.blood_group} />
@@ -389,27 +420,29 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                     <FiPhone className="text-blue-600" /> Contact & Location
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <EditableField 
-                                        icon={FiMail} 
-                                        label="Work Email" 
+                                    <EditableField
+                                        icon={FiMail}
+                                        label="Work Email"
                                         name="work_email"
                                         formik={formik}
-                                        isEditing={isEditing} 
+                                        isEditing={false}
                                     />
-                                    <EditableField 
-                                        icon={FiPhone} 
-                                        label="Phone Number" 
-                                        name="phone_number" 
+                                    <EditableField
+                                        icon={FiPhone}
+                                        label="Phone Number"
+                                        name="phone_number"
                                         inputType="numeric"
                                         formik={formik}
-                                        isEditing={isEditing} 
+                                        isEditing={isEditing}
+                                        prefix="+91"
+                                        maxLength={10}
                                     />
-                                    
+
                                     {/* --- UPDATED LOCATION FIELD WITH DROPDOWN --- */}
-                                    <EditableField 
-                                        icon={FiMapPin} 
-                                        label="Current Location" 
-                                        name="location" 
+                                    <EditableField
+                                        icon={FiMapPin}
+                                        label="Current Location"
+                                        name="location"
                                         fullWidth={true}
                                         formik={formik}
                                         isEditing={isEditing}
@@ -424,32 +457,32 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                     <DollarSign className="text-blue-600" /> Banking Details
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <EditableField 
-                                        label="Bank Name" 
-                                        name="bank_name" 
+                                    <EditableField
+                                        label="Bank Name"
+                                        name="bank_name"
                                         inputType="alpha"
                                         formik={formik}
-                                        isEditing={isEditing} 
+                                        isEditing={isEditing}
                                     />
-                                    <EditableField 
-                                        label="Branch Name" 
-                                        name="branch" 
+                                    <EditableField
+                                        label="Branch Name"
+                                        name="branch"
                                         inputType="alpha"
                                         formik={formik}
-                                        isEditing={isEditing} 
+                                        isEditing={isEditing}
                                     />
-                                    <EditableField 
-                                        label="Account Number" 
-                                        name="account_number" 
+                                    <EditableField
+                                        label="Account Number"
+                                        name="account_number"
                                         inputType="numeric"
                                         formik={formik}
-                                        isEditing={isEditing} 
+                                        isEditing={isEditing}
                                     />
-                                    <EditableField 
-                                        label="IFSC Code" 
-                                        name="ifsc_code" 
+                                    <EditableField
+                                        label="IFSC Code"
+                                        name="ifsc_code"
                                         formik={formik}
-                                        isEditing={isEditing} 
+                                        isEditing={isEditing}
                                     />
                                 </div>
                             </div>
@@ -512,7 +545,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                 className="px-6 py-2 bg-green-600 text-white rounded-xl flex items-center gap-2 font-medium hover:bg-green-700 transition shadow-md disabled:opacity-70"
                             >
                                 {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-                                Save Changes
+                                Save
                             </button>
                         </>
                     )}

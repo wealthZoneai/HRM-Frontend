@@ -1,4 +1,4 @@
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useAddEmployee } from "./AddEmployeeContext";
 import StepPersonal from "./StepPersonal";
@@ -48,29 +48,29 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       STEP CONFIG
   ============================================================ */
   const steps = [
-    { 
-      key: "personal", 
-      label: "Personal Info", 
+    {
+      key: "personal",
+      label: "Personal Info",
       // @ts-ignore 
-      comp: <StepPersonal showErrors={showErrors} /> 
+      comp: <StepPersonal showErrors={showErrors} />
     },
-    { 
-      key: "kin", 
-      label: "Job Information", 
+    {
+      key: "kin",
+      label: "Job Information",
       // @ts-ignore
-      comp: <StepKin showErrors={showErrors} /> 
+      comp: <StepKin showErrors={showErrors} />
     },
-    { 
-      key: "bank", 
-      label: "Bank Details (Optional)", 
+    {
+      key: "bank",
+      label: "Bank Details (Optional)",
       // @ts-ignore
-      comp: <StepBank showErrors={showErrors} /> 
+      comp: <StepBank showErrors={showErrors} />
     },
-    { 
-      key: "docs", 
-      label: "Documents", 
+    {
+      key: "docs",
+      label: "Documents",
       // @ts-ignore
-      comp: <StepDocs showErrors={showErrors} /> 
+      comp: <StepDocs showErrors={showErrors} />
     },
   ];
 
@@ -88,7 +88,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
           p.lastName?.trim() &&
           p.phone?.trim().length === 10 &&
           (!p.alternativeNumber || p.alternativeNumber.length === 10) &&
-          p.personalEmail?.trim() &&
+          p.personalEmail?.toLowerCase().includes("@gmail.com") &&
           p.dob?.trim() &&
           p.gender?.trim() &&
           p.maritalStatus?.trim()
@@ -96,7 +96,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
 
       case 1:
         return (
-          (k.role || "").trim() && 
+          (k.role || "").trim() &&
           k.startDate?.trim() &&
           k.jobTitle?.trim() &&
           k.department?.trim() &&
@@ -161,7 +161,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       <button
         disabled={!isCompleted && !isActive}
         onClick={() => {
-            dispatch({ type: "SET_STEP", payload: index })
+          dispatch({ type: "SET_STEP", payload: index })
         }}
         className="flex flex-col items-center flex-1"
       >
@@ -181,7 +181,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
     const b = state.bankAccounts[0] || {};
 
     const payload: any = {
-      role: k.role, 
+      role: k.role,
       emp_id: k.employeeId,
       work_email: k.email,
       contact: {
@@ -226,9 +226,9 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
   ============================================================ */
   const handelApiCall = async (state: any) => {
     if (!validateStep()) {
-        setShowErrors(true);
-        toast.error("Please fill in all required fields.");
-        return;
+      setShowErrors(true);
+      toast.error("Please fill in all required fields.");
+      return;
     }
 
     try {
@@ -268,7 +268,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
         {state.step > 0 ? (
           <button
             onClick={() => {
-              setShowErrors(false); 
+              setShowErrors(false);
               dispatch({ type: "SET_STEP", payload: state.step - 1 })
             }}
             // ADDED: flex items-center gap-2 to fix double line issue
@@ -285,7 +285,7 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
             onClick={() => {
               const isValid = validateStep();
               if (!isValid) {
-                setShowErrors(true); 
+                setShowErrors(true);
                 toast.error("Please fill in all required fields.");
                 return;
               }
