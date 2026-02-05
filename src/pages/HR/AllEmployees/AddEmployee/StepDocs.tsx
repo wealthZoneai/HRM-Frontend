@@ -18,8 +18,13 @@ const StepDocs: React.FC = () => {
   const validate = (key: string, file: File | null) => {
     let msg = "";
 
-    if (!file && ["aadharFront", "aadharBack", "panCard", "idCard"].includes(key)) {
-      msg = "This document is required";
+    // User requested not to show "This document is required" error immediately after deleting
+    if (!file) {
+      // If file is removed, we clear the error for now to avoid bad UX
+      msg = "";
+    } else if (["aadharFront", "aadharBack", "panCard", "idCard"].includes(key)) {
+      // logic for other validations if needed, for now just clear if file exists
+      msg = "";
     }
 
     setErrors((prev) => ({ ...prev, [key]: msg }));
@@ -30,6 +35,9 @@ const StepDocs: React.FC = () => {
     validate(key, file);
   };
 
+  /* --------------------------
+      REUSABLE UPLOAD BOX
+  -------------------------- */
   /* --------------------------
       REUSABLE UPLOAD BOX
   -------------------------- */
@@ -45,39 +53,125 @@ const StepDocs: React.FC = () => {
     onChange: (f: File | null) => void;
     error?: string;
     accept: string;
-  }) => (
-    <div>
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+  }) => {
+    // Helper to trigger the hidden input
+    const handleReplaceClick = (id: string) => {
+      document.getElementById(id)?.click();
+    };
 
-      <label
-        className="
-          mt-2 flex flex-col items-center justify-center
-          border-2 border-dashed border-gray-300 rounded-xl p-6
-          cursor-pointer bg-gray-50 hover:bg-gray-100
-          transition-all text-center
-        "
-      >
-        <span className="text-gray-600 text-sm mb-2">
-          Click to upload or drag and drop
-        </span>
+    const inputId = `file-input-${label.replace(/\s+/g, "-")}`;
 
-        <input
-          type="file"
-          accept={accept}
-          className="hidden"
-          onChange={(e) => onChange(e.target.files?.[0] || null)}
-        />
-      </label>
+    return (
+      <div className="flex flex-col">
+        <label className="text-sm font-medium text-gray-700 mb-1">{label}</label>
 
-      {value && (
-        <p className="mt-2 text-xs text-gray-700 bg-gray-100 p-2 rounded-md shadow-sm">
-          {value.name}
-        </p>
-      )}
+        {value ? (
+          /* ---------------- DONE / UPLOADED STATE ---------------- */
+          <div className="mt-2 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-3 overflow-hidden">
+              {/* Icon / Status */}
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
 
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-    </div>
-  );
+              {/* File Info */}
+              <div className="flex flex-col overflow-hidden">
+                <span className="text-sm font-semibold text-gray-800 truncate">
+                  {value.name}
+                </span>
+                <span className="text-xs text-green-600 font-medium">
+                  Uploaded Successfully
+                </span>
+              </div>
+            </div>
+
+            {/* Actions: Replace / Delete */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Replace Button */}
+              <button
+                type="button"
+                onClick={() => handleReplaceClick(inputId)}
+                className="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+              >
+                Replace
+              </button>
+
+              {/* Delete Button */}
+              <button
+                type="button"
+                onClick={() => onChange(null)}
+                className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+
+            {/* Hidden Input for "Replace" action */}
+            <input
+              id={inputId}
+              type="file"
+              accept={accept}
+              className="hidden"
+              onChange={(e) => onChange(e.target.files?.[0] || null)}
+            />
+          </div>
+        ) : (
+          /* ---------------- UPLOAD STATE ---------------- */
+          <label
+            className="
+              mt-2 flex flex-col items-center justify-center
+              border-2 border-dashed border-gray-300 rounded-xl p-6
+              cursor-pointer bg-gray-50 hover:bg-blue-50 hover:border-blue-300
+              transition-all text-center group
+            "
+          >
+            <div className="w-12 h-12 mb-3 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 group-hover:bg-blue-200 transition-colors">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+            </div>
+            <span className="text-gray-900 font-medium text-sm mb-1">
+              Click to upload
+            </span>
+            <span className="text-gray-500 text-xs">
+              SVG, PNG, JPG or PDF (max. 5MB)
+            </span>
+
+            <input
+              type="file"
+              accept={accept}
+              className="hidden"
+              onChange={(e) => onChange(e.target.files?.[0] || null)}
+            />
+          </label>
+        )}
+
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          {error}
+        </p>}
+      </div>
+    );
+  };
 
   return (
     <div className="w-full">

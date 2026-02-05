@@ -156,7 +156,7 @@ const InfoCard = ({ icon: Icon, title, value, className = "" }: any) => (
     </div>
 );
 
-export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
+export default function EmployeeDetailsModal({ open, onClose, employee, onUpdate }: any) {
     const [fullData, setFullData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -205,6 +205,11 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                 ]);
 
                 setFullData((prev: any) => ({ ...prev, ...values }));
+
+                // NOTIFY PARENT TO REFRESH LIST
+                if (onUpdate) {
+                    onUpdate();
+                }
 
                 setIsEditing(false);
                 console.log("Details updated successfully");
@@ -433,7 +438,7 @@ export default function EmployeeDetailsModal({ open, onClose, employee }: any) {
                                         name="phone_number"
                                         inputType="numeric"
                                         formik={formik}
-                                        isEditing={isEditing}
+                                        isEditing={false} // User requested phone number should not be editable
                                         prefix="+91"
                                         maxLength={10}
                                     />
