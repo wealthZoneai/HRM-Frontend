@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 // Adjust the import path based on your folder structure
-import { GetMyProfile } from '../../../../Services/apiHelpers';
+import { GetMyProfile, GetAllEmployes } from '../../../../Services/apiHelpers';
+import { showError } from '../../../../utils/toast';
 
 // Reusable Display Field
 const DisplayField = ({ label, value }: { label: string; value: string }) => (
@@ -35,20 +36,43 @@ const HRJobInformation = () => {
                 const response = await GetMyProfile();
                 const data = response.data;
                 
-                // Map API response to display fields
+                // 1. Robust ID Check (Same logic as Bank Details)
+                let extractedId = data?.id;
+
+                if (!extractedId && data?.emp_id) {
+                    try {
+                        const allEmpsResponse = await GetAllEmployes();
+                        const allEmps = allEmpsResponse.data?.results || [];
+                        const found = allEmps.find((e: any) => e.emp_id === data.emp_id);
+                        if (found && found.id) {
+                            extractedId = found.id;
+                        }
+                    } catch (err) {
+                        console.error("Fallback ID lookup failed:", err);
+                    }
+                }
+
+                if (!extractedId) {
+                    // console.error("User ID is missing in profile response!");
+                    // showError("Failed to identify user data.");
+                }
+
+                // 2. Correct Data Mapping based on Backend JSON
                 setFormData({
-                    jobTitle: data.role || '',
+                    jobTitle: data.job_title || data.role || '',
                     department: data.department || '',
-                    teamLead: data.reports_to || '', 
+                    teamLead: data.team_lead || data.reports_to || '', 
                     employmentType: data.employment_type || '',
-                    startDate: data.date_of_joining || '',
+                    // Backend uses 'start_date', fallback to 'date_of_joining'
+                    startDate: data.start_date || data.date_of_joining || '',
                     location: data.location || '',
-                    workEmail: data.email || '',
-                    employeeId: data.employee_id || '',
+                    workEmail: data.work_email || data.email || '',
+                    employeeId: data.emp_id || '',
                     jobDescription: data.job_description || '',
                 });
             } catch (error) {
                 console.error("Failed to load profile:", error);
+                showError("Failed to load job information.");
             } finally {
                 setIsLoading(false);
             }
@@ -71,7 +95,7 @@ const HRJobInformation = () => {
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-base sm:text-xl font-semibold text-slate-800">Job Information</h2>
-                {/* Edit button removed as per request */}
+                {/* Edit button removed as per previous request */}
             </div>
 
             {/* Read-Only Grid */}

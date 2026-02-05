@@ -7,18 +7,11 @@ import { showSuccess, showError } from '../../../../utils/toast';
 
 // --- Helper Functions ---
 const maskAccountNumber = (accNum: string) => {
-    // 1. Safety check: Convert to string to prevent errors
     const str = String(accNum || "");
-
     if (!str || str === "N/A") return "N/A";
-
-    // 2. If length is 4 or less, show the whole thing
     if (str.length <= 4) return str;
-
-    // 3. Masking Logic: Hide everything except the last 4 digits
     const last4 = str.slice(-4);
     const stars = "*".repeat(str.length - 4);
-
     return `${stars}${last4}`;
 };
 
@@ -70,47 +63,41 @@ const HRBankDetails = () => {
                 const response = await GetMyProfile();
                 const profile = response.data;
 
-                // UPDATED: Robust ID extraction with Fallback
+                // 1. ID Extraction (Robust check)
                 let extractedId = profile?.id;
 
-                // Fallback: If 'id' is missing but we have 'emp_id', try to find the PK from full employee list
-                // This handles cases where GetMyProfile serializer doesn't include the PK
                 if (!extractedId && profile?.emp_id) {
                     try {
-                        console.warn("PK missing in profile, attempting fallback lookup via GetAllEmployes...");
                         const allEmpsResponse = await GetAllEmployes();
                         const allEmps = allEmpsResponse.data?.results || [];
                         const found = allEmps.find((e: any) => e.emp_id === profile.emp_id);
                         if (found && found.id) {
                             extractedId = found.id;
-                            console.log("Found PK via fallback:", extractedId);
                         }
                     } catch (err) {
                         console.error("Fallback ID lookup failed:", err);
                     }
                 }
 
-                // Final check
                 if (!extractedId) {
-                    // Try weak fallback to string ID just in case
                     extractedId = profile?.emp_id || profile?.user_id;
                 }
-
-                console.log("Profile Data:", profile);
-                console.log("Extracted ID for Update:", extractedId);
 
                 if (extractedId) {
                     setUserId(extractedId);
                 } else {
-                    console.error("User ID is missing in profile response!", profile);
-                    showError("Failed to identify user for profile update.");
+                    console.error("User ID is missing in profile response!");
+                    showError("Failed to identify user.");
                 }
 
+                // 2. Correct Data Mapping (MATCHES YOUR BACKEND JSON)
                 const mappedData = {
                     bankName: profile.bank_name || '',
-                    accountNumber: profile.bank_account_number || '',
+                    // ✅ FIXED: Now looking for 'account_number' first
+                    accountNumber: profile.account_number || profile.masked_account_number || '', 
                     ifscCode: profile.ifsc_code || '',
-                    branch: profile.bank_branch || '',
+                    // ✅ FIXED: Now looking for 'branch' first
+                    branch: profile.branch || profile.bank_branch || '', 
                     accountName: profile.account_holder_name || profile.first_name || '',
                 };
 
@@ -131,15 +118,13 @@ const HRBankDetails = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        // 1. Validation for Text-Only Fields (Bank Name, Account Holder, Branch Name)
+        // Text-Only Validation
         if (name === 'bankName' || name === 'accountName' || name === 'branch') {
-            // Regex: Only alphabets (a-z, A-Z) and spaces allowed
             if (!/^[a-zA-Z\s]*$/.test(value)) return;
         }
 
-        // 2. Validation for Number-Only Fields (Account Number)
+        // Number-Only Validation
         if (name === 'accountNumber') {
-            // Regex: Only digits (0-9) allowed
             if (!/^\d*$/.test(value)) return;
         }
 
@@ -155,13 +140,16 @@ const HRBankDetails = () => {
         }
 
         try {
+            // 3. Correct Payload Keys for Update (MATCHES YOUR BACKEND JSON)
             const payload = {
                 bank_name: data.bankName,
-                bank_account_number: data.accountNumber,
+                account_number: data.accountNumber, // ✅ FIXED: Key matches backend
                 ifsc_code: data.ifscCode,
-                bank_branch: data.branch,
+                branch: data.branch,                // ✅ FIXED: Key matches backend
                 account_holder_name: data.accountName
             };
+
+            console.log("Sending Payload:", payload);
 
             await UpdateEmployeeJobAndBank(userId, payload);
 
@@ -214,27 +202,25 @@ const HRBankDetails = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                     {isEditing ? (
                         <>
-                            {/* EDIT MODE: Shows raw data */}
                             <EditLineField label="Bank Name" name="bankName" value={data.bankName} onChange={handleChange} />
                             <EditLineField label="Account Holder Name" name="accountName" value={data.accountName} onChange={handleChange} />
-
+                            
                             <EditLineField label="Bank Account Number" name="accountNumber" value={data.accountNumber} onChange={handleChange} />
                             <EditLineField label="Bank IFSC Code" name="ifscCode" value={data.ifscCode} onChange={handleChange} />
-
+                            
                             <EditLineField label="Branch Name" name="branch" value={data.branch} onChange={handleChange} />
                         </>
                     ) : (
                         <>
-                            {/* VIEW MODE: Shows masked account number */}
                             <DetailField label="Bank Name" value={data.bankName} />
                             <DetailField label="Account Holder Name" value={data.accountName} />
-
-                            <DetailField
-                                label="Bank Account Number"
-                                value={maskAccountNumber(data.accountNumber)}
+                            
+                            <DetailField 
+                                label="Bank Account Number" 
+                                value={maskAccountNumber(data.accountNumber)} 
                             />
                             <DetailField label="Bank IFSC Code" value={data.ifscCode} />
-
+                            
                             <DetailField label="Branch Name" value={data.branch} />
                         </>
                     )}
