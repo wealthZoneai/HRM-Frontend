@@ -236,6 +236,30 @@ const WizardInner: React.FC<{ editData?: any; onSuccess?: () => void }> = ({
       onSuccess ? onSuccess() : navigate("/hr/employees");
     } catch (error: any) {
       console.error("API error:", error.response?.data || error);
+
+      const errData = error.response?.data;
+      if (errData && typeof errData === "object") {
+        // Construct a detailed error message
+        const messages = Object.entries(errData).map(([key, val]) => {
+          // value might be an array or string
+          const msg = Array.isArray(val) ? val.join(", ") : String(val);
+          return `${key.replace(/_/g, " ")}: ${msg}`;
+        });
+
+        if (messages.length > 0) {
+          // Show first few errors or join them
+          toast.error(
+            <div>
+              <p className="font-bold">Failed to create employee:</p>
+              <ul className="list-disc pl-4 text-sm mt-1">
+                {messages.map((m, i) => <li key={i}>{m}</li>)}
+              </ul>
+            </div>
+          );
+          return;
+        }
+      }
+
       toast.error("Failed to create employee. Check required fields.");
     }
   };

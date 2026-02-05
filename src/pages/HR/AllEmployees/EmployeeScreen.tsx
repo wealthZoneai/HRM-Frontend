@@ -187,6 +187,7 @@ export default function EmployeeScreen() {
         open={detailsOpen}
         onClose={() => setDetailsOpen(false)}
         employee={selectedEmployee}
+        onUpdate={fetchEmployees}
       />
     </div>
   );

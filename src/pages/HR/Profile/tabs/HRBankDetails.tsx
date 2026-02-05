@@ -2,23 +2,23 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Pencil, X, Check } from 'lucide-react';
 // Correct relative imports based on your file structure
-import { GetMyProfile, UpdateEmployeeJobAndBank } from '../../../../Services/apiHelpers';
+import { GetMyProfile, UpdateEmployeeJobAndBank, GetAllEmployes } from '../../../../Services/apiHelpers';
 import { showSuccess, showError } from '../../../../utils/toast';
 
 // --- Helper Functions ---
 const maskAccountNumber = (accNum: string) => {
     // 1. Safety check: Convert to string to prevent errors
     const str = String(accNum || "");
-    
+
     if (!str || str === "N/A") return "N/A";
-    
+
     // 2. If length is 4 or less, show the whole thing
     if (str.length <= 4) return str;
-    
+
     // 3. Masking Logic: Hide everything except the last 4 digits
     const last4 = str.slice(-4);
     const stars = "*".repeat(str.length - 4);
-    
+
     return `${stars}${last4}`;
 };
 
@@ -69,11 +69,41 @@ const HRBankDetails = () => {
                 setIsLoading(true);
                 const response = await GetMyProfile();
                 const profile = response.data;
-                
-                if (profile?.id) {
-                    setUserId(profile.id);
+
+                // UPDATED: Robust ID extraction with Fallback
+                let extractedId = profile?.id;
+
+                // Fallback: If 'id' is missing but we have 'emp_id', try to find the PK from full employee list
+                // This handles cases where GetMyProfile serializer doesn't include the PK
+                if (!extractedId && profile?.emp_id) {
+                    try {
+                        console.warn("PK missing in profile, attempting fallback lookup via GetAllEmployes...");
+                        const allEmpsResponse = await GetAllEmployes();
+                        const allEmps = allEmpsResponse.data?.results || [];
+                        const found = allEmps.find((e: any) => e.emp_id === profile.emp_id);
+                        if (found && found.id) {
+                            extractedId = found.id;
+                            console.log("Found PK via fallback:", extractedId);
+                        }
+                    } catch (err) {
+                        console.error("Fallback ID lookup failed:", err);
+                    }
+                }
+
+                // Final check
+                if (!extractedId) {
+                    // Try weak fallback to string ID just in case
+                    extractedId = profile?.emp_id || profile?.user_id;
+                }
+
+                console.log("Profile Data:", profile);
+                console.log("Extracted ID for Update:", extractedId);
+
+                if (extractedId) {
+                    setUserId(extractedId);
                 } else {
-                    console.error("User ID is missing in profile response!");
+                    console.error("User ID is missing in profile response!", profile);
+                    showError("Failed to identify user for profile update.");
                 }
 
                 const mappedData = {
@@ -81,7 +111,7 @@ const HRBankDetails = () => {
                     accountNumber: profile.bank_account_number || '',
                     ifscCode: profile.ifsc_code || '',
                     branch: profile.bank_branch || '',
-                    accountName: profile.account_holder_name || profile.username || '',
+                    accountName: profile.account_holder_name || profile.first_name || '',
                 };
 
                 setData(mappedData);
@@ -118,7 +148,7 @@ const HRBankDetails = () => {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!userId) {
             showError("Cannot save: User ID is missing.");
             return;
@@ -187,10 +217,10 @@ const HRBankDetails = () => {
                             {/* EDIT MODE: Shows raw data */}
                             <EditLineField label="Bank Name" name="bankName" value={data.bankName} onChange={handleChange} />
                             <EditLineField label="Account Holder Name" name="accountName" value={data.accountName} onChange={handleChange} />
-                            
+
                             <EditLineField label="Bank Account Number" name="accountNumber" value={data.accountNumber} onChange={handleChange} />
                             <EditLineField label="Bank IFSC Code" name="ifscCode" value={data.ifscCode} onChange={handleChange} />
-                            
+
                             <EditLineField label="Branch Name" name="branch" value={data.branch} onChange={handleChange} />
                         </>
                     ) : (
@@ -198,13 +228,13 @@ const HRBankDetails = () => {
                             {/* VIEW MODE: Shows masked account number */}
                             <DetailField label="Bank Name" value={data.bankName} />
                             <DetailField label="Account Holder Name" value={data.accountName} />
-                            
-                            <DetailField 
-                                label="Bank Account Number" 
-                                value={maskAccountNumber(data.accountNumber)} 
+
+                            <DetailField
+                                label="Bank Account Number"
+                                value={maskAccountNumber(data.accountNumber)}
                             />
                             <DetailField label="Bank IFSC Code" value={data.ifscCode} />
-                            
+
                             <DetailField label="Branch Name" value={data.branch} />
                         </>
                     )}
