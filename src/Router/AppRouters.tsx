@@ -13,7 +13,6 @@ import ApplyLeaveSuccess from "../pages/Employee/leave-management/Apply-Leave/Ap
 import Payroll from "../pages/Employee/payroll/Payroll";
 import { Outlet } from "react-router-dom";
 import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
-// import HRLayout from "../pages/HR/HRLayout";
 import HRHomeDashboard from "../pages/HR/HrDashboard/HRHomeDashboard";
 import HolidayCard from "../pages/HR/HolidayCard/HolidayCard";
 import Calendar from "../pages/Employee/calendar/Calendar";
@@ -31,7 +30,6 @@ import HRLayout from "../pages/HR/HRLayout";
 import LeadStatus from "../pages/Team Lead/LeadStatus";
 import HRProfile from "../pages/HR/Profile/HRProfile";
 import HRPolicies from "../pages/HR/Policy/HRPolicies";
-// import UploadPage from "../pages/Employee/Profile/tabs/UploadPage";
 import ManagerLayout from "../pages/Manager/ManagerLayout";
 import ManagerDashboard from "../pages/Manager/ManagerDashboard";
 import CreateProject from "../pages/Manager/CreateProject";
@@ -43,25 +41,24 @@ function AppRouters() {
       {/* Redirect root → login */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* Login */}
+      {/* Public Routes */}
       <Route path="/login" element={<EmployeeLogin />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route path="otpverify" element={<OTPVerification />} />
       <Route path="resetpassword" element={<ResetPassword />} />
 
-      {/* EMPLOYEE ROUTES */}
+      {/* ---------------- EMPLOYEE ROUTES ---------------- */}
       <Route
         path="/employee/*"
         element={
-          // Wrap with Protected Route to check role
-          //   <ProtectedRoute allowedRole="EMPLOYEE">
-          <DashboardLayout>
-            <Outlet />
-          </DashboardLayout>
-          //   </ProtectedRoute>
+          // ✅ FIXED: Enabled Protection with backend role values
+          <ProtectedRoute allowedRoles={["employee", "intern", "tl"]}>
+            <DashboardLayout>
+              <Outlet />
+            </DashboardLayout>
+          </ProtectedRoute>
         }
       >
-        {/* ---------- Employee Pages ---------- */}
         <Route path="dashboard" element={<EmployeeDashboard />} />
         <Route path="profile" element={<Profile />} />
         <Route path="performance" element={<Performance />} />
@@ -69,70 +66,26 @@ function AppRouters() {
         <Route path="attendances" element={<Attendance />} />
         <Route path="notifications" element={<Notifications />} />
         <Route path="leave-management" element={<LeaveManagement />} />
-        <Route path="leave-management/apply" element={<ApplyLeaveFormPage />} />
-        <Route
-          path="leave-management/success"
-          element={<ApplyLeaveSuccess />}
-        />
-        <Route path="payroll" element={<Payroll />} />
-      </Route>
-      {/* EMPLOYEE ROUTES */}
-      <Route
-        path="/employee/*"
-        element={
-          // Wrap with Protected Route to check role
-          //   <ProtectedRoute allowedRole="EMPLOYEE">
-          <DashboardLayout>
-            <Outlet />
-          </DashboardLayout>
-          //   </ProtectedRoute>
-        }
-      >
-        {/* ---------- Employee Pages ---------- */}
-        <Route path="dashboard" element={<EmployeeDashboard />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="performance" element={<Performance />} />
-        <Route path="project-status" element={<ProjectStatus />} />
-        <Route path="attendances" element={<Attendance />} />
-        <Route path="notifications" element={<Notifications />} />
-        <Route path="leave-management" element={<LeaveManagement />} />
-        <Route
-          path="leave-management/success"
-          element={<ApplyLeaveSuccess />}
-        />
-        <Route path="payroll" element={<Payroll />} />
-        <Route path="calendar" element={<Calendar />} />
         <Route path="leave-management/apply" element={<ApplyLeaveFormPage />} />
         <Route path="leave-management/success" element={<ApplyLeaveSuccess />} />
-
+        <Route path="payroll" element={<Payroll />} />
+        <Route path="calendar" element={<Calendar />} />
         <Route path="policy" element={<Policies />} />
+        
+        {/* TL specific route accessible if role is 'tl' */}
         <Route path="lead-status" element={<LeadStatus />} />
-        {/* <Route path="/upload/:type" element={<UploadPage />} /> */}
       </Route>
 
-      {/* HR ROUTES */}
-
-      {/* <Route
-        path="/hr/*"
-        element={
-          // <ProtectedRoute allowedRole="HR">
-          <HRLayout>
-            <Outlet />
-          </HRLayout>
-          // </ProtectedRoute>
-        }
-      >
-        <Route path="dashboard" element={<HRHomeDashboard />} />
-        <Route path="Holidays" element={<HolidayCard />} />
-      </Route> */}
+      {/* ---------------- HR ROUTES ---------------- */}
       <Route
         path="/hr/*"
         element={
-          // <ProtectedRoute allowedRole="HR">
-          <HRLayout>
-            <Outlet />
-          </HRLayout>
-          // </ProtectedRoute>
+          // ✅ FIXED: Enabled Protection for HR
+          <ProtectedRoute allowedRoles={["hr", "admin"]}>
+            <HRLayout>
+              <Outlet />
+            </HRLayout>
+          </ProtectedRoute>
         }
       >
         <Route path="dashboard" element={<HRHomeDashboard />} />
@@ -147,48 +100,45 @@ function AppRouters() {
         <Route path="notifications" element={<Notifications />} />
         <Route path="policy" element={<HRPolicies />} />
         <Route path="profile" element={<HRProfile />} />
-        <Route path="profile" element={<HRProfile />} />
       </Route>
 
-      {/* DM ROUTES */}
+      {/* ---------------- MANAGER (DM/PM) ROUTES ---------------- */}
       <Route
         path="/dm/*"
         element={
-          <ManagerLayout>
-            <Outlet />
-          </ManagerLayout>
-        }
-      >
-        <Route path="dashboard" element={<ManagerDashboard />} />
-        <Route path="create-project" element={<CreateProject />} />
-        <Route path="create-module" element={<CreateModule />} />
-      </Route>
-
-      {/* PM ROUTES */}
-      <Route
-        path="/pm/*"
-        element={
-          <ManagerLayout>
-            <Outlet />
-          </ManagerLayout>
-        }
-      >
-        <Route path="dashboard" element={<ManagerDashboard />} />
-        <Route path="create-project" element={<CreateProject />} />
-        <Route path="create-module" element={<CreateModule />} />
-      </Route>
-
-      {/* ADMIN ROUTES */}
-      <Route
-        path="/admin/*"
-        element={
-          <ProtectedRoute allowedRole="ADMIN">
-            <div>ADMIN HOME (Add Admin Layout Here)</div>
+           // ✅ FIXED: Enabled Protection for DM
+          <ProtectedRoute allowedRoles={["dm"]}>
+            <ManagerLayout>
+              <Outlet />
+            </ManagerLayout>
           </ProtectedRoute>
         }
       >
-        {/* Add Admin Routes */}
+        <Route path="dashboard" element={<ManagerDashboard />} />
+        <Route path="create-project" element={<CreateProject />} />
+        <Route path="create-module" element={<CreateModule />} />
       </Route>
+
+      <Route
+        path="/pm/*"
+        element={
+           // ✅ FIXED: Enabled Protection for PM
+          <ProtectedRoute allowedRoles={["pm"]}>
+            <ManagerLayout>
+              <Outlet />
+            </ManagerLayout>
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<ManagerDashboard />} />
+        <Route path="create-project" element={<CreateProject />} />
+        <Route path="create-module" element={<CreateModule />} />
+      </Route>
+
+      {/* Fallback for unauthorized or 404 */}
+      <Route path="/unauthorized" element={<div className="p-10 text-center text-red-600 font-bold">403 - Unauthorized Access</div>} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+      
     </Routes>
   );
 }

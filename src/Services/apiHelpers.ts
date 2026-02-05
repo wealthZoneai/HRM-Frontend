@@ -88,7 +88,10 @@ export function HRLeaveAction(id: string | number, action: 'approve' | 'reject',
 // --- UPDATE REQUESTS (EDIT) ---
 // 1. Update Job Description & Bank Details
 export function UpdateEmployeeJobAndBank(id: string | number, body: any) {
-  return server.patch((endpoints as any).updateEmployeeJobBank(id), body, { requiresAuth: true });
+  // Uses PATCH to allow partial updates (e.g., only bank details)
+  return server.patch(endpoints.updateEmployeeJobBank(id), body, {
+    requiresAuth: true,
+  });
 }
 
 // 2. Update Role, Name & Department

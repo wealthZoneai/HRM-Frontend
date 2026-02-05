@@ -90,7 +90,7 @@ const HRProfileHeader = () => {
     const userName = data 
         ? `${data.first_name} ${data.last_name}` 
         : (localStorage.getItem("userName") || "HR Manager");
-    console.log(data);
+    
     const role = data?.user?.role || "Human Resources Manager";
     const department = data?.department || "HR Department";
     const employeeId = data?.employee_id || localStorage.getItem("empId") || "WZG-HR-001";
@@ -145,7 +145,7 @@ const HRProfileHeader = () => {
                                     {userName}
                                 </h2>
                                 <p className="text-sm sm:text-base text-gray-500 font-medium mt-1">
-                                    {role?.toUpperCase()}
+                                    {role.toUpperCase()}
                                 </p>
                             </div>
 
