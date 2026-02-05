@@ -10,7 +10,7 @@ import {
     AlertCircle,
     Image as ImageIcon
 } from "lucide-react";
-import { showError } from "../../../../utils/toast"; 
+import { showError } from "../../../../utils/toast";
 
 // --- TYPES ---
 
@@ -59,7 +59,7 @@ const documents: DocumentType[] = [
 
 const commonGuidelines = [
     "Ensure the photo and details are clearly visible.",
-    "Supported formats: JPG, PNG, PDF (Max 5MB).",
+    "Supported formats: JPG, PNG, SVG, PDF (Max 5MB).",
     "Front side is mandatory for all documents.",
     "Back side is required for Aadhar Card and Passport.",
     "Ensure the documents are valid and not expired."
@@ -176,7 +176,8 @@ const UploadCard = ({
                     <input
                         type="file"
                         className="hidden"
-                        accept="image/*,.pdf"
+                        // ✅ FIXED: Strictly allow only these extensions
+                        accept=".jpg,.jpeg,.png,.svg,.pdf"
                         onChange={onUpload}
                     />
                     <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 h-40 flex flex-col items-center justify-center gap-2 transition-colors group-hover:border-blue-400 group-hover:bg-blue-50/30">
@@ -207,15 +208,26 @@ const DocumentRow = ({
     onRemove: (side: UploadSide) => void;
     onPreview: (file: UploadedFile) => void;
 }) => {
-    // --- UPDATED HANDLER WITH VALIDATION ---
+    
     const handleFileChange = (side: UploadSide) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            // ✅ FIXED: Add Validation for File Type
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg', 'pdf'];
+            const fileExtension = file.name.split('.').pop()?.toLowerCase();
+            const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'application/pdf'];
+
+            if (!fileExtension || (!allowedExtensions.includes(fileExtension) && !allowedMimeTypes.includes(file.type))) {
+                showError("Invalid file type. Only JPG, PNG, SVG, and PDF are allowed.");
+                e.target.value = ''; // Reset input
+                return;
+            }
+
             // 5MB Limit Calculation (5 * 1024 * 1024 bytes)
             const MAX_SIZE = 5 * 1024 * 1024;
             
             if (file.size > MAX_SIZE) {
-                showError("File size exceeds 5MB. Please upload a smaller file."); // Updated to use toast
+                showError("File size exceeds 5MB. Please upload a smaller file.");
                 e.target.value = ''; // Reset the input so they can try again
                 return;
             }
