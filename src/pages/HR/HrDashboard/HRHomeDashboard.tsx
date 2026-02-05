@@ -257,11 +257,11 @@ export default function HRHomeDashboard() {
       </div>
 
       {/* Interviews */}
-      <InterviewTable
+      {/* <InterviewTable
         items={interviews}
         onToggleComplete={markInterviewComplete}
         onReschedule={handleReschedule}
-      />
+      /> */}
     </div>
   );
 }

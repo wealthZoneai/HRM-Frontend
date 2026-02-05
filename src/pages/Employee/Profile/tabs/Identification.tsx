@@ -403,7 +403,7 @@ const Identification = ({ data }: { data?: any }) => {
                         }
                     }}
                 >
-                    Submit Documents
+                    Submit
                 </button>
             </div>
 

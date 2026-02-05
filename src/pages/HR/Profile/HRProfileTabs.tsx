@@ -16,10 +16,10 @@ const HRProfileTabs = () => {
 
     const renderTab = () => {
         switch (active) {
-            case 0: return <ContactInformation data={{ allowFullEdit: true }} />; // Fully Editable for HR
-            case 1: return <HRJobInformation />; // Custom Editable
-            case 2: return <HRBankDetails />; // Custom Editable
-            case 3: return <Identification />; // Upload functionality works fine
+            case 0: return <ContactInformation />; 
+            case 1: return <HRJobInformation />; 
+            case 2: return <HRBankDetails />; 
+            case 3: return <Identification />;
             default: return null;
         }
     };

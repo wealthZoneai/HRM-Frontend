@@ -1,72 +1,86 @@
-
-
-
 const endpoints = {
-
-    //authentication
+    // ==========================================
+    // AUTHENTICATION
+    // ==========================================
     login: '/api/login/',
     register: '/api/auth/candidateSignup',
+    forgotPassword: 'api/forgot-password/',
+    resetPassword: 'api/reset-password/',
+    refresh: 'api/refresh/',
 
-    //hr endpoints
-
-    createEmployes: 'api/hr/create-employee/',
-    employees: 'api/employees/',
-    hrAnnouncements: '/api/announcement/list/',
-    createAnnouncement: 'api/announcement/create/',
-    deleteAnnouncement: (id: string | number) => `api/announcement/${id}/delete/`,
-    updateAnnouncement: (id: string | number) => `api/announcement/${id}/update/`,
+    // ==========================================
+    // HR ENDPOINTS
+    // ==========================================
+    // --- GET ---
+    employees: 'api/employees/', // List all employees
     hrDashboardStats: 'api/hr/dashboard/stats/',
     hrLeaveDashboardStats: 'api/leave-dashboard/stats/',
     hrMonthlyAttendance: "api/attendance/",
-    updateEmployeeJobBank: (id: string | number) => `api/employees/${id}/job&bank/`,
-    updateEmployeeRole: (id: string | number) => `api/hr/employees/${id}/role/`,
-    updateEmployeeContact: (id: string | number) => `api/hr/employees/${id}/contact/`,
-
-    // tl endpoints
-    tlCreateAnnouncement: 'api/tl/announcement/create/',
-
-
-
-
-    //employee endpoints
-    forgotPassword: 'api/forgot-password/',
-    resetPassword: 'api/reset-password/',
-    myProfile: 'api/my-profile/',
-    myProfileContact: 'api/my-profile/contact/',
-    refresh: 'api/refresh/',
-
-    //attendance
-    clockIn: 'api/attendance/clock-in/',
-    clockOut: 'api/attendance/clock-out/',
-    applyLeave: 'api/leave/apply/',
-    hrLeaves: 'api/leaves/',
-    myLeaves: 'api/leave/my-requests/',
-    dailyAttendance: 'api/timesheet/daily/form/',
-    teamDashboard: 'api/team/dashboard/',
-    teamMembers: 'api/team/members/',
-    pendingLeaves: 'api/leave/pending/',
-    hrLeaveAction: (id: string | number) => `api/leaves/${id}/action/`,
-    tlLeaveAction: (id: string | number) => `api/leave/${id}/action/`,
+    hrLeaves: 'api/leaves/', // All leave requests
+    hrAnnouncements: '/api/announcement/list/',
     totalAttendance: "api/attendance/days/",
-    announcements: "/api/announcements/",
-    notifications: "/api/notifications/",
-    markNotificationsRead: "/api/notifications/mark-read/",
-    calendar: "api/calendar/events/",
-    policies: "api/policy/",
+
+    // --- POST (Create) ---
+    createEmployes: 'api/hr/create-employee/',
+    createAnnouncement: 'api/announcement/create/',
     createPolicy: "api/policy/create/",
+    hrLeaveAction: (id: string | number) => `api/leaves/${id}/action/`, // Approve/Reject
+
+    // --- UPDATE (Patch/Put) ---
+    updateEmployeeRole: (id: string | number) => `api/hr/employees/${id}/role/`,
+    updateEmployeeJobBank: (id: string | number) => `api/employees/${id}/job&bank/`,
+    updateEmployeeContact: (id: string | number) => `api/hr/employees/${id}/contact/`,
+    updateAnnouncement: (id: string | number) => `api/announcement/${id}/update/`,
+
+    // --- DELETE ---
+    deleteAnnouncement: (id: string | number) => `api/announcement/${id}/delete/`,
     deletePolicy: (id: string | number) => `api/policy/delete/${id}/`,
-    // Manager (DM/PM/TL) Endpoints
-    createProject: 'api/dm/project/create/',
-    assignPM: (projectId: string | number) => `api/dm/project/${projectId}/assign-pm/`,
 
-    createModule: (projectId: string | number) => `api/pm/project/${projectId}/module/create/`,
-
+    // ==========================================
+    // TEAM LEAD (TL) & MANAGER ENDPOINTS
+    // ==========================================
+    // --- GET ---
+    teamMembers: 'api/team/members/',
+    teamDashboard: 'api/team/dashboard/',
     pmProjects: 'api/pm/projects/',
     dmProjects: 'api/dm/projects/',
     tlModules: 'api/tl/modules/',
+
+    // --- POST ---
+    createProject: 'api/dm/project/create/',
+    createModule: (projectId: string | number) => `api/pm/project/${projectId}/module/create/`,
     createTask: (moduleId: string | number) => `api/tl/module/${moduleId}/task/create/`,
+    tlCreateAnnouncement: 'api/tl/announcement/create/',
+    assignPM: (projectId: string | number) => `api/dm/project/${projectId}/assign-pm/`,
+    tlLeaveAction: (id: string | number) => `api/leave/${id}/action/`,
+
+    // ==========================================
+    // EMPLOYEE ENDPOINTS
+    // ==========================================
+    // --- GET ---
+    myProfile: 'api/my-profile/',
+    myLeaves: 'api/leave/my-requests/',
+    pendingLeaves: 'api/leave/pending/',
+    dailyAttendance: 'api/timesheet/daily/form/',
     employeeProjectStatus: 'api/employee/project-status/',
     employeeTasks: 'api/employee/tasks/',
+    
+    // --- POST ---
+    clockIn: 'api/attendance/clock-in/',
+    clockOut: 'api/attendance/clock-out/',
+    applyLeave: 'api/leave/apply/',
+
+    // --- UPDATE ---
+    myProfileContact: 'api/my-profile/contact/',
+
+    // ==========================================
+    // COMMON / SHARED (Notifications, Calendar, etc)
+    // ==========================================
+    announcements: "/api/announcements/", // View announcements
+    policies: "api/policy/",
+    calendar: "api/calendar/events/",
+    notifications: "/api/notifications/",
+    markNotificationsRead: "/api/notifications/mark-read/",
 }
 
-export default endpoints
+export default endpoints;
