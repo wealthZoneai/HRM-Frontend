@@ -108,9 +108,10 @@ const HRBankDetails = () => {
 
                 const mappedData = {
                     bankName: profile.bank_name || '',
-                    accountNumber: profile.bank_account_number || '',
+                    accountNumber: profile.masked_account_number
+ || '',
                     ifscCode: profile.ifsc_code || '',
-                    branch: profile.bank_branch || '',
+                    branch: profile.branch || '',
                     accountName: profile.account_holder_name || profile.first_name || '',
                 };
 
