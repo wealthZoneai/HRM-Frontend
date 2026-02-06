@@ -13,6 +13,8 @@ const HRProfileHeader = () => {
     const [imageSrc, setImageSrc] = useState<string>(Pic);
     const [data, setData] = useState<any>(null);
 
+    
+
     // 1. Fetch Profile Data on Mount
     const fetchProfileData = async () => {
         try {
