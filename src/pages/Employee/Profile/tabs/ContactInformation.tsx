@@ -153,8 +153,10 @@ const ContactInformation = () => {
     // Validation: Middle Name (Characters only)
     if (name === "middleName" && !/^[a-zA-Z\s]*$/.test(value)) return;
 
-    // Validation: Alternative Number (Numbers only)
-    if (name === "alternativeNumber" && !/^\d*$/.test(value)) return;
+    // ✅ FIXED: Alternative Number (Numbers only & Max 10 Digits)
+    if (name === "alternativeNumber") {
+      if (!/^\d{0,10}$/.test(value)) return;
+    }
 
     setData((prev) => ({ ...prev, [name]: value }));
   };
@@ -230,7 +232,7 @@ const ContactInformation = () => {
             <EditLineField label="Middle Name" name="middleName" value={dataState.middleName} onChange={handleChange} />
             <EditLineField label="Last Name" name="lastName" value={dataState.lastName} disabled />
             
-            <EditLineField label="Work Email" name="workMail" value={dataState.workMail} disabled />
+            {/* <EditLineField label="Work Email" name="workMail" value={dataState.workMail} disabled /> */}
             <EditLineField label="Personal Email" name="personalMail" value={dataState.personalMail} disabled />
             
             <PhoneNumberField label="Phone Number" name="phone" value={dataState.phone} disabled />
@@ -261,7 +263,7 @@ const ContactInformation = () => {
             <UnderlineField label="First Name" value={dataState.firstName} />
             <UnderlineField label="Middle Name" value={dataState.middleName} />
             <UnderlineField label="Last Name" value={dataState.lastName} />
-            <UnderlineField label="Work Email" value={dataState.workMail} />
+            {/* <UnderlineField label="Work Email" value={dataState.workMail} /> */}
             <UnderlineField label="Personal Email" value={dataState.personalMail} />
             <UnderlineField label="Phone Number" value={dataState.phone ? `+91 ${dataState.phone}` : "N/A"} />
             <UnderlineField label="Alternative Number" value={dataState.alternativeNumber ? `+91 ${dataState.alternativeNumber}` : "N/A"} />
