@@ -176,7 +176,6 @@ const UploadCard = ({
                     <input
                         type="file"
                         className="hidden"
-                        // ✅ FIXED: Strictly allow only these extensions
                         accept=".jpg,.jpeg,.png,.svg,.pdf"
                         onChange={onUpload}
                     />
@@ -212,7 +211,6 @@ const DocumentRow = ({
     const handleFileChange = (side: UploadSide) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // ✅ FIXED: Add Validation for File Type
             const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg', 'pdf'];
             const fileExtension = file.name.split('.').pop()?.toLowerCase();
             const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'application/pdf'];
@@ -223,7 +221,6 @@ const DocumentRow = ({
                 return;
             }
 
-            // 5MB Limit Calculation (5 * 1024 * 1024 bytes)
             const MAX_SIZE = 5 * 1024 * 1024;
             
             if (file.size > MAX_SIZE) {
@@ -243,13 +240,14 @@ const DocumentRow = ({
             <div className="flex flex-col items-center mb-6 border-b border-gray-100 pb-4">
                 <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                     {doc.label}
+                    {/* ✅ UPDATED: Added Asterisk if mandatory */}
+                    {!doc.isOptional && <span className="text-red-500">*</span>}
+                    
                     {state.front && (!doc.requiresBack || state.back) && (
                         <CheckCircle size={20} className="text-green-500" />
                     )}
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                    {doc.isOptional ? "Optional Document" : "Mandatory Document"}
-                </p>
+                {/* ✅ UPDATED: Removed "Mandatory/Optional Document" text paragraph */}
             </div>
 
             <div className="flex flex-col grow justify-center">
