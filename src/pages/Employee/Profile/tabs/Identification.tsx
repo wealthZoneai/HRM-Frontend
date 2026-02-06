@@ -59,7 +59,7 @@ const documents: DocumentType[] = [
 
 const commonGuidelines = [
     "Ensure the photo and details are clearly visible.",
-    "Supported formats: JPG, PNG, SVG, PDF (Max 5MB).",
+    "Supported formats: JPG, PNG, PDF (Max 5MB).",
     "Front side is mandatory for all documents.",
     "Back side is required for Aadhar Card and Passport.",
     "Ensure the documents are valid and not expired."
@@ -177,7 +177,7 @@ const UploadCard = ({
                         type="file"
                         className="hidden"
                         // ✅ FIXED: Strictly allow only these extensions
-                        accept=".jpg,.jpeg,.png,.svg,.pdf"
+                        accept=".jpg,.jpeg,.png,.pdf"
                         onChange={onUpload}
                     />
                     <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 h-40 flex flex-col items-center justify-center gap-2 transition-colors group-hover:border-blue-400 group-hover:bg-blue-50/30">
@@ -186,7 +186,7 @@ const UploadCard = ({
                         </div>
                         <div className="text-center">
                             <p className="text-sm font-medium text-gray-600 group-hover:text-blue-600">Click to upload</p>
-                            <p className="text-xs text-gray-400 mt-1">SVG, PNG, JPG or PDF</p>
+                            <p className="text-xs text-gray-400 mt-1">PNG, JPG or PDF</p>
                         </div>
                     </div>
                 </label>
@@ -213,12 +213,12 @@ const DocumentRow = ({
         const file = e.target.files?.[0];
         if (file) {
             // ✅ FIXED: Add Validation for File Type
-            const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg', 'pdf'];
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
             const fileExtension = file.name.split('.').pop()?.toLowerCase();
-            const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'application/pdf'];
+            const allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
 
             if (!fileExtension || (!allowedExtensions.includes(fileExtension) && !allowedMimeTypes.includes(file.type))) {
-                showError("Invalid file type. Only JPG, PNG, SVG, and PDF are allowed.");
+                showError("Invalid file type. Only JPG, PNG, and PDF are allowed.");
                 e.target.value = ''; // Reset input
                 return;
             }

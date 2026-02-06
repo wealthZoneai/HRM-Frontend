@@ -73,7 +73,7 @@ const AddPolicyModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
               <option value="policy">Company Policy</option>
               <option value="terms">Terms & Conditions</option>
               <option value="resignation">Resignation Rules</option>
-              <option value="termination">Termination Rules</option>
+              <option value="separation">Separation Rules</option>
             </select>
           </div>
 

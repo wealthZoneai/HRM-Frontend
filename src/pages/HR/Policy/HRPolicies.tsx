@@ -18,7 +18,7 @@ const POLICY_TYPES_MAP: { [key: string]: string } = {
   'policy': 'Company Policies',
   'terms': 'Terms & Conditions',
   'resignation': 'Resignation Rules',
-  'termination': 'Termination Rules'
+  'separation': 'Separation Rules'
 };
 
 export default function HRPolicies() {
@@ -33,7 +33,7 @@ export default function HRPolicies() {
     'policy': true,
     'terms': false,
     'resignation': false,
-    'termination': false
+    'separation': false
   });
 
   const toggleSection = (type: string) => {
