@@ -1,5 +1,5 @@
 import React from "react";
-import { FiTrash2, FiAlertTriangle, FiX } from "react-icons/fi";
+import { FiTrash2, FiX } from "react-icons/fi";
 
 interface DeleteConfirmationModalProps {
     isOpen: boolean;
