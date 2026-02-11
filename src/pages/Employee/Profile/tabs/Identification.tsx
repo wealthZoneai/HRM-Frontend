@@ -50,6 +50,7 @@ const commonGuidelines = [
     "Ensure the photo and details are clearly visible.",
     "Supported formats: JPG, PNG, PDF (Max 5MB).",
     "Front side is mandatory for all documents.",
+    "Back side is required for Aadhaar Card and Passport.",
     "Ensure the documents are valid and not expired."
 ];
 

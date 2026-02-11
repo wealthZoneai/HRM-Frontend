@@ -14,7 +14,7 @@ interface AnnouncementFormData {
 interface Props {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (form: AnnouncementFormData) => void;
+    onSubmit: (form: AnnouncementFormData) => Promise<void> | void;
     initialData?: AnnouncementFormData | null;
 }
 
@@ -30,6 +30,7 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, init
     });
 
     const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     React.useEffect(() => {
         if (isOpen && initialData) {
@@ -69,20 +70,21 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, init
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validate()) return;
-        onSubmit(form);
-        onClose();
-        setForm({ // Reset form
-            title: "",
-            description: "",
-            department: "",
-            priority: "",
-            date: "",
-            time: "",
-            location: "",
-        })
-        setErrors({});
+
+        setIsSubmitting(true);
+        try {
+            await onSubmit(form);
+            // Don't close here, let parent handle closing on success
+            // But reset form if needed? Parent usually closes modal, so reset happens on next open.
+            setErrors({});
+        } catch (error) {
+            console.error("Error submitting form", error);
+            // Keep modal open so user can retry
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -106,10 +108,10 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, init
             </style>
 
             {/* Modal Box */}
-            <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-white animate-zoomIn max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-white animate-zoomIn max-h-[90vh] flex flex-col overflow-hidden">
 
-                {/* Header Gradient */}
-                <div className="bg-linear-to-r from-blue-600 to-indigo-600 p-5 text-white flex justify-between items-center sticky top-0 z-10">
+                {/* Header Gradient - Fixed at top */}
+                <div className="bg-linear-to-r from-blue-600 to-indigo-600 p-5 text-white flex justify-between items-center shrink-0 z-10">
                     <div>
                         <h2 className="text-2xl font-semibold">{initialData ? "Edit Announcement" : "Add New Announcement"}</h2>
                         <p className="text-sm opacity-80">{initialData ? "Update the announcement details below" : "Send updates to the selected departments"}</p>
@@ -117,13 +119,14 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, init
                     <button
                         onClick={onClose}
                         className="p-2 rounded-full hover:bg-white/20 transition-colors"
+                        disabled={isSubmitting}
                     >
                         <FiX size={24} />
                     </button>
                 </div>
 
-                {/* Content */}
-                <div className="p-6">
+                {/* Scrollable Content */}
+                <div className="p-6 overflow-y-auto custom-scrollbar">
 
                     {/* Title */}
                     <div className="mb-5">
@@ -239,15 +242,30 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, init
                         <button
                             onClick={onClose}
                             className="px-5 py-2 rounded-xl border text-gray-700 bg-gray-100 hover:bg-gray-200 transition"
+                            disabled={isSubmitting}
                         >
                             Cancel
                         </button>
 
                         <button
                             onClick={handleSubmit}
-                            className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-md transition"
+                            disabled={isSubmitting}
+                            className={`px-6 py-2 rounded-xl text-white shadow-md transition flex items-center justify-center min-w-[140px] ${isSubmitting
+                                    ? "bg-blue-400 cursor-not-allowed"
+                                    : "bg-blue-600 hover:bg-blue-700 transform active:scale-95"
+                                }`}
                         >
-                            {initialData ? "Update Announcement" : "Send Announcement"}
+                            {isSubmitting ? (
+                                <>
+                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Processing...
+                                </>
+                            ) : (
+                                initialData ? "Update" : "Send Announcement"
+                            )}
                         </button>
 
                     </div>
@@ -259,3 +277,4 @@ const AddAnnouncementModal: React.FC<Props> = ({ isOpen, onClose, onSubmit, init
 };
 
 export default AddAnnouncementModal;
+

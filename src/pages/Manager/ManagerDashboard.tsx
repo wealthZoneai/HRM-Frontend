@@ -48,7 +48,7 @@ const ManagerDashboard: React.FC = () => {
                 {(user?.role === 'dm' || user?.role === 'management') && (
                     <button
                         onClick={() => navigate('/dm/create-project')}
-                        className="p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg text-white hover:shadow-xl transition transform hover:-translate-y-1"
+                        className="p-6 bg-linear-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg text-white hover:shadow-xl transition transform hover:-translate-y-1"
                     >
                         <div className="text-xl font-bold mb-2">+ New Project</div>
                         <p className="opacity-90 text-sm">Create and assign new projects</p>
@@ -58,7 +58,7 @@ const ManagerDashboard: React.FC = () => {
                 {user?.role === 'pm' && (
                     <button
                         onClick={() => navigate('/pm/create-module')}
-                        className="p-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg text-white hover:shadow-xl transition transform hover:-translate-y-1"
+                        className="p-6 bg-linear-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg text-white hover:shadow-xl transition transform hover:-translate-y-1"
                     >
                         <div className="text-xl font-bold mb-2">+ New Module</div>
                         <p className="opacity-90 text-sm">Add modules to your projects</p>

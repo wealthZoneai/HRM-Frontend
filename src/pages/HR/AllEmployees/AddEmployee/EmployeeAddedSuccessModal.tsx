@@ -38,14 +38,6 @@ const EmployeeAddedSuccessModal: React.FC<EmployeeAddedSuccessModalProps> = ({
                     >
                         Go to Employee List
                     </button>
-
-                    {/* Secondary Action (Optional) */}
-                    <button
-                        onClick={onClose}
-                        className="mt-3 text-sm text-gray-400 hover:text-gray-600 font-medium"
-                    >
-                        Stay on this page
-                    </button>
                 </div>
             </div>
         </div>

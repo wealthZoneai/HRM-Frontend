@@ -14,55 +14,67 @@ import { showLoginError, showLoginSuccess, showWarning, } from "../../utils/toas
 import { loginUser } from "../../Services/apiHelpers";
 import { setUserData } from "../../store/slice/userData";
 import { useDispatch } from "react-redux";
-
-
+ 
+ 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+ 
   const [workMode, setWorkMode] = useState<"WFO" | "WFH">("WFO");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+ 
   const handleForgotPassword = () => {
     navigate('/forgot-password')
   }
-
+ 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+ 
     if (isLoading) return;
-
+ 
     if (!username.trim() || !password.trim()) {
       showWarning("Please fill in all fields");
       return;
     }
-
+ 
     setIsLoading(true);
-
+ 
     try {
       const response = await loginUser({ username, password });
-      
+     
       if (response.status === 200) {
         // Save critical auth data
         localStorage.setItem("access", response.data.access);
         localStorage.setItem("refresh", response.data.refresh);
         localStorage.setItem("userName", response.data.username);
-        localStorage.setItem("role", response.data.role); // REQUIRED to fix redirection issue
-
-        // Update Redux state
+        if (response.data.role === "admin" || response.data.role === "hr") {
+          navigate(`/hr/dashboard`);
+        } else if (response.data.role === "tl") {
+          navigate(`/employee/dashboard`);
+        } else if (response.data.role === "employee" || response.data.role === "intern") {
+          navigate(`/employee/dashboard`);
+        } else if (response.data.role === "dm") {
+          navigate(`/dm/dashboard`);
+        } else if (response.data.role === "pm") {
+          navigate(`/pm/dashboard`);
+        }
         dispatch(setUserData({
           token: response.data.access,
           role: response.data.role,
           userName: response.data.username
         }));
 
-        // Success Feedback
+        // Show success toast with username
         showLoginSuccess(response.data.username);
 
-        // Save User ID metadata
+        // Debug log to check available fields
+        console.log("Login Response Data:", response.data);
+
+
+        // Save User ID/Employee ID (Adjust field name based on debug log if needed: id, user_id, employee_id)
         if (response.data.id) {
           localStorage.setItem("userId", response.data.id);
         } else if (response.data.employee_id) {
@@ -70,42 +82,22 @@ const Login: React.FC = () => {
         } else if (response.data.user_id) {
           localStorage.setItem("userId", response.data.user_id);
         }
-
+ 
         if (response.data.emp_id) {
           localStorage.setItem("empId", response.data.emp_id);
         }
 
-        // Role-based Navigation
-        const role = response.data.role.toLowerCase();
-        if (role === "admin" || role === "hr") {
-          navigate(`/hr/dashboard`);
-        } else if (role === "tl" || role === "employee" || role === "intern") {
-          navigate(`/employee/dashboard`);
-        } else if (role === "dm") {
-          navigate(`/dm/dashboard`);
-        } else if (role === "pm") {
-          navigate(`/pm/dashboard`);
-        }
       }
 
-    } catch (error: any) {
-      // Improved error handling for Toastify
-      if (error.response) {
-        // Handle specific server error messages if available
-        const errorMsg = error.response.data?.detail || "Invalid credentials. Please check your email and password.";
-        showLoginError(errorMsg);
-      } else if (error.request) {
-        showLoginError("No response from server. Please check your connection.");
-      } else {
-        showLoginError("An unexpected error occurred during login.");
-      }
+    } catch (error) {
+      showLoginError("Invalid credentials. Please check your email and password.");
       console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
-
-
+ 
+ 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-[#f6f7fb] px-6">
       <motion.div
@@ -143,12 +135,12 @@ const Login: React.FC = () => {
             <h2
               className="text-3xl font-semibold tracking-tight text-[#0047AB] text-center -mb-4"
               style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
-
+ 
             >
               Human Resource
               <br /> Management System
             </h2>
-
+ 
             <div className="flex justify-center">
               <img
                 src={Logo}
@@ -156,29 +148,29 @@ const Login: React.FC = () => {
                 alt="logo"
               />
             </div>
-
+ 
             <h2
               className="text-3xl tracking-wide font-bold text-[#0047AB]"
               style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
-
+ 
             >
               WEALTH ZONE GROUP AI
             </h2>
-
+ 
             <p
               className="text-[#0047AB] font-medium text-2xl tracking-tight"
               style={{ textShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
-
+ 
             >
               INTERNATIONAL PRIVATE LIMITED
             </p>
           </div>
         </div>
-
+ 
         {/* RIGHT SECTION */}
         <div className="relative z-10 p-8 md:p-12 top-[30px] flex flex-col justify-center">
           <form onSubmit={handleSubmit} className="space-y-6">
-
+ 
             {/* USERNAME */}
             <div>
               <label className="block text-sm text-white mb-2">Username</label>
@@ -194,7 +186,7 @@ const Login: React.FC = () => {
                 />
               </div>
             </div>
-
+ 
             {/* PASSWORD */}
             <div>
               <label className="block text-sm text-white mb-2">Password</label>
@@ -218,6 +210,12 @@ const Login: React.FC = () => {
               </div>
             </div>
 
+
+
+
+
+
+
             {/* WORK MODE SELECTION */}
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer group">
@@ -238,7 +236,7 @@ const Login: React.FC = () => {
                   Work From Office
                 </span>
               </label>
-
+ 
               <label className="flex items-center  gap-2 cursor-pointer group">
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${workMode === "WFH" ? "border-white" : "border-gray-400 group-hover:border-white"
                   }`}>
@@ -258,7 +256,7 @@ const Login: React.FC = () => {
                 </span>
               </label>
             </div>
-
+ 
             {/* LOGIN BUTTON */}
             <button
               type="submit"
@@ -267,14 +265,14 @@ const Login: React.FC = () => {
             >
               {isLoading ? "Logging in..." : "Login"}
             </button>
-
+ 
             <p className="text-center text-sm text-white">
               Don't remember your password?{" "}
               <span className="text-white underline cursor-pointer" onClick={handleForgotPassword}>
                 Click here
               </span>
             </p>
-
+ 
             <div className="mt-8 text-center pt-4 border-t border-white/20">
               <p className="text-white/80 text-sm">
                 Have a query?{" "}
@@ -292,5 +290,5 @@ const Login: React.FC = () => {
     </div>
   );
 };
-
+ 
 export default Login;
