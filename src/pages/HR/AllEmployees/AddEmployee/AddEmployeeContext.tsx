@@ -53,6 +53,12 @@ export interface Documents {
   profileImage?: File | null;
   cvFile?: File | null;
   certificates?: File[]; // multiple
+  aadharFront?: File | null;
+  aadharBack?: File | null;
+  panCard?: File | null;
+  panCardBack?: File | null;
+  idCard?: File | null;
+  passport?: File | null;
 }
 
 export interface AddEmployeeState {

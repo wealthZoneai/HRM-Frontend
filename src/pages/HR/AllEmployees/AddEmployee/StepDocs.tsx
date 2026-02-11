@@ -12,6 +12,7 @@ const StepDocs: React.FC = () => {
     aadharFront: "",
     aadharBack: "",
     panCard: "",
+    panCardBack: "",
     idCard: "",
   });
 
@@ -22,7 +23,7 @@ const StepDocs: React.FC = () => {
     if (!file) {
       // If file is removed, we clear the error for now to avoid bad UX
       msg = "";
-    } else if (["aadharFront", "aadharBack", "panCard", "idCard"].includes(key)) {
+    } else if (["aadharFront", "aadharBack", "panCard", "panCardBack", "idCard"].includes(key)) {
       // logic for other validations if needed, for now just clear if file exists
       msg = "";
     }
@@ -31,13 +32,26 @@ const StepDocs: React.FC = () => {
   };
 
   const handleFile = (file: File | null, key: string) => {
+    if (file) {
+      const fileName = file.name.toLowerCase();
+      // Check for SVG extension
+      if (fileName.endsWith('.svg')) {
+        setErrors((prev) => ({ ...prev, [key]: "SVG files are not allowed. Please upload PNG, JPG or PDF." }));
+        // Do not update the document state if invalid
+        return;
+      }
+
+      // Also check MIME type if available
+      if (file.type === 'image/svg+xml') {
+        setErrors((prev) => ({ ...prev, [key]: "SVG files are not allowed. Please upload PNG, JPG or PDF." }));
+        return;
+      }
+    }
+
     dispatch({ type: "SET_DOCUMENT", payload: { [key]: file } });
     validate(key, file);
   };
 
-  /* --------------------------
-      REUSABLE UPLOAD BOX
-  -------------------------- */
   /* --------------------------
       REUSABLE UPLOAD BOX
   -------------------------- */
@@ -150,7 +164,7 @@ const StepDocs: React.FC = () => {
               Click to upload
             </span>
             <span className="text-gray-500 text-xs">
-              SVG, PNG, JPG or PDF (max. 5MB)
+              PNG, JPG or PDF (max. 5MB)
             </span>
 
             <input
@@ -182,8 +196,8 @@ const StepDocs: React.FC = () => {
           {/* Aadhar Front */}
           <UploadBox
             label="Aadhaar Card (Front)"
-            value={(docs as any).aadharFront}
-            accept="image/*,.pdf"
+            value={docs.aadharFront}
+            accept="image/png,image/jpeg,image/jpg,application/pdf"
             error={errors.aadharFront}
             onChange={(f) => handleFile(f, "aadharFront")}
           />
@@ -191,37 +205,48 @@ const StepDocs: React.FC = () => {
           {/* Aadhar Back */}
           <UploadBox
             label="Aadhaar Card (Back)"
-            value={(docs as any).aadharBack}
-            accept="image/*,.pdf"
+            value={docs.aadharBack}
+            accept="image/png,image/jpeg,image/jpg,application/pdf"
             error={errors.aadharBack}
             onChange={(f) => handleFile(f, "aadharBack")}
           />
 
           {/* PAN Card */}
           <UploadBox
-            label="PAN Card"
-            value={(docs as any).panCard}
-            accept="image/*,.pdf"
+            label="PAN Card (Front)"
+            value={docs.panCard}
+            accept="image/png,image/jpeg,image/jpg,application/pdf"
             error={errors.panCard}
             onChange={(f) => handleFile(f, "panCard")}
           />
 
-          {/* Company ID Card */}
+          {/* PAN Card Back */}
           <UploadBox
-            label="Company ID Card"
-            value={(docs as any).idCard}
-            accept="image/*,.pdf"
-            error={errors.idCard}
-            onChange={(f) => handleFile(f, "idCard")}
+            label="PAN Card (Back) (Optional)"
+            value={docs.panCardBack}
+            accept="image/png,image/jpeg,image/jpg,application/pdf"
+            error={errors.panCardBack}
+            onChange={(f) => handleFile(f, "panCardBack")}
           />
 
           {/* Passport (Optional) */}
           <UploadBox
             label="Passport (Optional)"
-            value={(docs as any).passport}
-            accept="image/*,.pdf"
+            value={docs.passport}
+            accept="image/png,image/jpeg,image/jpg,application/pdf"
             onChange={(f) => handleFile(f, "passport")}
           />
+
+          {/* Company ID Card */}
+          <UploadBox
+            label="Company ID Card"
+            value={docs.idCard}
+            accept="image/png,image/jpeg,image/jpg,application/pdf"
+            error={errors.idCard}
+            onChange={(f) => handleFile(f, "idCard")}
+          />
+
+
         </div>
       </div>
     </div>
