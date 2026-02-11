@@ -31,6 +31,7 @@ const endpoints = {
     updateEmployeeJobBank: (id: string | number) => `api/employees/${id}/job&bank/`,
     updateEmployeeContact: (id: string | number) => `api/hr/employees/${id}/contact/`,
     updateAnnouncement: (id: string | number) => `api/announcement/${id}/update/`,
+    updatePolicy: (id: string | number) => `api/policy/update/${id}/`,
 
     // --- DELETE ---
     deleteAnnouncement: (id: string | number) => `api/announcement/${id}/delete/`,
@@ -72,6 +73,7 @@ const endpoints = {
 
     // --- UPDATE ---
     myProfileContact: 'api/my-profile/contact/',
+    myIdentification: 'api/my-profile/identification/',
 
     // ==========================================
     // COMMON / SHARED (Notifications, Calendar, etc)
@@ -81,6 +83,7 @@ const endpoints = {
     calendar: "api/calendar/events/",
     notifications: "/api/notifications/",
     markNotificationsRead: "/api/notifications/mark-read/",
+    mySensitiveData: 'api/my-profile/sensitive/',
 }
 
 export default endpoints;

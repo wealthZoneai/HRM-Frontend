@@ -1,12 +1,15 @@
 import { useAddEmployee } from "./AddEmployeeContext";
 
-/* ===================
-   Reusable Components
-=================== */
-/* ===================
-   Reusable Components
-=================== */
-const TextField = ({ label, value, onChange, type = "text", prefix, error, required, ...props }: any) => (
+const TextField = ({
+  label,
+  value,
+  onChange,
+  type = "text",
+  prefix,
+  error,
+  required,
+  ...props
+}: any) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">
       {label} {required && <span className="text-red-500">*</span>}
@@ -40,7 +43,14 @@ const TextField = ({ label, value, onChange, type = "text", prefix, error, requi
   </div>
 );
 
-const SelectField = ({ label, value, onChange, children, error, required }: any) => (
+const SelectField = ({
+  label,
+  value,
+  onChange,
+  children,
+  error,
+  required,
+}: any) => (
   <div className="flex flex-col gap-1">
     <label className="text-gray-700 font-medium text-sm">
       {label} {required && <span className="text-red-500">*</span>}
@@ -73,7 +83,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
     const maxDate = new Date(
       today.getFullYear() - 18,
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
     return maxDate.toISOString().split("T")[0];
   };
@@ -105,14 +115,13 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
     <div className="w-full">
       <div className="bg-white p-0 md:p-0 rounded-none border-none shadow-none">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <TextField
             label="First Name"
             value={personal.firstName}
             required
             error={showErrors && !personal.firstName}
             onChange={(v: string) => {
-              if (/^[^0-9]*$/.test(v)) {
+              if (/^[A-Za-z]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { firstName: v } });
               }
             }}
@@ -122,7 +131,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             label="Middle Name"
             value={personal.middleName}
             onChange={(v: string) => {
-              if (/^[^0-9]*$/.test(v)) {
+              if (/^[A-Za-z]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { middleName: v } });
               }
             }}
@@ -134,7 +143,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             required
             error={showErrors && !personal.lastName}
             onChange={(v: string) => {
-              if (/^[^0-9]*$/.test(v)) {
+              if (/^[A-Za-z]*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { lastName: v } });
               }
             }}
@@ -157,7 +166,9 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             required
             prefix="+91"
             maxLength={10}
-            error={showErrors && (!personal.phone || personal.phone.length !== 10)}
+            error={
+              showErrors && (!personal.phone || personal.phone.length !== 10)
+            }
             onChange={(v: string) => {
               if (/^\d*$/.test(v)) {
                 dispatch({ type: "SET_PERSONAL", payload: { phone: v } });

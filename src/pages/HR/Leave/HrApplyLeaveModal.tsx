@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiX, FiUploadCloud } from "react-icons/fi";
+import { GetMyProfile } from "../../../Services/apiHelpers"; 
+import { showError } from "../../../utils/toast"; 
 
 interface Props {
     isOpen: boolean;
@@ -8,16 +10,42 @@ interface Props {
 
 export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
     const [form, setForm] = useState({
-        name: "HR Manager", // Default or fetched from user context
+        name: "", 
         type: "",
         from: "",
         to: "",
-        empId: "", // New field for employee ID
-        id: "HR-001",
-        role: "HR",
+        empId: "", 
+        role: "", 
         reason: "",
         document: null as File | null,
     });
+    const [isLoading, setIsLoading] = useState(false);
+
+    
+    useEffect(() => {
+        if (isOpen) {
+            const fetchUserData = async () => {
+                setIsLoading(true);
+                try {
+                    const response = await GetMyProfile(); //
+                    const data = response.data; //
+                    
+                    setForm(prev => ({
+                        ...prev,
+                        // Mapping backend fields to form state
+                        name: `${data.first_name} ${data.last_name}`, //
+                        empId: data.emp_id || "", //
+                        role: data.role || "HR", //
+                    }));
+                } catch (error) {
+                    showError("Failed to load user information."); //
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            fetchUserData();
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -40,9 +68,7 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
         if (!form.from || !form.to) return "";
         const start = new Date(form.from);
         const end = new Date(form.to);
-
         if (end < start) return "Invalid date range";
-
         const diff = end.getTime() - start.getTime();
         const days = Math.round(diff / (1000 * 3600 * 24)) + 1;
         return days > 0 ? `${days} Day(s)` : "";
@@ -50,7 +76,6 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // API call logic here
         console.log("Submitting Leave Application:", form);
         alert("Leave application submitted successfully!");
         onClose();
@@ -65,15 +90,11 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
         return Math.round(diff / (1000 * 3600 * 24)) + 1;
     })();
 
-    // Document is required for:
-    // 1. Sick leave longer than 4 days
-    // 2. Maternity/Paternity leave (always required)
     const isDocumentRequired =
         (form.type === "Sick Leave" && durationDays > 4) ||
         form.type === "Maternity Leave" ||
         form.type === "Paternity Leave";
 
-    // Show document upload for any sick leave, but only require it for >4 days
     const showDocumentUpload = 
         form.type === "Sick Leave" ||
         form.type === "Maternity Leave" ||
@@ -83,7 +104,6 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
         form.type !== "" &&
         form.from !== "" &&
         form.to !== "" &&
-        form.empId !== "" &&
         form.reason !== "" &&
         durationDays > 0 &&
         (!isDocumentRequired || form.document !== null);
@@ -110,143 +130,137 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
 
                 {/* Scrollable Content */}
                 <div className="p-6 overflow-y-auto custom-scrollbar">
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                        {/* Name */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
-                            <input
-                                name="name"
-                                value={form.name}
-                                disabled
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-medium text-sm"
-                            />
+                    {isLoading ? (
+                        <div className="flex justify-center py-10">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                         </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                        {/* Role */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Role</label>
-                            <input
-                                name="role"
-                                value={form.role}
-                                disabled
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-medium text-sm"
-                            />
-                        </div>
-
-                        {/* Employee ID */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Employee ID <span className="text-red-500">*</span></label>
-                            <input
-                                type="text"
-                                name="empId"
-                                value={form.empId}
-                                onChange={handleChange}
-                                placeholder="Enter employee ID"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
-                                required
-                            />
-                        </div>
-
-                        {/* Leave Type */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Leave Type <span className="text-red-500">*</span></label>
-                            <select
-                                name="type"
-                                onChange={handleChange}
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm bg-white"
-                                required
-                            >
-                                <option value="">Select Category</option>
-                                <option value="Casual Leave">Casual Leave</option>
-                                <option value="Sick Leave">Sick Leave</option>
-                                <option value="Maternity Leave">Maternity Leave</option>
-                                <option value="Paternity Leave">Paternity Leave</option>
-                            </select>
-                        </div>
-
-                        {/* Dates */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">From Date <span className="text-red-500">*</span></label>
-                            <input
-                                type="date"
-                                name="from"
-                                min={today}
-                                onChange={handleChange}
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">To Date <span className="text-red-500">*</span></label>
-                            <input
-                                type="date"
-                                name="to"
-                                min={form.from || today}
-                                onChange={handleChange}
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
-                                required
-                            />
-                        </div>
-
-                        {/* Duration (Read-only) */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Duration</label>
-                            <input
-                                value={calculateDuration()}
-                                disabled
-                                placeholder="Select dates to calculate duration"
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-medium text-sm"
-                            />
-                        </div>
-
-                        {/* Reason */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Reason <span className="text-red-500">*</span></label>
-                            <textarea
-                                name="reason"
-                                rows={3}
-                                onChange={handleChange}
-                                placeholder="Please describe the reason for your leave..."
-                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm resize-none"
-                                required
-                            />
-                        </div>
-
-                        {/* Document Upload */}
-                        {showDocumentUpload && (
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                    Upload Document 
-                                    {isDocumentRequired && <span className="text-red-500">*</span>}
-                                    {form.type === "Sick Leave" && !isDocumentRequired && (
-                                        <span className="text-xs text-gray-500 ml-1">(Optional for 4 days or less)</span>
-                                    )}
-                                </label>
-                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-gray-50 transition cursor-pointer relative">
-                                    <input
-                                        type="file"
-                                        name="document"
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                        onChange={handleFileChange}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        required={isDocumentRequired}
-                                    />
-                                    <FiUploadCloud className="w-8 h-8 text-blue-500 mb-2" />
-                                    <p className="text-sm font-medium text-gray-700">
-                                        {form.document ? form.document.name : "Click to upload or drag and drop"}
-                                    </p>
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        {isDocumentRequired 
-                                            ? "Document is required for this leave type" 
-                                            : form.type === "Sick Leave"
-                                                ? "Document is optional (recommended)"
-                                                : "Document is required"}
-                                    </p>
-                                </div>
+                            {/* Name */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+                                <input
+                                    name="name"
+                                    value={form.name}
+                                    disabled
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-medium text-sm"
+                                />
                             </div>
-                        )}
-                    </form>
+
+                            {/* Role */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Role</label>
+                                <input
+                                    name="role"
+                                    value={form.role}
+                                    disabled
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-medium text-sm"
+                                />
+                            </div>
+
+                            {/* Employee ID */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Employee ID</label>
+                                <input
+                                    type="text"
+                                    name="empId"
+                                    value={form.empId}
+                                    disabled
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-medium text-sm"
+                                />
+                            </div>
+
+                            {/* Leave Type */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Leave Type <span className="text-red-500">*</span></label>
+                                <select
+                                    name="type"
+                                    value={form.type}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm bg-white"
+                                    required
+                                >
+                                    <option value="">Select Category</option>
+                                    <option value="Casual Leave">Casual Leave</option>
+                                    <option value="Sick Leave">Sick Leave</option>
+                                    <option value="Maternity Leave">Maternity Leave</option>
+                                    <option value="Paternity Leave">Paternity Leave</option>
+                                </select>
+                            </div>
+
+                            {/* Dates */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">From Date <span className="text-red-500">*</span></label>
+                                <input
+                                    type="date"
+                                    name="from"
+                                    min={today}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">To Date <span className="text-red-500">*</span></label>
+                                <input
+                                    type="date"
+                                    name="to"
+                                    min={form.from || today}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm"
+                                    required
+                                />
+                            </div>
+
+                            {/* Duration */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Duration</label>
+                                <input
+                                    value={calculateDuration()}
+                                    disabled
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-600 font-medium text-sm"
+                                />
+                            </div>
+
+                            {/* Reason */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Reason <span className="text-red-500">*</span></label>
+                                <textarea
+                                    name="reason"
+                                    rows={3}
+                                    onChange={handleChange}
+                                    placeholder="Please describe the reason for your leave..."
+                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm resize-none"
+                                    required
+                                />
+                            </div>
+
+                            {/* Document Upload */}
+                            {showDocumentUpload && (
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Upload Document 
+                                        {isDocumentRequired && <span className="text-red-500">*</span>}
+                                    </label>
+                                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-gray-50 transition cursor-pointer relative">
+                                        <input
+                                            type="file"
+                                            name="document"
+                                            accept=".pdf,.jpg,.jpeg,.png"
+                                            onChange={handleFileChange}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            required={isDocumentRequired}
+                                        />
+                                        <FiUploadCloud className="w-8 h-8 text-blue-500 mb-2" />
+                                        <p className="text-sm font-medium text-gray-700">
+                                            {form.document ? form.document.name : "Click to upload or drag and drop"}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </form>
+                    )}
                 </div>
 
                 {/* Footer actions */}
@@ -258,16 +272,15 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
                         Cancel
                     </button>
                     <button
-                        onClick={handleSubmit as any}
-                        disabled={!isFormValid}
-                        className={`px-6 py-2.5 rounded-lg text-sm font-medium text-white shadow-lg shadow-blue-500/30 transition-all transform active:scale-95
-                    ${!isFormValid ? "bg-gray-400 cursor-not-allowed shadow-none" : "bg-blue-600 hover:bg-blue-700"}
-                `}
+                        onClick={handleSubmit}
+                        disabled={!isFormValid || isLoading}
+                        className={`px-6 py-2.5 rounded-lg text-sm font-medium text-white shadow-lg transition-all transform active:scale-95
+                        ${!isFormValid || isLoading ? "bg-gray-400 cursor-not-allowed shadow-none" : "bg-blue-600 hover:bg-blue-700"}
+                    `}
                     >
                         Submit Application
                     </button>
                 </div>
-
             </div>
         </div>
     );
