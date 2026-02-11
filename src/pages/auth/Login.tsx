@@ -50,19 +50,31 @@ const Login: React.FC = () => {
         localStorage.setItem("access", response.data.access);
         localStorage.setItem("refresh", response.data.refresh);
         localStorage.setItem("userName", response.data.username);
-        localStorage.setItem("role", response.data.role); // REQUIRED to fix redirection issue
- 
-        // Update Redux state
+        if (response.data.role === "admin" || response.data.role === "hr") {
+          navigate(`/hr/dashboard`);
+        } else if (response.data.role === "tl") {
+          navigate(`/employee/dashboard`);
+        } else if (response.data.role === "employee" || response.data.role === "intern") {
+          navigate(`/employee/dashboard`);
+        } else if (response.data.role === "dm") {
+          navigate(`/dm/dashboard`);
+        } else if (response.data.role === "pm") {
+          navigate(`/pm/dashboard`);
+        }
         dispatch(setUserData({
           token: response.data.access,
           role: response.data.role,
           userName: response.data.username
         }));
- 
-        // Success Feedback
+
+        // Show success toast with username
         showLoginSuccess(response.data.username);
- 
-        // Save User ID metadata
+
+        // Debug log to check available fields
+        console.log("Login Response Data:", response.data);
+
+
+        // Save User ID/Employee ID (Adjust field name based on debug log if needed: id, user_id, employee_id)
         if (response.data.id) {
           localStorage.setItem("userId", response.data.id);
         } else if (response.data.employee_id) {
@@ -74,31 +86,11 @@ const Login: React.FC = () => {
         if (response.data.emp_id) {
           localStorage.setItem("empId", response.data.emp_id);
         }
- 
-        // Role-based Navigation
-        const role = response.data.role.toLowerCase();
-        if (role === "admin" || role === "hr") {
-          navigate(`/hr/dashboard`);
-        } else if (role === "tl" || role === "employee" || role === "intern") {
-          navigate(`/employee/dashboard`);
-        } else if (role === "dm") {
-          navigate(`/dm/dashboard`);
-        } else if (role === "pm") {
-          navigate(`/pm/dashboard`);
-        }
+
       }
- 
-    } catch (error: any) {
-      // Improved error handling for Toastify
-      if (error.response) {
-        // Handle specific server error messages if available
-        const errorMsg = error.response.data?.detail || "Invalid credentials. Please check your email and password.";
-        showLoginError(errorMsg);
-      } else if (error.request) {
-        showLoginError("No response from server. Please check your connection.");
-      } else {
-        showLoginError("An unexpected error occurred during login.");
-      }
+
+    } catch (error) {
+      showLoginError("Invalid credentials. Please check your email and password.");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -217,7 +209,13 @@ const Login: React.FC = () => {
                 </button>
               </div>
             </div>
- 
+
+
+
+
+
+
+
             {/* WORK MODE SELECTION */}
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer group">

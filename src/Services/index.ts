@@ -46,27 +46,33 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
  
-    // no response available
     if (!error.response) {
       return Promise.reject(error);
     }
+
+    // Identify if the request was a login attempt
+    // Adjust "/api/login" to match your actual login endpoint string if different
+    const isLoginRequest = originalRequest.url?.includes("login");
  
-    // Unauthorized and not retried before
+    // 1. Unauthorized and not retried before
     if (error.response.status === 401 && !originalRequest._retry) {
+      // If it's a login request, don't try to refresh tokens, just throw the error
+      if (isLoginRequest) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
- 
       const newAccessToken = await refreshAccessToken();
  
       if (newAccessToken) {
         httpClient.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
- 
-        return httpClient(originalRequest); // retry request
+        return httpClient(originalRequest);
       }
     }
  
-    // second 401 or refresh failed → logout
-    if (error.response.status === 401) {
+    // 2. Clear storage and redirect ONLY if it's a 401 AND NOT a login attempt
+    if (error.response.status === 401 && !isLoginRequest) {
       localStorage.clear();
       window.location.href = "/";
     }
@@ -76,4 +82,3 @@ httpClient.interceptors.response.use(
 );
  
 export default httpClient;
-  

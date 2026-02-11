@@ -4,7 +4,7 @@ import { GetMyProfile, UpdateContactDetails } from "../../../../Services/apiHelp
 import { showSuccess, showError } from "../../../../utils/toast";
 
 /* =====================
-   DISPLAY COMPONENT
+    DISPLAY COMPONENT
 ===================== */
 const UnderlineField = ({ label, value }: { label: string; value: string }) => (
   <div className="space-y-1">
@@ -15,7 +15,7 @@ const UnderlineField = ({ label, value }: { label: string; value: string }) => (
 );
 
 /* =====================
-   EDIT FIELD COMPONENT
+    EDIT FIELD COMPONENT
 ===================== */
 const EditLineField = ({
   label,
@@ -79,14 +79,14 @@ const EditLineField = ({
 );
 
 /* =====================
-   PHONE FIELD
+    PHONE FIELD
 ===================== */
 const PhoneNumberField = (props: any) => (
   <EditLineField {...props} type="tel" prefix="+91" />
 );
 
 /* =====================
-   MAIN COMPONENT
+    MAIN COMPONENT
 ===================== */
 const ContactInformation = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -120,7 +120,6 @@ const ContactInformation = () => {
       const response = await GetMyProfile();
       const data = response.data;
 
-      // Map backend flat structure to state
       const state = {
         employeeId: data.emp_id || "",
         firstName: data.first_name || "",
@@ -150,10 +149,13 @@ const ContactInformation = () => {
   const handleChange = (e: any) => {
     const { name, value } = e.target;
 
-    // Validation: Middle Name (Characters only)
-    if (name === "middleName" && !/^[a-zA-Z\s]*$/.test(value)) return;
+    // ✅ Validation: Names (Characters only)
+    const nameFields = ["firstName", "middleName", "lastName"];
+    if (nameFields.includes(name)) {
+      if (!/^[a-zA-Z\s]*$/.test(value)) return;
+    }
 
-    // ✅ FIXED: Alternative Number (Numbers only & Max 10 Digits)
+    // ✅ Validation: Alternative Number (Numbers only & Max 10 Digits)
     if (name === "alternativeNumber") {
       if (!/^\d{0,10}$/.test(value)) return;
     }
@@ -181,14 +183,11 @@ const ContactInformation = () => {
       return;
     }
 
-    // Prepare payload matching backend keys
     const payload = {
       middle_name: dataState.middleName,
       alternate_number: dataState.alternativeNumber,
       blood_group: dataState.bloodGroup,
       marital_status: dataState.maritalStatus,
-      // Add personal_email if your API allows updating it here
-      // personal_email: dataState.personalMail 
     };
 
     try {
@@ -206,9 +205,6 @@ const ContactInformation = () => {
     return <div className="p-8 text-center text-gray-500">Loading Contact Information...</div>;
   }
 
-  /* =====================
-       RENDER
-   ===================== */
   return (
     <form onSubmit={handleSubmit} className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl">
       <div className="flex justify-between items-center mb-6">
@@ -231,15 +227,10 @@ const ContactInformation = () => {
             <EditLineField label="First Name" name="firstName" value={dataState.firstName} disabled />
             <EditLineField label="Middle Name" name="middleName" value={dataState.middleName} onChange={handleChange} />
             <EditLineField label="Last Name" name="lastName" value={dataState.lastName} disabled />
-            
-            {/* <EditLineField label="Work Email" name="workMail" value={dataState.workMail} disabled /> */}
             <EditLineField label="Personal Email" name="personalMail" value={dataState.personalMail} disabled />
-            
             <PhoneNumberField label="Phone Number" name="phone" value={dataState.phone} disabled />
             <PhoneNumberField label="Alternative Number" name="alternativeNumber" value={dataState.alternativeNumber} onChange={handleChange} />
-            
             <EditLineField label="Date of Birth" name="dob" value={dataState.dob} disabled />
-            
             <EditLineField 
               label="Blood Group" 
               name="bloodGroup" 
@@ -247,9 +238,7 @@ const ContactInformation = () => {
               onChange={handleChange}
               options={["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]}
             />
-            
             <EditLineField label="Gender" name="gender" value={dataState.gender} disabled />
-            
             <EditLineField
               label="Marital Status"
               name="maritalStatus"
@@ -263,7 +252,6 @@ const ContactInformation = () => {
             <UnderlineField label="First Name" value={dataState.firstName} />
             <UnderlineField label="Middle Name" value={dataState.middleName} />
             <UnderlineField label="Last Name" value={dataState.lastName} />
-            {/* <UnderlineField label="Work Email" value={dataState.workMail} /> */}
             <UnderlineField label="Personal Email" value={dataState.personalMail} />
             <UnderlineField label="Phone Number" value={dataState.phone ? `+91 ${dataState.phone}` : "N/A"} />
             <UnderlineField label="Alternative Number" value={dataState.alternativeNumber ? `+91 ${dataState.alternativeNumber}` : "N/A"} />

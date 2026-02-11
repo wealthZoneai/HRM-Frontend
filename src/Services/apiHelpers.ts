@@ -4,10 +4,54 @@ import server from "./index";
 export const PrivateAxios = server;
 
 // ==========================================
+// 📄 TYPES & INTERFACES
+// ==========================================
+
+export interface IIdentificationBody {
+  aadhaar_number?: string;
+  aadhaar_front_image?: File | null;
+  aadhaar_back_image?: File | null;
+  pan?: string | null;
+  pan_front_image?: File | null;
+  pan_back_image?: File | null;
+  passport_number?: string;
+  passport_front_image?: File | null;
+  passport_back_image?: File | null;
+  // ✅ Bank Fields included to allow persistence
+  bank_name?: string;
+  account_number?: string;
+  ifsc_code?: string;
+  branch?: string;
+  account_holder_name?: string;
+}
+
+export interface ISensitiveData {
+  account_holder_name: string;
+  aadhaar_number: string | null;
+  aadhaar_front_image_url: string | null;
+  aadhaar_back_image_url: string | null;
+  pan: string | null;
+  pan_front_image_url: string | null;
+  pan_back_image_url: string | null;
+  passport_number: string | null;
+  passport_front_image_url: string | null;
+  passport_back_image_url: string | null;
+  bank_name: string;
+  ifsc_code: string;
+  account_number: string;
+  branch: string;
+}
+
+export interface ISensitiveResponse {
+  temporary: boolean;
+  data: ISensitiveData;
+}
+
+// ==========================================
 // 🔐 AUTHENTICATION
 // ==========================================
 
-export function loginUser({ username, password }: ILoginUserBody) {
+export function loginUser({ username, password }: any) {
   const body = { username, password };
   return server.post(endpoints.login, body, { requiresAuth: false });
 }
@@ -17,7 +61,7 @@ export function ForgotPassword(email: string) {
   return server.post(endpoints.forgotPassword, body, { requiresAuth: false })
 }
 
-export function ResetPassword({ email, otp, new_password, confirm_password }: { email: string, otp: string, new_password: string, confirm_password: string }) {
+export function ResetPassword({ email, otp, new_password, confirm_password }: any) {
   const body = { email, otp, new_password, confirm_password };
   return server.post(endpoints.resetPassword, body, { requiresAuth: false })
 }
@@ -26,7 +70,6 @@ export function ResetPassword({ email, otp, new_password, confirm_password }: { 
 // 👔 HR SERVICES
 // ==========================================
 
-// --- GET REQUESTS ---
 export const GetAllEmployes = (params?: any) => {
   return server.get(endpoints.employees, {
     requiresAuth: true,
@@ -63,9 +106,7 @@ export const gettotalAttendance = () => {
   return server.get(endpoints.totalAttendance, { requiresAuth: true });
 };
 
-
-// --- POST REQUESTS (CREATE) ---
-export function CreateEmployes(body: ICreateEmployesBody) {
+export function CreateEmployes(body: any) {
   return server.post(endpoints.createEmployes, body, { requiresAuth: true });
 }
 
@@ -80,26 +121,27 @@ export const CreatePolicy = (data: any) => {
   });
 };
 
+export const updatePolicy = (id: string | number, data: any) => {
+  return server.patch(endpoints.updatePolicy(id), data, { requiresAuth: true });
+};
+
+
+export const deletePolicy = (id: string | number) => {
+  return server.delete(endpoints.deletePolicy(id), { requiresAuth: true });
+};
+
 export function HRLeaveAction(id: string | number, action: 'approve' | 'reject', remarks: string = "") {
   return server.post((endpoints as any).hrLeaveAction(id), { action, remarks }, { requiresAuth: true });
 }
 
-
-// --- UPDATE REQUESTS (EDIT) ---
-// 1. Update Job Description & Bank Details
 export function UpdateEmployeeJobAndBank(id: string | number, body: any) {
-  // Uses PATCH to allow partial updates (e.g., only bank details)
-  return server.patch(endpoints.updateEmployeeJobBank(id), body, {
-    requiresAuth: true,
-  });
+  return server.patch(endpoints.updateEmployeeJobBank(id), body, { requiresAuth: true });
 }
 
-// 2. Update Role, Name & Department
 export function UpdateEmployeeRole(id: string | number, body: any) {
   return server.patch((endpoints as any).updateEmployeeRole(id), body, { requiresAuth: true });
 }
 
-// 3. Update Contact Information (HR Edit)
 export function UpdateEmployeeContact(id: string | number, body: any) {
   return server.patch((endpoints as any).updateEmployeeContact(id), body, { requiresAuth: true });
 }
@@ -108,22 +150,14 @@ export const UpdateAnnouncement = (id: string | number, data: any) => {
   return server.put((endpoints as any).updateAnnouncement(id), data, { requiresAuth: true });
 }
 
-
-// --- DELETE REQUESTS ---
 export const DeleteAnnouncement = (id: string | number) => {
   return server.delete((endpoints as any).deleteAnnouncement(id), { requiresAuth: true });
 };
-
-export const deletePolicy = (id: string | number) => {
-  return server.delete((endpoints as any).deletePolicy(id), { requiresAuth: true });
-};
-
 
 // ==========================================
 // 🚀 TEAM LEAD (TL) 
 // ==========================================
 
-// --- GET REQUESTS ---
 export function GetTeamMembers() {
   return server.get(endpoints.teamMembers, { requiresAuth: true });
 }
@@ -144,8 +178,6 @@ export const GetTLModules = () => {
   return server.get(endpoints.tlModules, { requiresAuth: true });
 };
 
-
-// --- POST REQUESTS ---
 export const CreateProject = (data: any) => {
   return server.post(endpoints.createProject, data, { requiresAuth: true });
 };
@@ -166,14 +198,37 @@ export function TLLeaveAction(id: string | number, action: 'approve' | 'reject',
   return server.post((endpoints as any).tlLeaveAction(id), { action, remarks }, { requiresAuth: true });
 }
 
-
 // ==========================================
-// 👤 EMPLOYEE SERVICES
+// 👤 EMPLOYEE SERVICES (Self-Service)
 // ==========================================
 
-// --- GET REQUESTS ---
 export function GetMyProfile() {
   return server.get(endpoints.myProfile, { requiresAuth: true });
+}
+
+export function GetMySensitiveData() {
+  return server.get<ISensitiveResponse>(endpoints.mySensitiveData, { requiresAuth: true });
+}
+
+export function GetMyIdentification() {
+  return server.get(endpoints.myIdentification, { requiresAuth: true });
+}
+
+/**
+ * Handles multipart/form-data for both Files and Strings
+ */
+export function UpdateMyIdentification(data: IIdentificationBody) {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value instanceof File ? value : String(value));
+    }
+  });
+
+  return server.patch(endpoints.myIdentification, formData, {
+    requiresAuth: true,
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 }
 
 export function GetMyLeaves() {
@@ -222,8 +277,6 @@ export const getCalendarEvents = (year?: number, month?: number) => {
   return server.get(url, { requiresAuth: true });
 };
 
-
-// --- POST REQUESTS ---
 export function ClockIn() {
   return server.post(endpoints.clockIn, {}, { requiresAuth: true });
 }
@@ -243,8 +296,6 @@ export const markAllNotificationsRead = () => {
   return server.post(endpoints.markNotificationsRead, {}, { requiresAuth: true });
 };
 
-
-// --- UPDATE REQUESTS ---
 export function UpdateMyProfileImage(formData: FormData) {
   return server.patch(endpoints.myProfileContact, formData, {
     requiresAuth: true,
@@ -255,7 +306,6 @@ export function UpdateMyProfileImage(formData: FormData) {
 export function UpdateContactDetails(body: any) {
   return server.patch(endpoints.myProfileContact, body, { requiresAuth: true });
 }
-
 
 // ==========================================
 // 🛠 UTILITIES
