@@ -5,7 +5,7 @@
 // ==============================
 export const DEPARTMENTS = [
   "Python",
-  "Testing",
+  "QA",
   "Java",
   "UI/UX",
   "React",

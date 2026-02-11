@@ -54,6 +54,38 @@ export default function EmployeeDashboard() {
     fetchMonthlyAttendance();
   }, []);
 
+  /* ---------------- AUTO CHECKOUT AFTER 12 HOURS ---------------- */
+  useEffect(() => {
+    // Only proceed if clocked in but not yet clocked out
+    if (!clockInTime || clockOutTime) return;
+
+    const checkAndAutoCheckout = async () => {
+      try {
+        const clockInDate = new Date(clockInTime);
+        const now = new Date();
+        const elapsedMilliseconds = now.getTime() - clockInDate.getTime();
+        const elapsedHours = elapsedMilliseconds / (1000 * 60 * 60);
+
+        // Auto-checkout if more than 12 hours and not already loading
+        if (elapsedHours > 12 && !loading) {
+          console.warn(`Auto-checkout triggered: ${elapsedHours.toFixed(2)} hours elapsed`);
+          showWarning(
+            "You have been clocked in for more than 12 hours. Auto-checking you out for safety."
+          );
+          await handleClockOut();
+        }
+      } catch (error) {
+        console.error("Error during auto-checkout check:", error);
+      }
+    };
+
+    // Check immediately and then every minute
+    checkAndAutoCheckout();
+    const autoCheckoutInterval = setInterval(checkAndAutoCheckout, 60000); // Check every 1 minute
+
+    return () => clearInterval(autoCheckoutInterval);
+  }, [clockInTime, clockOutTime, loading, dispatch]);
+
   /* ---------------- HELPERS ---------------- */
   const formatTime = (isoString: string | null) => {
     if (!isoString) return "--:--";
