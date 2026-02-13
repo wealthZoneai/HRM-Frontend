@@ -244,7 +244,7 @@ const ContactInformation = () => {
               name="maritalStatus"
               value={dataState.maritalStatus}
               onChange={handleChange}
-              options={["Single", "Married", "Divorced", "Widowed"]}
+              options={["Single", "Married", "Divorced"]}
             />
           </>
         ) : (

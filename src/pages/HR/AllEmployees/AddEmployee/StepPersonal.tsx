@@ -96,7 +96,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
   // Strictly block dates > maxDate (Handles manual typing of future dates)
   const handleDobChange = (v: string) => {
     if (v && v > maxDate) {
-      return; 
+      return;
     }
     dispatch({ type: "SET_PERSONAL", payload: { dob: v } });
   };
@@ -113,6 +113,17 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
 
     return false;
   };
+
+  const bloodGroupOptions = [
+    "A+",
+    "A-",
+    "B+",
+    "B-",
+    "O+",
+    "O-",
+    "AB+",
+    "AB-",
+  ];
 
   return (
     <div className="w-full">
@@ -199,23 +210,37 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             }}
           />
 
-          <TextField
-            label="Date of Birth"
-            type="date"
-            required
-            value={personal.dob}
-            error={showErrors && !personal.dob}
-            onChange={handleDobChange}
-            max={maxDate}
-          />
+          {/* Date of Birth (Faded out) */}
+          <div className="opacity-50 ">
+            <TextField
+              label="Date of Birth"
+              type="date"
+              required
+              value={personal.dob}
+              error={showErrors && !personal.dob}
+              onChange={handleDobChange}
+              max={maxDate}
+            />
+          </div>
 
-          <TextField
+          {/* UPDATED: Blood Group is now OPTIONAL (removed required and error props) */}
+          <SelectField
             label="Blood Group"
             value={personal.bloodGroup}
             onChange={(v: string) =>
-              dispatch({ type: "SET_PERSONAL", payload: { bloodGroup: v } })
+              dispatch({
+                type: "SET_PERSONAL",
+                payload: { bloodGroup: v },
+              })
             }
-          />
+          >
+            <option value="">Select</option>
+            {bloodGroupOptions.map((bg) => (
+              <option key={bg} value={bg}>
+                {bg}
+              </option>
+            ))}
+          </SelectField>
 
           <SelectField
             label="Gender"
@@ -232,7 +257,6 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             <option value="other">Other</option>
           </SelectField>
 
-          {/* UPDATED MARITAL STATUS OPTIONS */}
           <SelectField
             label="Marital Status"
             value={personal.maritalStatus}
