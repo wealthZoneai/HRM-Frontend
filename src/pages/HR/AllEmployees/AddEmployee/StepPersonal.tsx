@@ -1,5 +1,8 @@
 import { useAddEmployee } from "./AddEmployeeContext";
 
+/* ==========================
+   Reusable Components
+========================== */
 const TextField = ({
   label,
   value,
@@ -34,7 +37,6 @@ const TextField = ({
         {...props}
       />
     </div>
-    {/* Display custom error string if provided */}
     {error && (
       <span className="text-xs text-red-500">
         {typeof error === "string" ? error : "This field is required"}
@@ -78,6 +80,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
   const { state, dispatch } = useAddEmployee();
   const personal = state.contact;
 
+  // Calculate Max Date (Today - 18 Years)
   const getMaxDob = () => {
     const today = new Date();
     const maxDate = new Date(
@@ -90,10 +93,10 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
 
   const maxDate = getMaxDob();
 
+  // Strictly block dates > maxDate (Handles manual typing of future dates)
   const handleDobChange = (v: string) => {
     if (v && v > maxDate) {
-      alert("Employee must be at least 18 years old.");
-      return;
+      return; 
     }
     dispatch({ type: "SET_PERSONAL", payload: { dob: v } });
   };
@@ -101,7 +104,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
   // --- VALIDATION LOGIC ---
   const getEmailError = () => {
     if (!showErrors) return false;
-    if (!personal.personalEmail) return true; // Returns "This field is required" (default)
+    if (!personal.personalEmail) return true;
 
     // Check for @gmail.com
     if (!personal.personalEmail.toLowerCase().includes("@gmail.com")) {
@@ -149,7 +152,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             }}
           />
 
-          {/* UPDATED EMAIL FIELD */}
+          {/* Email Field */}
           <TextField
             label="Personal Email"
             value={personal.personalEmail}
@@ -229,6 +232,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             <option value="other">Other</option>
           </SelectField>
 
+          {/* UPDATED MARITAL STATUS OPTIONS */}
           <SelectField
             label="Marital Status"
             value={personal.maritalStatus}
@@ -242,7 +246,6 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
             <option value="single">Single</option>
             <option value="married">Married</option>
             <option value="divorced">Divorced</option>
-            <option value="widowed">Widowed</option>
           </SelectField>
         </div>
       </div>

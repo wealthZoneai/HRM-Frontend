@@ -12,11 +12,11 @@ const endpoints = {
     // HR ENDPOINTS
     // ==========================================
     // --- GET ---
-    employees: 'api/employees/', // List all employees
+    employees: 'api/employees/', 
     hrDashboardStats: 'api/hr/dashboard/stats/',
     hrLeaveDashboardStats: 'api/leave-dashboard/stats/',
     hrMonthlyAttendance: "api/attendance/",
-    hrLeaves: 'api/leaves/', // All leave requests
+    hrLeaves: 'api/leaves/', 
     hrAnnouncements: '/api/announcement/list/',
     totalAttendance: "api/attendance/days/",
 

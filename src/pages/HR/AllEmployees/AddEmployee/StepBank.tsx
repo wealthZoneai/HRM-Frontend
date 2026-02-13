@@ -52,25 +52,27 @@ const StepBank = ({ showErrors }: { showErrors: boolean }) => {
     <div className="w-full">
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
           {/* BANK NAME */}
           <Field label="Bank Name" error={showErrors && !bank.bankName}>
-            <select
+            <input
+              type="text"
+              placeholder="Enter Bank Name"
               value={bank.bankName || ""}
               onChange={(e) => setBankField("bankName", e.target.value)}
-              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 
-              ${showErrors && !bank.bankName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500 border-gray-300"}`}
-            >
-              <option value="">Select Bank</option>
-              <option value="Bank Of Baroda">Bank of Baroda</option>
-              <option value="HDFC">HDFC</option>
-              <option value="ICICI">ICICI</option>
-              <option value="SBI">State Bank of India</option>
-            </select>
+              className={`w-full px-4 py-2 bg-white border rounded-lg ${placeholderStyle} shadow-sm focus:outline-none focus:ring-2
+    ${
+      showErrors && !bank.bankName
+        ? "border-red-500 focus:ring-red-500"
+        : "border-gray-300 focus:ring-blue-500"
+    }`}
+            />
           </Field>
 
           {/* ACCOUNT HOLDER NAME */}
-          <Field label="Account Holder Name" error={showErrors && !bank.accountName}>
+          <Field
+            label="Account Holder Name"
+            error={showErrors && !bank.accountName}
+          >
             <input
               value={bank.accountName || ""}
               placeholder="Enter Account Holder Name"
@@ -98,7 +100,10 @@ const StepBank = ({ showErrors }: { showErrors: boolean }) => {
           </Field>
 
           {/* ACCOUNT NUMBER */}
-          <Field label="Account Number" error={showErrors && !bank.accountNumber}>
+          <Field
+            label="Account Number"
+            error={showErrors && !bank.accountNumber}
+          >
             <input
               value={bank.accountNumber || ""}
               onChange={(e) => {
@@ -106,7 +111,11 @@ const StepBank = ({ showErrors }: { showErrors: boolean }) => {
                 if (/^\d*$/.test(v)) setBankField("accountNumber", v);
               }}
               disabled={!bank.bankName}
-              placeholder={!bank.bankName ? "Select Bank Name first" : "Enter Account Number"}
+              placeholder={
+                !bank.bankName
+                  ? "Select Bank Name First"
+                  : "Enter Account Number"
+              }
               className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 ${placeholderStyle}
               ${showErrors && !bank.accountNumber ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500 border-gray-300"}
               ${!bank.bankName ? "bg-gray-100 cursor-not-allowed text-gray-400" : ""}`}
@@ -114,7 +123,10 @@ const StepBank = ({ showErrors }: { showErrors: boolean }) => {
           </Field>
 
           {/* CONFIRM ACCOUNT NUMBER */}
-          <Field label="Confirm Account Number" error={showErrors && !bank.confirmAccountNumber}>
+          <Field
+            label="Confirm Account Number"
+            error={showErrors && !bank.confirmAccountNumber}
+          >
             <input
               value={bank.confirmAccountNumber || ""}
               onChange={(e) => {
@@ -122,7 +134,11 @@ const StepBank = ({ showErrors }: { showErrors: boolean }) => {
                 if (/^\d*$/.test(v)) setBankField("confirmAccountNumber", v);
               }}
               disabled={!bank.bankName}
-              placeholder={!bank.bankName ? "Select Bank Name first" : "Confirm Account Number"}
+              placeholder={
+                !bank.bankName
+                  ? "Select Bank Name First"
+                  : "Confirm Account Number"
+              }
               className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 ${placeholderStyle}
               ${showErrors && !bank.confirmAccountNumber ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500 border-gray-300"}
               ${!bank.bankName ? "bg-gray-100 cursor-not-allowed text-gray-400" : ""}`}
@@ -133,12 +149,20 @@ const StepBank = ({ showErrors }: { showErrors: boolean }) => {
           <Field label="IFSC Code" error={showErrors && !bank.ifscCode}>
             <input
               value={bank.ifscCode || ""}
-              onChange={(e) => setBankField("ifscCode", e.target.value)}
+              onChange={(e) =>
+                setBankField("ifscCode", e.target.value.toUpperCase())
+              }
               disabled={!bank.bankName}
-              placeholder={!bank.bankName ? "Select Bank Name first" : "Enter IFSC Code"}
-              className={`w-full px-4 py-2 uppercase bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 ${placeholderStyle}
-              ${showErrors && !bank.ifscCode ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500 border-gray-300"}
-              ${!bank.bankName ? "bg-gray-100 cursor-not-allowed text-gray-400" : ""}`}
+              placeholder={
+                !bank.bankName ? "Select Bank Name First" : "Enter IFSC Code"
+              }
+              className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 ${placeholderStyle}
+    ${
+      showErrors && !bank.ifscCode
+        ? "border-red-500 focus:ring-red-500"
+        : "focus:ring-blue-500 border-gray-300"
+    }
+    ${!bank.bankName ? "bg-gray-100 cursor-not-allowed text-gray-400" : ""}`}
             />
           </Field>
         </div>

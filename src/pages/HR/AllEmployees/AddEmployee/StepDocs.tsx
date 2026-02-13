@@ -13,7 +13,6 @@ const StepDocs: React.FC = () => {
     aadharBack: "",
     panCard: "",
     panCardBack: "",
-    idCard: "",
   });
 
   const validate = (key: string, file: File | null) => {
@@ -23,7 +22,7 @@ const StepDocs: React.FC = () => {
     if (!file) {
       // If file is removed, we clear the error for now to avoid bad UX
       msg = "";
-    } else if (["aadharFront", "aadharBack", "panCard", "panCardBack", "idCard"].includes(key)) {
+    } else if (["aadharFront", "aadharBack", "panCard", "panCardBack"].includes(key)) {
       // logic for other validations if needed, for now just clear if file exists
       msg = "";
     }
@@ -222,7 +221,7 @@ const StepDocs: React.FC = () => {
 
           {/* PAN Card Back */}
           <UploadBox
-            label="PAN Card (Back) (Optional)"
+            label="PAN Card (Back)"
             value={docs.panCardBack}
             accept="image/png,image/jpeg,image/jpg,application/pdf"
             error={errors.panCardBack}
@@ -236,17 +235,6 @@ const StepDocs: React.FC = () => {
             accept="image/png,image/jpeg,image/jpg,application/pdf"
             onChange={(f) => handleFile(f, "passport")}
           />
-
-          {/* Company ID Card */}
-          <UploadBox
-            label="Company ID Card"
-            value={docs.idCard}
-            accept="image/png,image/jpeg,image/jpg,application/pdf"
-            error={errors.idCard}
-            onChange={(f) => handleFile(f, "idCard")}
-          />
-
-
         </div>
       </div>
     </div>
