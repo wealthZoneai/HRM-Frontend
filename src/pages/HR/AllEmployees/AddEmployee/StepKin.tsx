@@ -11,8 +11,8 @@ const InputField = ({
   type = "text",
   error,
   max,
-  disabled, // Added disabled prop
-  required, // Added required
+  disabled,
+  required,
 }: {
   label: string;
   value: string | undefined;
@@ -30,7 +30,7 @@ const InputField = ({
     <input
       type={type}
       max={max}
-      disabled={disabled} // Applied disabled
+      disabled={disabled}
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       className={`w-full px-4 py-2 bg-white border rounded-lg shadow-sm
@@ -90,7 +90,17 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
         break;
 
       case "startDate":
-        if (!value.trim()) errorMsg = "Start date is required";
+        if (!value.trim()) {
+          errorMsg = "Start date is required";
+        } else {
+          // Extra validation: Check if date is in the future
+          const selectedDate = new Date(value);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Normalize time
+          if (selectedDate > today) {
+            errorMsg = "Date cannot be in the future";
+          }
+        }
         break;
 
       case "jobTitle":
@@ -112,7 +122,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
       UPDATE FIELD + VALIDATE
   -------------------------- */
   const updateField = (field: string, value: string) => {
-    // UPDATED: Auto-select employment type if Role is Intern
+    // Auto-select employment type if Role is Intern
     if (field === "role" && value === "intern") {
       dispatch({ type: "SET_KIN", payload: { role: value, employmentType: "internship" } });
       validate("role", value);
@@ -120,9 +130,9 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
       return;
     }
 
-    // UPDATED: Clear Team Lead if Role is TL
+    // Clear Team Lead if Role is TL
     if (field === "role" && value === "tl") {
-      dispatch({ type: "SET_KIN", payload: { role: value, teamLead: "" } }); // Clear team lead
+      dispatch({ type: "SET_KIN", payload: { role: value, teamLead: "" } });
       validate("role", value);
       setErrors(prev => ({ ...prev, role: "" }));
       return;
@@ -138,7 +148,7 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* --- NEW ROLE DROPDOWN --- */}
+          {/* --- ROLE DROPDOWN (UPDATED) --- */}
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium text-sm">
               Role <span className="text-red-500">*</span>
@@ -154,11 +164,10 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
             >
               <option value="">Select Role</option>
               <option value="employee">Employee</option>
-              <option value="hr">HR</option>
-              <option value="delivery_manager">Delivery Manager</option>
-              <option value="project_manager">Project Manager</option>
-              <option value="tl">Team Leader</option>
               <option value="intern">Intern</option>
+              <option value="tl">Team Leader</option>
+              <option value="hr">HR</option>
+              <option value="management">Management</option>
             </select>
             {showErrors && !kin.role && (
               <span className="text-red-500 text-xs">Role is required</span>
@@ -244,7 +253,6 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
                 <option value="">Select Type</option>
                 <option value="full_time">Full time</option>
                 <option value="contract">Contract</option>
-                {kin.role !== "tl" && <option value="internship">Intern</option>}
               </select>
             )}
             {showErrors && !kin.employmentType && (
@@ -262,8 +270,16 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
               errors.startDate ||
               (showErrors && !kin.startDate ? "Start date is required" : "")
             }
-            max={new Date().toISOString().split("T")[0]}
-            onChange={(v) => updateField("startDate", v)}
+            // Max attribute handles the UI Calendar blocker
+            max={new Date().toISOString().split("T")[0]} 
+            
+            // This Logic handles the manual typing blocker
+            onChange={(v) => {
+              const today = new Date().toISOString().split("T")[0];
+              // If user tries to type a date greater than today, we simply ignore it
+              if (v > today) return; 
+              updateField("startDate", v);
+            }}
           />
 
           {/* LOCATION */}

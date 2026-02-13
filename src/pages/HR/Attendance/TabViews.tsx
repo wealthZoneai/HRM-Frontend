@@ -128,9 +128,10 @@ export const DailyView: React.FC = () => {
   );
 };
 
-// --- MONTHLY VIEW COMPONENT (UPDATED WITH API AGGREGATION) ---
+// --- MONTHLY VIEW COMPONENT (UPDATED) ---
 export const MonthlyView: React.FC<{ onViewLog: (emp: string, month: string, logs: any[]) => void }> = ({ onViewLog }) => {
-  const [selectedDepartment, setSelectedDepartment] = useState(DEPARTMENTS[0]); 
+  // FIX 1: Initialize as empty string to support "Select Department" placeholder
+  const [selectedDepartment, setSelectedDepartment] = useState(""); 
   const [selectedMonth, setSelectedMonth] = useState(MONTHS[0].value); 
   
   const [monthlyAggregatedData, setMonthlyAggregatedData] = useState<any[]>([]);
@@ -194,7 +195,8 @@ export const MonthlyView: React.FC<{ onViewLog: (emp: string, month: string, log
 
   const filteredMonthlyData = useMemo(() => {
     return monthlyAggregatedData.filter(item => {
-      if (selectedDepartment === "Teams") return true;
+      // FIX 2: If selectedDepartment is empty (Select) or "Teams", show all.
+      if (selectedDepartment === "" || selectedDepartment === "Teams") return true;
       return item.department?.toLowerCase() === selectedDepartment.toLowerCase();
     });
   }, [selectedDepartment, monthlyAggregatedData]);
@@ -204,12 +206,14 @@ export const MonthlyView: React.FC<{ onViewLog: (emp: string, month: string, log
       <h3 className="text-xl font-semibold text-gray-800 mb-4">Monthly Summary Overview</h3>
       
       <div className="flex flex-wrap gap-4 mb-6">
+        {/* FIX 3: Added conditional styling and default option */}
         <select 
-          className="border border-gray-300 px-3 py-2 rounded-lg text-gray-700 bg-white shadow-sm capitalize"
+          className={`border px-3 py-2 rounded-lg shadow-sm capitalize ${selectedDepartment === "" ? "text-gray-400" : "text-gray-700"} border-gray-300 bg-white`}
           value={selectedDepartment} 
           onChange={(e) => setSelectedDepartment(e.target.value)}
         >
-          {DEPARTMENTS.map(dept => <option key={dept} value={dept}>{dept}</option>)}
+          <option value="" className="text-gray-400">Select Department</option>
+          {DEPARTMENTS.map(dept => <option key={dept} value={dept} className="text-gray-700">{dept}</option>)}
         </select>
         
         <div className="relative">
@@ -264,7 +268,6 @@ export const MonthlyView: React.FC<{ onViewLog: (emp: string, month: string, log
                       {m.onLeave} <span className="text-xs font-normal text-gray-500">({onLeavePct}%)</span>
                     </td>
                     <td className="text-center">
-                      {/* 👇 THIS CALL MUST PASS 3 ARGUMENTS */}
                       <button onClick={() => onViewLog(m.employee, m.month, m.logs)} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition">View Log</button>
                     </td>
                   </tr>
@@ -287,7 +290,7 @@ export const RecordsView: React.FC = () => {
 
   const [search, setSearch] = useState("");
   
-  // CHANGED: Initialize as empty strings to show "All" by default
+  // Initialize as empty strings to show "All" by default
   const [fromDate, setFromDate] = useState(""); 
   const [toDate, setToDate] = useState("");
 
@@ -295,9 +298,8 @@ export const RecordsView: React.FC = () => {
     try {
       setLoading(true);
       
-      // LOGIC CHANGE:
       // If 'fromDate' is set, use it to determine the month to fetch.
-      // If 'fromDate' is EMPTY, default to the CURRENT DATE (so we fetch the current month's data).
+      // If 'fromDate' is EMPTY, default to the CURRENT DATE.
       const dateObj = fromDate ? new Date(fromDate) : new Date();
       
       const year = dateObj.getFullYear().toString();
@@ -373,7 +375,6 @@ export const RecordsView: React.FC = () => {
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    // Handle filename if dates are empty
     const fileNameDate = fromDate ? `${fromDate}_to_${toDate || 'end'}` : 'Full_Month';
     link.setAttribute("download", `attendance_records_${fileNameDate}.csv`);
     link.style.visibility = "hidden";
@@ -519,4 +520,3 @@ export const RecordsView: React.FC = () => {
     </div>
   );
 };
-

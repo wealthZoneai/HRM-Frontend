@@ -2,10 +2,9 @@ import { Bell, Headset, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import myPic from "../assets/user.png";
-// import { GetMyProfile } from "../Services/apiHelpers"; // Removed to use direct call
 import server from "../Services/index";
 import endpoints from "../Services/endpoints";
-import { getNotifications } from "../Services/apiHelpers"; // Import API
+import { getNotifications } from "../Services/apiHelpers";
 
 interface TopbarProps {
   name: string;
@@ -20,40 +19,34 @@ export default function HrTopbar({ name, id }: TopbarProps) {
   const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
   const helpDropdownRef = useRef<HTMLDivElement>(null);
 
+  // FIX 1: Profile Image - Removed "t: new Date()" cache buster to allow browser caching
   useEffect(() => {
     let active = true;
     let objectUrl: string | null = null;
 
     const fetchImage = async () => {
       try {
-        // Fetch profile directly with cache busting to ensure we get the latest photo URL
+        // Removed `params` to stop forcing a fresh request every time
         const profileRes = await server.get(endpoints.myProfile, {
           requiresAuth: true,
-          params: { t: new Date().getTime() }
         });
 
-        // console.log("HrTopbar: Profile Response", profileRes);
-
         const photoUrl = profileRes.data?.data?.protected_profile_photo_url || profileRes.data?.protected_profile_photo_url;
-        // console.log("HrTopbar: Photo URL", photoUrl);
 
         if (photoUrl) {
-          // Fetch image as Blob with auth headers and cache busting
           const response = await server.get(photoUrl, {
             responseType: "blob",
             requiresAuth: true,
-            params: { t: new Date().getTime() }
+            // Removed cache busting params here as well
           });
 
           if (active) {
             objectUrl = URL.createObjectURL(response.data);
             setImageSrc(objectUrl);
           }
-        } else {
-          // console.log("HrTopbar: No photo URL found, using default.");
         }
       } catch (error) {
-        console.error("HrTopbar: Failed to load profile image", error);
+        // Silent error to prevent console spam
         if (active) setImageSrc(myPic);
       }
     };
@@ -66,22 +59,28 @@ export default function HrTopbar({ name, id }: TopbarProps) {
     };
   }, []);
 
-  // Fetch unread notifications count
+  // FIX 2: Notifications - Removed [location.pathname] and added 60s Interval
   useEffect(() => {
     const fetchUnreadCount = async () => {
       try {
         const res = await getNotifications();
-        // Assuming res.data.data is the list, as seen in Notifications.tsx
         const list = res.data?.data || [];
         const count = list.filter((item: any) => !item.is_read).length;
         setUnreadCount(count);
       } catch (err) {
-        console.error("HrTopbar: Failed to fetch notifications", err);
+        // console.error("HrTopbar: Failed to fetch notifications");
       }
     };
 
+    // 1. Fetch immediately on mount
     fetchUnreadCount();
-  }, [location.pathname]); // Re-fetch when switching pages (e.g. returning from reading notifications)
+
+    // 2. Poll every 60 seconds (instead of on every navigation)
+    const interval = setInterval(fetchUnreadCount, 60000);
+
+    // 3. Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, []); 
 
   // Close help dropdown when clicking outside
   useEffect(() => {
@@ -101,7 +100,6 @@ export default function HrTopbar({ name, id }: TopbarProps) {
   }, [isHelpDropdownOpen]);
 
   const handleNotification = () => {
-    // Toggle between notifications page and dashboard
     if (location.pathname === "/hr/notifications") {
       navigate(-1);
     } else {
@@ -111,10 +109,9 @@ export default function HrTopbar({ name, id }: TopbarProps) {
 
   const handleProfile = () => {
     if (location.pathname === "/hr/profile") {
-      navigate(-1)
-    }
-    else {
-      navigate("/hr/profile")
+      navigate(-1);
+    } else {
+      navigate("/hr/profile");
     }
   };
 
@@ -174,7 +171,6 @@ export default function HrTopbar({ name, id }: TopbarProps) {
                 <button
                   onClick={() => {
                     setIsHelpDropdownOpen(false);
-                    // Navigate or handle IT support action
                     console.log("IT Support clicked");
                   }}
                   className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition flex items-center gap-3"

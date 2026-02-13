@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Pencil, X, Check } from 'lucide-react';
-// Correct relative imports based on your file structure
-import { GetMyProfile, UpdateEmployeeJobAndBank, GetAllEmployes } from '../../../../Services/apiHelpers';
+import {
+    GetMyProfile,
+    UpdateEmployeeJobAndBank,
+    GetAllEmployes
+} from '../../../../Services/apiHelpers';
 import { showSuccess, showError } from '../../../../utils/toast';
 
 // --- Helper Functions ---
@@ -15,10 +18,25 @@ const maskAccountNumber = (accNum: string) => {
     return `${stars}${last4}`;
 };
 
-// Reusable Edit Field
-const EditLineField = ({ label, name, value, onChange }: { label: string, name: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
+// --- Reusable Edit Field ---
+const EditLineField = ({
+    label,
+    name,
+    value,
+    onChange,
+    required = false
+}: {
+    label: string;
+    name: string;
+    value: string;
+    required?: boolean;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => (
     <div className="space-y-1">
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+            {label}
+            {required && <span className="text-red-500">*</span>}
+        </label>
         <input
             type="text"
             name={name}
@@ -29,11 +47,20 @@ const EditLineField = ({ label, name, value, onChange }: { label: string, name: 
     </div>
 );
 
-// Reusable Display Field
-const DetailField = ({ label, value }: { label: string; value: string }) => (
+// --- Reusable Display Field ---
+const DetailField = ({
+    label,
+    value,
+    required = false
+}: {
+    label: string;
+    value: string;
+    required?: boolean;
+}) => (
     <div className="py-2">
-        <label className="block text-sm font-medium text-slate-600">
+        <label className="block text-sm font-medium text-slate-600 flex items-center gap-1">
             {label}
+            {required && <span className="text-red-500">*</span>}
         </label>
         <p className="mt-1 text-sm text-slate-900 font-medium border-b border-slate-300 pb-2 h-9">
             {value || '-'}
@@ -53,9 +80,10 @@ const HRBankDetails = () => {
         branch: '',
         accountName: '',
     });
+
     const [originalData, setOriginalData] = useState(data);
 
-    // Fetch Data
+    // --- Fetch Data ---
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -63,7 +91,6 @@ const HRBankDetails = () => {
                 const response = await GetMyProfile();
                 const profile = response.data;
 
-                // 1. ID Extraction (Robust check)
                 let extractedId = profile?.id;
 
                 if (!extractedId && profile?.emp_id) {
@@ -71,33 +98,26 @@ const HRBankDetails = () => {
                         const allEmpsResponse = await GetAllEmployes();
                         const allEmps = allEmpsResponse.data?.results || [];
                         const found = allEmps.find((e: any) => e.emp_id === profile.emp_id);
-                        if (found && found.id) {
-                            extractedId = found.id;
-                        }
+                        if (found?.id) extractedId = found.id;
                     } catch (err) {
                         console.error("Fallback ID lookup failed:", err);
                     }
                 }
 
+                extractedId = extractedId || profile?.emp_id || profile?.user_id;
+
                 if (!extractedId) {
-                    extractedId = profile?.emp_id || profile?.user_id;
-                }
-
-                if (extractedId) {
-                    setUserId(extractedId);
-                } else {
-                    console.error("User ID is missing in profile response!");
                     showError("Failed to identify user.");
+                    return;
                 }
 
-                // 2. Correct Data Mapping (MATCHES YOUR BACKEND JSON)
+                setUserId(extractedId);
+
                 const mappedData = {
                     bankName: profile.bank_name || '',
-                    // ✅ FIXED: Now looking for 'account_number' first
-                    accountNumber: profile.account_number || profile.masked_account_number || '', 
+                    accountNumber: profile.account_number || profile.masked_account_number || '',
                     ifscCode: profile.ifsc_code || '',
-                    // ✅ FIXED: Now looking for 'branch' first
-                    branch: profile.branch || profile.bank_branch || '', 
+                    branch: profile.branch || profile.bank_branch || '',
                     accountName: profile.account_holder_name || profile.first_name || '',
                 };
 
@@ -114,16 +134,14 @@ const HRBankDetails = () => {
         fetchData();
     }, []);
 
-    // Validation Logic
+    // --- Input Validation ---
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        // Text-Only Validation
-        if (name === 'bankName' || name === 'accountName' || name === 'branch') {
+        if (['bankName', 'accountName', 'branch'].includes(name)) {
             if (!/^[a-zA-Z\s]*$/.test(value)) return;
         }
 
-        // Number-Only Validation
         if (name === 'accountNumber') {
             if (!/^\d*$/.test(value)) return;
         }
@@ -131,35 +149,30 @@ const HRBankDetails = () => {
         setData(prev => ({ ...prev, [name]: value }));
     };
 
+    // --- Save ---
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!userId) {
-            showError("Cannot save: User ID is missing.");
+            showError("User ID missing.");
             return;
         }
 
         try {
-            // 3. Correct Payload Keys for Update (MATCHES YOUR BACKEND JSON)
             const payload = {
                 bank_name: data.bankName,
-                account_number: data.accountNumber, // ✅ FIXED: Key matches backend
+                account_number: data.accountNumber,
                 ifsc_code: data.ifscCode,
-                branch: data.branch,                // ✅ FIXED: Key matches backend
-                account_holder_name: data.accountName
+                branch: data.branch,
+                account_holder_name: data.accountName,
             };
 
-            console.log("Sending Payload:", payload);
-
             await UpdateEmployeeJobAndBank(userId, payload);
-
-            showSuccess("Bank Details updated successfully!");
+            showSuccess("Bank details updated successfully!");
             setOriginalData(data);
             setIsEditing(false);
         } catch (error: any) {
-            console.error("Error saving bank details:", error);
-            const errorMsg = error.response?.data?.detail || "Failed to update bank details.";
-            showError(errorMsg);
+            showError(error.response?.data?.detail || "Failed to update bank details.");
         }
     };
 
@@ -179,7 +192,6 @@ const HRBankDetails = () => {
             transition={{ duration: 0.5 }}
             className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl"
         >
-            {/* Header */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-base sm:text-xl font-semibold text-slate-800">
                     Banking Details
@@ -188,7 +200,7 @@ const HRBankDetails = () => {
                 {!isEditing && (
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="px-3 sm:px-4 py-1.5 bg-blue-600 text-white rounded-lg text-xs sm:text-sm flex items-center gap-2"
+                        className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm flex items-center gap-2"
                     >
                         Edit <Pencil size={16} />
                     </button>
@@ -198,51 +210,40 @@ const HRBankDetails = () => {
             <hr className="border-slate-200" />
 
             <form onSubmit={handleSave} className="mt-6">
-                {/* UNIFIED GRID LAYOUT */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                     {isEditing ? (
                         <>
-                            <EditLineField label="Bank Name" name="bankName" value={data.bankName} onChange={handleChange} />
-                            <EditLineField label="Account Holder Name" name="accountName" value={data.accountName} onChange={handleChange} />
-                            
-                            <EditLineField label="Bank Account Number" name="accountNumber" value={data.accountNumber} onChange={handleChange} />
-                            <EditLineField label="Bank IFSC Code" name="ifscCode" value={data.ifscCode} onChange={handleChange} />
-                            
-                            <EditLineField label="Branch Name" name="branch" value={data.branch} onChange={handleChange} />
+                            <EditLineField label="Bank Name" name="bankName" value={data.bankName} onChange={handleChange} required />
+                            <EditLineField label="Account Holder Name" name="accountName" value={data.accountName} onChange={handleChange} required />
+                            <EditLineField label="Bank Account Number" name="accountNumber" value={data.accountNumber} onChange={handleChange} required />
+                            <EditLineField label="Bank IFSC Code" name="ifscCode" value={data.ifscCode} onChange={handleChange} required />
+                            <EditLineField label="Branch Name" name="branch" value={data.branch} onChange={handleChange} required />
                         </>
                     ) : (
                         <>
-                            <DetailField label="Bank Name" value={data.bankName} />
-                            <DetailField label="Account Holder Name" value={data.accountName} />
-                            
-                            <DetailField 
-                                label="Bank Account Number" 
-                                value={maskAccountNumber(data.accountNumber)} 
-                            />
-                            <DetailField label="Bank IFSC Code" value={data.ifscCode} />
-                            
-                            <DetailField label="Branch Name" value={data.branch} />
+                            <DetailField label="Bank Name" value={data.bankName} required />
+                            <DetailField label="Account Holder Name" value={data.accountName} required />
+                            <DetailField label="Bank Account Number" value={maskAccountNumber(data.accountNumber)} required />
+                            <DetailField label="Bank IFSC Code" value={data.ifscCode} required />
+                            <DetailField label="Branch Name" value={data.branch} required />
                         </>
                     )}
                 </div>
 
-                {/* Form Actions */}
                 {isEditing && (
-                    <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-8 pt-6 border-t border-slate-200">
+                    <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-slate-200">
                         <button
                             type="button"
                             onClick={handleCancel}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 border border-slate-300"
+                            className="flex items-center gap-2 px-4 py-2 border rounded-lg text-slate-700 hover:bg-slate-100"
                         >
-                            <X size={16} />
-                            Cancel
+                            <X size={16} /> Cancel
                         </button>
                         <button
                             type="submit"
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md transition-colors hover:bg-blue-700"
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
-                            <Check size={16} />
-                            Save Changes
+                            <Check size={16} /> Save Changes
                         </button>
                     </div>
                 )}

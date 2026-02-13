@@ -49,8 +49,6 @@ const documents: DocumentType[] = [
 const commonGuidelines = [
     "Ensure the photo and details are clearly visible.",
     "Supported formats: JPG, PNG, PDF (Max 5MB).",
-    "Front side is mandatory for all documents.",
-    "Back side is required for Aadhaar Card and Passport.",
     "Ensure the documents are valid and not expired."
 ];
 
@@ -114,7 +112,7 @@ const UploadCard = ({ file, onUpload, onPreview, label }: any) => {
                             <Eye size={18} />
                         </button>
                         
-                        {/* ✅ Edit Button: Triggers hidden file input to select a new document */}
+                        {/* ✅ Edit Button: Triggers hidden file input */}
                         <label className="p-2 bg-white text-blue-500 rounded-full shadow-md hover:scale-110 cursor-pointer">
                             <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={onUpload} />
                             <Edit size={18} />
@@ -209,7 +207,14 @@ const Identification = ({ onRefresh }: { onRefresh?: () => void }) => {
     const handleUpload = (docId: string, side: UploadSide, file: File) => {
         if (!file) return;
 
-        // ✅ Logic: Block upload if file exceeds 5MB
+        // ✅ Validation 1: Strict File Type Check
+        const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+            showError("Invalid format. Only JPG, PNG, and PDF files are allowed.");
+            return;
+        }
+
+        // ✅ Validation 2: File Size (5MB)
         const maxSize = 5 * 1024 * 1024; // 5MB in bytes
         if (file.size > maxSize) {
             showError("File size exceeds 5MB limit. Please upload a smaller file.");
@@ -224,7 +229,6 @@ const Identification = ({ onRefresh }: { onRefresh?: () => void }) => {
             }
         }));
 
-        // Mapping local ID keys to the IIdentificationBody payload keys expected by apiHelper
         const payloadKey = `${docId === 'aadhar' ? 'aadhaar' : docId}_${side}_image` as any;
         setRawFiles(prev => ({ ...prev, [payloadKey]: file }));
         setHasChanges(true);
@@ -233,7 +237,6 @@ const Identification = ({ onRefresh }: { onRefresh?: () => void }) => {
     const handleUpdate = async () => {
         setIsUpdating(true);
         try {
-            // ✅ Logic: Update Database using the stagged rawFiles and UpdateMyIdentification helper
             await UpdateMyIdentification(rawFiles as any);
             showSuccess("Documents updated successfully!");
             setHasChanges(false);

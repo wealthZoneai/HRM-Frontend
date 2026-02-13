@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FiX, FiPlus, FiTrash2 } from "react-icons/fi";
 
 interface FormData {
@@ -13,7 +13,7 @@ interface Props {
   onSubmit: (form: FormData) => void;
   onDelete?: (id: string | number) => void;
   initialData?: any | null; 
-  loading?: boolean; // Controls the loading state of the submit button
+  loading?: boolean; 
 }
 
 const AddPolicyModal: React.FC<Props> = ({ 
@@ -24,21 +24,29 @@ const AddPolicyModal: React.FC<Props> = ({
   initialData,
   loading = false 
 }) => {
-  const [form, setForm] = React.useState<FormData>({ 
+  const [form, setForm] = useState<FormData>({ 
     title: "", 
     content: [""], 
     policy_type: "" 
   });
-  const [errors, setErrors] = React.useState<{ [k: string]: string }>({});
+  const [errors, setErrors] = useState<{ [k: string]: string }>({});
 
-  // Sync form with initialData when editing
+  // --- ROOT FIX: Immediate Lock System ---
+  // 1. We use a Ref for logic because it updates Instantly (Synchronously)
+  const isSubmitLocked = useRef(false);
+  // 2. We use State purely for visual feedback (disabling the button UI)
+  const [isVisualLoading, setIsVisualLoading] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
+      // Reset locks when modal opens
+      isSubmitLocked.current = false;
+      setIsVisualLoading(false);
+
       if (initialData) {
         setForm({
           title: initialData.title || "",
           policy_type: initialData.policy_type || "",
-          // Split the backend description string into the array for inputs
           content: initialData.description ? initialData.description.split('\n') : [""]
         });
       } else {
@@ -47,6 +55,14 @@ const AddPolicyModal: React.FC<Props> = ({
       setErrors({});
     }
   }, [isOpen, initialData]);
+
+  // Unlock when the parent component signals that loading has finished
+  useEffect(() => {
+    if (!loading) {
+      isSubmitLocked.current = false;
+      setIsVisualLoading(false);
+    }
+  }, [loading]);
 
   if (!isOpen) return null;
 
@@ -73,17 +89,31 @@ const AddPolicyModal: React.FC<Props> = ({
   };
 
   const handleSubmit = () => {
-    if (loading) return; // Prevent double submission
+    // --- ROOT FIX LOGIC ---
+    // This check happens synchronously. If the user double clicks, 
+    // the second click hits this line and sees 'true' immediately.
+    if (isSubmitLocked.current || loading) return; 
+    
     if (!validate()) return;
+
+    // 1. Lock the logic instantly
+    isSubmitLocked.current = true;
+    // 2. Update the UI (triggers render)
+    setIsVisualLoading(true);
+    
     onSubmit(form);
   };
 
   const handleDelete = () => {
-    // Only trigger if not currently loading
-    if (!loading && onDelete && initialData?.id) {
-      onDelete(initialData.id);
+    if (!loading && !isSubmitLocked.current && onDelete && initialData?.id) {
+        // Prevent double delete clicks too
+        isSubmitLocked.current = true; 
+        onDelete(initialData.id);
     }
   };
+
+  // Combine parent loading state with our local immediate lock
+  const isDisabled = loading || isVisualLoading;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000] p-4">
@@ -97,7 +127,7 @@ const AddPolicyModal: React.FC<Props> = ({
           </div>
           <button 
             onClick={onClose} 
-            disabled={loading}
+            disabled={isDisabled}
             className="p-2 rounded-full hover:bg-white/20 transition-colors disabled:opacity-50"
           >
             <FiX size={24} />
@@ -112,7 +142,7 @@ const AddPolicyModal: React.FC<Props> = ({
             <select
               value={form.policy_type}
               onChange={(e) => setForm({ ...form, policy_type: e.target.value })}
-              disabled={loading}
+              disabled={isDisabled}
               className={`mt-2 w-full px-4 py-2.5 rounded-xl border ${errors.policy_type ? 'border-red-500' : 'border-gray-300'} bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm disabled:opacity-60`}
             >
               <option value="">Select Policy Type</option>
@@ -132,7 +162,7 @@ const AddPolicyModal: React.FC<Props> = ({
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               placeholder="Enter policy title"
-              disabled={loading}
+              disabled={isDisabled}
               className={`mt-2 w-full px-4 py-2.5 rounded-xl border ${errors.title ? 'border-red-500' : 'border-gray-300'} bg-gray-50 placeholder:opacity-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm disabled:opacity-60`}
             />
             {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
@@ -151,13 +181,13 @@ const AddPolicyModal: React.FC<Props> = ({
                     value={c}
                     onChange={(e) => updateContentAt(idx, e.target.value)}
                     placeholder={`Describe point...`}
-                    disabled={loading}
+                    disabled={isDisabled}
                     className="flex-1 px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 resize-none focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all h-24 text-sm disabled:opacity-60"
                   />
                   <button 
                     type="button" 
                     onClick={() => removeContent(idx)}
-                    disabled={loading}
+                    disabled={isDisabled}
                     className="p-2.5 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all mt-1 opacity-0 group-hover:opacity-100 disabled:opacity-0"
                   >
                     <FiTrash2 size={18} />
@@ -169,7 +199,7 @@ const AddPolicyModal: React.FC<Props> = ({
             <button
               type="button"
               onClick={addContent}
-              disabled={loading}
+              disabled={isDisabled}
               className="mt-4 flex items-center gap-2 text-blue-600 font-semibold text-sm hover:text-indigo-700 transition-colors px-2 py-1 disabled:opacity-50"
             >
               <div className="p-1 bg-blue-100 rounded-full"><FiPlus size={16} /></div>
@@ -182,21 +212,19 @@ const AddPolicyModal: React.FC<Props> = ({
         {/* Footer Actions */}
         <div className="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50 shrink-0">
           {initialData ? (
-            // Edit Mode: Show DELETE button
             <button 
               type="button" 
               onClick={handleDelete} 
-              disabled={loading}
+              disabled={isDisabled}
               className="px-6 py-2.5 rounded-xl border border-red-200 text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Delete Policy
             </button>
           ) : (
-            // Create Mode: Show CANCEL button
             <button 
               type="button" 
               onClick={onClose} 
-              disabled={loading}
+              disabled={isDisabled}
               className="px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
@@ -206,10 +234,10 @@ const AddPolicyModal: React.FC<Props> = ({
           <button 
             type="button" 
             onClick={handleSubmit} 
-            disabled={loading}
+            disabled={isDisabled}
             className="px-8 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition font-semibold disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
           >
-            {loading ? (
+            {isDisabled ? (
               <>
                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
