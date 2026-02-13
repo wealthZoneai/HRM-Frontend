@@ -211,7 +211,7 @@ const StepPersonal = ({ showErrors }: { showErrors: boolean }) => {
           />
 
           {/* Date of Birth (Faded out) */}
-          <div className="opacity-50 ">
+          <div >
             <TextField
               label="Date of Birth"
               type="date"
