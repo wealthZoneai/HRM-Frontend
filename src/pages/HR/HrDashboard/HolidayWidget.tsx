@@ -19,13 +19,31 @@ export default function HolidayWidget() {
     const dispatch = useDispatch<AppDispatch>();
     const allEvents = useSelector(selectAllCalendarEvents);
     const loading = useSelector(selectCalendarLoading);
-    const [currentDate, setCurrentDate] = useState(new Date("2026-01-01"));
+    const [currentDate, setCurrentDate] = useState(new Date());
 
     const [holidays, setHolidays] = useState<Holiday[]>([]);
-    const [view, setView] = useState<'calendar' | 'list'>('calendar');
+    const [view, setView] = useState<'calendar' | 'Holiday List'>('calendar');
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
+
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
+
+    const handleMonthSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newMonth = parseInt(e.target.value);
+        setCurrentDate(new Date(year, newMonth, 1));
+    };
+
+    const handleYearSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newYear = parseInt(e.target.value);
+        setCurrentDate(new Date(newYear, month, 1));
+    };
 
     // Fetch holidays
     // Fetch dynamic events when month changes
@@ -112,9 +130,26 @@ export default function HolidayWidget() {
             {/* Header & Controls */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-2 gap-2">
                 <div>
-                    <h2 className="text-lg font-bold text-gray-800">
-                        {currentDate.toLocaleString("default", { month: "long" })} {year}
-                    </h2>
+                    <div className="flex gap-2 items-center">
+                        <select
+                            value={month}
+                            onChange={handleMonthSelect}
+                            className="p-1 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer outline-none hover:border-blue-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                        >
+                            {months.map((m, index) => (
+                                <option key={m} value={index}>{m}</option>
+                            ))}
+                        </select>
+                        <select
+                            value={year}
+                            onChange={handleYearSelect}
+                            className="p-1 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer outline-none hover:border-blue-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                        >
+                            {years.map((y) => (
+                                <option key={y} value={y}>{y}</option>
+                            ))}
+                        </select>
+                    </div>
                     <p className="text-gray-500 text-[10px]">Manage your holidays</p>
                 </div>
 
@@ -138,10 +173,10 @@ export default function HolidayWidget() {
                             Calendar
                         </button>
                         <button
-                            onClick={() => setView('list')}
-                            className={`px-2 py-1 rounded-md font-medium transition-all ${view === 'list' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            onClick={() => setView('Holiday List')}
+                            className={`px-2 py-1 rounded-md font-medium transition-all ${view === 'Holiday List' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                         >
-                            List
+                            Holiday List
                         </button>
                     </div>
                 </div>
@@ -149,7 +184,7 @@ export default function HolidayWidget() {
 
             {/* Content Body */}
             <div>
-                {view === 'list' && (
+                {view === 'Holiday List' && (
                     <div className="w-full">
                         {loading && <p className="text-sm text-gray-400">Loading holidays...</p>}
                         {!loading && holidays.length === 0 && (
@@ -206,9 +241,24 @@ export default function HolidayWidget() {
                                 const currentDayOfWeek = new Date(year, month, d).getDay();
                                 const isWeekend = currentDayOfWeek === 0;
 
+                                const today = new Date();
+                                const isToday =
+                                    d === today.getDate() &&
+                                    month === today.getMonth() &&
+                                    year === today.getFullYear();
+
                                 return (
-                                    <div key={`curr-${d}`} className="min-h-[6rem] border-r border-b border-gray-200 p-1 relative bg-gray-50/30 hover:bg-white transition-colors group flex flex-col gap-1">
-                                        <span className={`text-xs font-medium ${isWeekend ? 'text-red-500' : 'text-gray-700'}`}>
+                                    <div
+                                        key={`curr-${d}`}
+                                        className={`min-h-[6rem] border-r border-b border-gray-200 p-1 relative transition-colors group flex flex-col gap-1 
+                                            ${isToday ? 'bg-blue-50' : 'bg-gray-50/30 hover:bg-white'}
+                                        `}
+                                    >
+                                        <span
+                                            className={`text-xs font-medium w-6 h-6 flex items-center justify-center rounded-full 
+                                                ${isToday ? 'bg-blue-600 text-white' : (isWeekend ? 'text-red-500' : 'text-gray-700')}
+                                            `}
+                                        >
                                             {String(d).padStart(2, '0')}
                                         </span>
 

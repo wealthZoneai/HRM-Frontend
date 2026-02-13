@@ -1,4 +1,4 @@
-import { Calendar, CalendarDays, X } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAllCalendarEvents } from "../../../store/slice/calendarSlice";

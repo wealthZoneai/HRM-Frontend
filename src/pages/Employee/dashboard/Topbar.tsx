@@ -6,7 +6,6 @@ import LogoutModal from "../../../components/LogoutModal";
 import server from "../../../Services/index";
 import endpoints from "../../../Services/endpoints";
 import { getNotifications } from "../../../Services/apiHelpers"; // Import API
-// import { useSelector } from "react-redux";
 
 interface TopbarProps {
   name: string;
@@ -21,16 +20,7 @@ function toTitleCase(str: string): string {
   );
 }
 
-// function getInitials(name: string): string {
 
-//   if (!name) return "U";
-//   return name
-//     .split(" ")
-//     .map((n) => n[0])
-//     .slice(0, 2)
-//     .join("")
-//     .toUpperCase();
-// }
 
 const getGreeting = (): string => {
   const hour = new Date().getHours();
