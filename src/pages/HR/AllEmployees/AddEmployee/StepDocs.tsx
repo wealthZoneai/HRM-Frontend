@@ -84,7 +84,7 @@ const StepDocs: React.FC = () => {
           <div className="mt-2 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3 overflow-hidden">
               {/* Icon / Status */}
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -109,7 +109,7 @@ const StepDocs: React.FC = () => {
             </div>
 
             {/* Actions: Replace / Delete */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               {/* Replace Button */}
               <button
                 type="button"

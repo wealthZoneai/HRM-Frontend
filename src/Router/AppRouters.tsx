@@ -35,7 +35,44 @@ import ManagerDashboard from "../pages/Manager/ManagerDashboard";
 import CreateProject from "../pages/Manager/CreateProject";
 import CreateModule from "../pages/Manager/CreateModule";
 
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { clearAttendance } from "../store/slice/attendanceSlice";
+
 function AppRouters() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const loginTime = localStorage.getItem("loginTime");
+      if (loginTime) {
+        const currentTime = Date.now();
+        const timeElapsed = currentTime - parseInt(loginTime);
+        const twelveHours = 12 * 60 * 60 * 1000;
+
+        if (timeElapsed > twelveHours) {
+          // Clear all auth & user data
+          localStorage.clear();
+
+          // Dispatch Redux action
+          dispatch(clearAttendance());
+
+          navigate("/login");
+        }
+      }
+    };
+
+    // Check immediately
+    checkLoginStatus();
+
+    // Check every minute
+    const interval = setInterval(checkLoginStatus, 60000);
+
+    return () => clearInterval(interval);
+  }, [navigate, dispatch]);
+
   return (
     <Routes>
       {/* Redirect root → login */}
@@ -71,7 +108,7 @@ function AppRouters() {
         <Route path="payroll" element={<Payroll />} />
         <Route path="calendar" element={<Calendar />} />
         <Route path="policy" element={<Policies />} />
-        
+
         {/* TL specific route accessible if role is 'tl' */}
         <Route path="lead-status" element={<LeadStatus />} />
       </Route>
@@ -106,7 +143,7 @@ function AppRouters() {
       <Route
         path="/dm/*"
         element={
-           // ✅ FIXED: Enabled Protection for DM
+          // ✅ FIXED: Enabled Protection for DM
           <ProtectedRoute allowedRoles={["dm"]}>
             <ManagerLayout>
               <Outlet />
@@ -122,7 +159,7 @@ function AppRouters() {
       <Route
         path="/pm/*"
         element={
-           // ✅ FIXED: Enabled Protection for PM
+          // ✅ FIXED: Enabled Protection for PM
           <ProtectedRoute allowedRoles={["pm"]}>
             <ManagerLayout>
               <Outlet />
@@ -138,7 +175,7 @@ function AppRouters() {
       {/* Fallback for unauthorized or 404 */}
       <Route path="/unauthorized" element={<div className="p-10 text-center text-red-600 font-bold">403 - Unauthorized Access</div>} />
       <Route path="*" element={<Navigate to="/login" replace />} />
-      
+
     </Routes>
   );
 }

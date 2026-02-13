@@ -10,7 +10,6 @@ interface EmployeeAddedSuccessModalProps {
 const EmployeeAddedSuccessModal: React.FC<EmployeeAddedSuccessModalProps> = ({
     isOpen,
     onNavigate,
-    onClose,
 }) => {
     if (!isOpen) return null;
 
