@@ -212,6 +212,8 @@ const StepKin = ({ showErrors }: { showErrors: boolean }) => {
               <option value="BDM">BDM</option>
               <option value="Networking">Networking</option>
               <option value="Cloud">Cloud (AWS / DevOps)</option>
+              <option value="Delivery manager">Delivery Manager</option>
+              <option value="Project Manager">Project Manager</option>
             </select>
             {showErrors && !kin.department && (
               <span className="text-red-500 text-xs">Department is required</span>
