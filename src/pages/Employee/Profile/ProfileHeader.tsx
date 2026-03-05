@@ -77,10 +77,50 @@ const ProfileHeader = ({ data }: { data?: any }) => {
 
             {/* Upload Overlay */}
             <div
-              className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-20"
-              onClick={() => !uploading && fileInputRef.current?.click()}
+              className={`absolute inset-0 rounded-full bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 ${imageSrc !== Pic ? 'cursor-default' : 'cursor-pointer'}`}
+              onClick={() => {
+                if (!uploading && imageSrc === Pic) fileInputRef.current?.click();
+              }}
             >
-              <Camera className="text-white w-6 h-6 sm:w-8 sm:h-8" />
+              <div className="flex gap-4">
+                <div
+                  className="cursor-pointer hover:scale-110 transition-transform p-2 bg-black/20 rounded-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!uploading) fileInputRef.current?.click();
+                  }}
+                  title="Upload New Picture"
+                >
+                  <Camera className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                {imageSrc !== Pic && (
+                  <div
+                    className="cursor-pointer hover:scale-110 transition-transform p-2 bg-black/20 rounded-full"
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (uploading) return;
+                      if (!window.confirm("Are you sure you want to delete your profile picture?")) return;
+                      setUploading(true);
+                      try {
+                        const formData = new FormData();
+                        // Passing empty string can sometimes delete string fields or image fields on some backends 
+                        // If it fails, another backend patch might be needed but we pass an empty file instance or empty string here
+                        formData.append('profile_photo', '');
+                        await UpdateMyProfileImage(formData);
+                        showSuccess("Profile photo deleted successfully! Please refresh.");
+                        window.location.reload();
+                      } catch (err: any) {
+                        showError(err.response?.data?.detail || "Failed to delete profile photo.");
+                      } finally {
+                        setUploading(false);
+                      }
+                    }}
+                    title="Delete Picture"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white w-5 h-5 sm:w-6 sm:h-6"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                  </div>
+                )}
+              </div>
             </div>
 
             <input

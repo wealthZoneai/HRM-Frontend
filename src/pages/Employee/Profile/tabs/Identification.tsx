@@ -5,7 +5,7 @@ import {
     X,
     CheckCircle,
     Eye,
-    Edit, 
+    Edit,
     AlertCircle,
     Image as ImageIcon,
     Loader2
@@ -28,7 +28,7 @@ interface UploadedFile {
     url: string;
     name: string;
     type: string;
-    isExisting?: boolean; 
+    isExisting?: boolean;
 }
 
 interface DocumentState {
@@ -89,7 +89,7 @@ const PreviewModal = ({ file, onClose }: { file: UploadedFile | null; onClose: (
     );
 };
 
-const UploadCard = ({ file, onUpload, onPreview, label }: any) => {
+const UploadCard = ({ file, onUpload, onPreview, onClear, label }: any) => {
     return (
         <div className="flex-1 min-w-[140px] sm:min-w-[180px]">
             <div className="mb-2 flex items-center justify-between">
@@ -111,12 +111,20 @@ const UploadCard = ({ file, onUpload, onPreview, label }: any) => {
                         <button onClick={onPreview} className="p-2 bg-white text-blue-600 rounded-full shadow-md hover:scale-110">
                             <Eye size={18} />
                         </button>
-                        
-                        {/* ✅ Edit Button: Triggers hidden file input */}
-                        <label className="p-2 bg-white text-blue-500 rounded-full shadow-md hover:scale-110 cursor-pointer">
-                            <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={onUpload} />
-                            <Edit size={18} />
-                        </label>
+
+                        {/* Hide Edit/Cancel if file already exists in backend */}
+                        {!file.isExisting && (
+                            <>
+                                <label className="p-2 bg-white text-blue-500 rounded-full shadow-md hover:scale-110 cursor-pointer">
+                                    <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf" onChange={onUpload} />
+                                    <Edit size={18} />
+                                </label>
+
+                                <button onClick={onClear} className="p-2 bg-white text-red-500 rounded-full shadow-md hover:scale-110" title="Cancel Upload">
+                                    <X size={18} />
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             ) : (
@@ -166,14 +174,14 @@ const Identification = ({ onRefresh }: { onRefresh?: () => void }) => {
         setIsLoading(true);
         try {
             const response = await GetMySensitiveData();
-            const sensitiveData = response?.data?.data; 
-            
+            const sensitiveData = response?.data?.data;
+
             if (sensitiveData) {
                 const getDoc = async (url?: string | null, name?: string): Promise<UploadedFile | null> => {
                     if (!url) return null;
                     const authUrl = await fetchAuthImage(url);
-                    return authUrl 
-                        ? { url: authUrl, name: name || "Document", type: "image/jpeg", isExisting: true } 
+                    return authUrl
+                        ? { url: authUrl, name: name || "Document", type: "image/jpeg", isExisting: true }
                         : null;
                 };
 
@@ -240,8 +248,8 @@ const Identification = ({ onRefresh }: { onRefresh?: () => void }) => {
             await UpdateMyIdentification(rawFiles as any);
             showSuccess("Documents updated successfully!");
             setHasChanges(false);
-            setRawFiles({}); 
-            
+            setRawFiles({});
+
             if (onRefresh) onRefresh();
             await loadSensitiveData();
         } catch (error: any) {
@@ -286,23 +294,31 @@ const Identification = ({ onRefresh }: { onRefresh?: () => void }) => {
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 {documents.map(doc => (
                     <div key={doc.id} className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm">
-                         <div className="flex flex-col items-center mb-6 border-b border-gray-100 pb-4">
+                        <div className="flex flex-col items-center mb-6 border-b border-gray-100 pb-4">
                             <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                 {doc.label} {!doc.isOptional && <span className="text-red-500">*</span>}
                             </h3>
                         </div>
                         <div className="flex flex-row gap-4 justify-center w-full">
-                            <UploadCard 
-                                label="Front Side" 
-                                file={docState[doc.id]?.front} 
-                                onUpload={(e: any) => handleUpload(doc.id, 'front', e.target.files[0])} 
-                                onPreview={() => setPreviewFile(docState[doc.id]?.front)} 
+                            <UploadCard
+                                label="Front Side"
+                                file={docState[doc.id]?.front}
+                                onUpload={(e: any) => handleUpload(doc.id, 'front', e.target.files[0])}
+                                onPreview={() => setPreviewFile(docState[doc.id]?.front)}
+                                onClear={() => {
+                                    setDocState(prev => ({ ...prev, [doc.id]: { ...prev[doc.id], front: null } }));
+                                    setRawFiles(prev => { const n = { ...prev }; delete n[`${doc.id === 'aadhar' ? 'aadhaar' : doc.id}_front_image`]; return n; });
+                                }}
                             />
-                            <UploadCard 
-                                label="Back Side" 
-                                file={docState[doc.id]?.back} 
-                                onUpload={(e: any) => handleUpload(doc.id, 'back', e.target.files[0])} 
-                                onPreview={() => setPreviewFile(docState[doc.id]?.back)} 
+                            <UploadCard
+                                label="Back Side"
+                                file={docState[doc.id]?.back}
+                                onUpload={(e: any) => handleUpload(doc.id, 'back', e.target.files[0])}
+                                onPreview={() => setPreviewFile(docState[doc.id]?.back)}
+                                onClear={() => {
+                                    setDocState(prev => ({ ...prev, [doc.id]: { ...prev[doc.id], back: null } }));
+                                    setRawFiles(prev => { const n = { ...prev }; delete n[`${doc.id === 'aadhar' ? 'aadhaar' : doc.id}_back_image`]; return n; });
+                                }}
                             />
                         </div>
                     </div>

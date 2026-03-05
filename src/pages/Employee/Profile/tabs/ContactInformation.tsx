@@ -33,9 +33,8 @@ const EditLineField = ({
     </label>
 
     <div
-      className={`flex items-center border-b ${
-        disabled ? "border-gray-200" : "border-gray-300 focus-within:border-blue-500"
-      } transition-colors`}
+      className={`flex items-center border-b ${disabled ? "border-gray-200" : "border-gray-300 focus-within:border-blue-500"
+        } transition-colors`}
     >
       {prefix && (
         <span className={`pr-2 py-1 ${disabled ? "text-gray-400" : "text-gray-500"}`}>
@@ -49,9 +48,8 @@ const EditLineField = ({
           value={value}
           onChange={onChange}
           disabled={disabled}
-          className={`w-full py-1 bg-transparent focus:outline-none ${
-            disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"
-          }`}
+          className={`w-full py-1 bg-transparent focus:outline-none ${disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"
+            }`}
         >
           <option value="" disabled>
             Select {label}
@@ -69,9 +67,8 @@ const EditLineField = ({
           value={value}
           onChange={onChange}
           disabled={disabled}
-          className={`w-full py-1 bg-transparent focus:outline-none ${
-            disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"
-          }`}
+          className={`w-full py-1 bg-transparent focus:outline-none ${disabled ? "text-gray-400 cursor-not-allowed" : "text-gray-900"
+            }`}
         />
       )}
     </div>
@@ -183,12 +180,18 @@ const ContactInformation = () => {
       return;
     }
 
-    const payload = {
-      middle_name: dataState.middleName,
-      alternate_number: dataState.alternativeNumber,
-      blood_group: dataState.bloodGroup,
-      marital_status: dataState.maritalStatus,
-    };
+    // Only include fields that have been explicitly changed by the user
+    // because backend restricts updating populated fields for non-HR roles
+    const payload: any = {};
+    if (dataState.middleName !== backup.middleName) payload.middle_name = dataState.middleName;
+    if (dataState.alternativeNumber !== backup.alternativeNumber) payload.alternate_number = dataState.alternativeNumber;
+    if (dataState.bloodGroup !== backup.bloodGroup) payload.blood_group = dataState.bloodGroup;
+    if (dataState.maritalStatus !== backup.maritalStatus) payload.marital_status = dataState.maritalStatus;
+
+    if (Object.keys(payload).length === 0) {
+      setIsEditing(false);
+      return;
+    }
 
     try {
       await UpdateContactDetails(payload);
@@ -231,10 +234,10 @@ const ContactInformation = () => {
             <PhoneNumberField label="Phone Number" name="phone" value={dataState.phone} disabled />
             <PhoneNumberField label="Alternative Number" name="alternativeNumber" value={dataState.alternativeNumber} onChange={handleChange} />
             <EditLineField label="Date of Birth" name="dob" value={dataState.dob} disabled />
-            <EditLineField 
-              label="Blood Group" 
-              name="bloodGroup" 
-              value={dataState.bloodGroup} 
+            <EditLineField
+              label="Blood Group"
+              name="bloodGroup"
+              value={dataState.bloodGroup}
               onChange={handleChange}
               options={["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]}
             />

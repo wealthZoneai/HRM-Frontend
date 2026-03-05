@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Check, Pencil } from 'lucide-react';
 import { motion } from 'framer-motion';
-import UploadModal from '../UploadModal';
 // import axios from 'axios'; // Import axios for API call (Commented out as requested)
 
 // --- Helper Data and Components ---
@@ -59,7 +58,6 @@ const JobInformation = ({ data }: { data?: any }) => {
     jobDescription: '',
   });
   const [originalData, setOriginalData] = useState(formData);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -106,16 +104,18 @@ const JobInformation = ({ data }: { data?: any }) => {
     setIsEditing(false);
   };
 
-  const handleSaveImages = (frontImage: string, backImage: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      idCardFront: frontImage,
-      idCardBack: backImage,
-    }));
-    setIsUploadModalOpen(false);
-    // Note: If you want these changes to be part of the "Save Changes" flow, 
-    // keep them in formData state. If they should verify immediately, call API here.
-    // For now, we update local state which will be submitted with handleSubmit.
+  const validateFile = (file: File) => {
+    const validTypes = ['image/jpeg', 'image/png'];
+    if (!validTypes.includes(file.type)) {
+      alert("Invalid format. Only JPG and PNG files are allowed.");
+      return false;
+    }
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    if (file.size > maxSize) {
+      alert("File size exceeds 2MB limit. Please upload a smaller image.");
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -125,16 +125,6 @@ const JobInformation = ({ data }: { data?: any }) => {
       transition={{ duration: 0.5 }}
       className="bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl max-w-4xl mx-auto"
     >
-      {/* ... (Component Header and Form Fields remain same) ... */}
-      {/* For brevity, I'm omitting the middle part which is largely unchanged, 
-          but I will include the full return block to ensure correctness if replacing the whole file 
-          or careful partial replacement. 
-          Given "replace_file_content" works best with context, I will target the imports and the ID Card section specifically if possible, 
-          but here I am replacing large chunks or the whole file logic to be safe. 
-          Actually, let's just do targeted replacements in the next tool steps or one large replacement if safer.
-          Let's try to replace the whole file content to be safe as requested by "ReplacementContent" containing potentially modified imports and logic.
-      */}
-
       {/* --- Component Header --- */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3 sm:gap-0">
         <h2 className="text-base sm:text-xl font-semibold text-slate-800">
@@ -189,16 +179,7 @@ const JobInformation = ({ data }: { data?: any }) => {
             <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider">
               ID Card
             </label>
-            {isEditing && (
-              <button
-                type="button"
-                onClick={() => setIsUploadModalOpen(true)}
-                className="p-1 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-                title="Edit ID Card Photos"
-              >
-                <Pencil size={14} />
-              </button>
-            )}
+            {/* Separate ID Edit pencil button removed */}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-6">
@@ -220,6 +201,32 @@ const JobInformation = ({ data }: { data?: any }) => {
                   </div>
                 )}
               </div>
+              {isEditing && (
+                <div className="flex items-center gap-2 mt-2">
+                  <label className="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-700">
+                    Replace
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".jpg,.jpeg,.png"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file && validateFile(file)) {
+                          setFormData({ ...formData, idCardFront: URL.createObjectURL(file) });
+                        }
+                      }}
+                    />
+                  </label>
+                  <span className="text-gray-300">|</span>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, idCardFront: '' })}
+                    className="text-xs font-semibold text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Back Side */}
@@ -240,6 +247,32 @@ const JobInformation = ({ data }: { data?: any }) => {
                   </div>
                 )}
               </div>
+              {isEditing && (
+                <div className="flex items-center gap-2 mt-2">
+                  <label className="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-700">
+                    Replace
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".jpg,.jpeg,.png"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file && validateFile(file)) {
+                          setFormData({ ...formData, idCardBack: URL.createObjectURL(file) });
+                        }
+                      }}
+                    />
+                  </label>
+                  <span className="text-gray-300">|</span>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, idCardBack: '' })}
+                    className="text-xs font-semibold text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -265,16 +298,6 @@ const JobInformation = ({ data }: { data?: any }) => {
           </div>
         )}
       </form>
-
-      {/* --- Upload Modal --- */}
-      {isUploadModalOpen && (
-        <UploadModal
-          docKey="idcard"
-          docLabel="ID Card"
-          onClose={() => setIsUploadModalOpen(false)}
-          onSave={handleSaveImages}
-        />
-      )}
     </motion.div>
   );
 };

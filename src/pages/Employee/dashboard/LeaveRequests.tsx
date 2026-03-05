@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { CalendarDays, CheckCircle2, XCircle, AlertCircle, X, FileText, Info, Loader2, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import type { AppDispatch, RootState } from "../../../store";
 import { fetchMyLeaves } from "../../../store/slice/leaveSlice";
 import { createPortal } from "react-dom";
@@ -45,6 +46,8 @@ export default function LeaveRequests() {
   const { leaves, loading, error } = useSelector((state: RootState) => state.leave);
   const [selectedLeave, setSelectedLeave] = useState<any | null>(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(fetchMyLeaves());
   }, [dispatch]);
@@ -65,7 +68,10 @@ export default function LeaveRequests() {
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <h1 className="text-lg font-semibold text-gray-800">Leave Requests</h1>
-        <button className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors">
+        <button
+          onClick={() => navigate('/employee/leave-management')}
+          className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors"
+        >
           <ArrowRight size={20} />
         </button>
       </div>
@@ -93,6 +99,7 @@ export default function LeaveRequests() {
           leaves.map((req) => {
             const config = getStatusConfig(req.status);
             // const StatusIcon = config.icon;
+            const daysCount = Math.round(Number(req.days) || 0);
 
             return (
               <div
@@ -121,7 +128,7 @@ export default function LeaveRequests() {
                   <p className="text-xs text-gray-400 mt-0.5 truncate flex items-center gap-2">
                     <span>{formatDateShort(req.start_date)} - {formatDateShort(req.end_date)}</span>
                     <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                    <span>{req.days} {Number(req.days) > 1 ? 'Days' : 'Day'}</span>
+                    <span>{daysCount} {daysCount > 1 ? 'Days' : 'Day'}</span>
                   </p>
                 </div>
               </div>
@@ -179,8 +186,8 @@ export default function LeaveRequests() {
                     </div>
 
                     <div className="flex justify-between items-center text-xs text-gray-400 pt-2 border-t border-gray-100">
-                      <span>Applied on {selectedLeave.created_at ? formatDateLong(selectedLeave.created_at) : "---"}</span>
-                      <span>{selectedLeave.days} Days</span>
+                      <span>Applied on {selectedLeave.created_at ? formatDateLong(selectedLeave.created_at) : (selectedLeave.applied_at ? formatDateLong(selectedLeave.applied_at) : "---")}</span>
+                      <span>{Math.round(Number(selectedLeave.days) || 0)} Days</span>
                     </div>
                   </div>
                 </div>

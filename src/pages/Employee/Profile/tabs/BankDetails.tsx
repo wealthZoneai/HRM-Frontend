@@ -15,16 +15,16 @@ type BankAccount = {
 const maskAccountNumber = (accNum: string) => {
   // 1. Safety check: Convert to string to prevent errors if it's a number type
   const str = String(accNum || "");
-  
+
   if (!str || str === "N/A") return "N/A";
-  
+
   // 2. If length is 4 or less, show the whole thing (can't mask)
   if (str.length <= 4) return str;
-  
+
   // 3. Masking Logic: Hide everything except the last 4 digits
   const last4 = str.slice(-4);
   const stars = "*".repeat(str.length - 4);
-  
+
   return `${stars}${last4}`;
 };
 
@@ -33,7 +33,7 @@ const maskAccountNumber = (accNum: string) => {
 // 1. View Mode Component (Read-Only)
 const DetailField = ({ label, value }: { label: string; value: string }) => (
   <div className="py-2 w-full">
-    <label 
+    <label
       className="block text-sm font-medium text-slate-600 whitespace-nowrap overflow-hidden text-ellipsis"
       title={label}
     >
@@ -46,25 +46,27 @@ const DetailField = ({ label, value }: { label: string; value: string }) => (
 );
 
 // 2. Edit Mode Component (Input)
-const EditField = ({ 
-  label, 
-  name, 
-  value, 
+const EditField = ({
+  label,
+  name,
+  value,
   onChange,
-  type = "text" 
-}: { 
-  label: string; 
-  name: string; 
-  value: string; 
+  type = "text",
+  required = true
+}: {
+  label: string;
+  name: string;
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
+  required?: boolean;
 }) => (
   <div className="py-2 w-full">
-    <label 
+    <label
       className="block text-sm font-medium text-slate-700 whitespace-nowrap overflow-hidden text-ellipsis"
       title={label}
     >
-      {label}
+      {label} {required && <span className="text-red-500">*</span>}
     </label>
     <div className="h-9 flex items-center border-b border-blue-500 mt-1 pb-2">
       <input
@@ -93,6 +95,8 @@ const BankDetails = ({ data }: { data?: any }) => {
   });
 
   const [backup, setBackup] = useState<BankAccount>(account);
+  // Determine if bank details already exist so we hide Edit button
+  const hasExistingDetails = !!(backup.bankName && backup.accountNumber);
 
   useEffect(() => {
     if (data) {
@@ -111,6 +115,16 @@ const BankDetails = ({ data }: { data?: any }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // Validation for text fields
+    if (["bankName", "accountName", "branch"].includes(name)) {
+      if (!/^[a-zA-Z\s]*$/.test(value)) return;
+    }
+    // Validation for numeric fields
+    if (["accountNumber"].includes(name)) {
+      if (!/^\d*$/.test(value)) return;
+    }
+
     setAccount(prev => ({ ...prev, [name]: value }));
   };
 
@@ -125,7 +139,12 @@ const BankDetails = ({ data }: { data?: any }) => {
   };
 
   const handleSave = () => {
+    if (!account.bankName || !account.accountName || !account.accountNumber || !account.ifscCode || !account.branch) {
+      alert("Please fill out all mandatory fields.");
+      return;
+    }
     console.log("Saving Updated Data:", account);
+    setBackup(account);
     setIsEditing(false); // Switching to false triggers re-render of View Mode
   };
 
@@ -142,7 +161,7 @@ const BankDetails = ({ data }: { data?: any }) => {
           Banking Details
         </h2>
 
-        {!isEditing && (
+        {!isEditing && !hasExistingDetails && (
           <button
             onClick={handleEdit}
             className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
@@ -156,51 +175,52 @@ const BankDetails = ({ data }: { data?: any }) => {
 
       {/* --- Form Section --- */}
       <div className="mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-
-          {/* Left Column */}
-          <div className="space-y-4">
+        {/* Layout adjusted to be side-by-side per requirement */}
+        <div className="flex flex-col gap-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             {isEditing ? (
               <>
                 <EditField label="Bank Name" name="bankName" value={account.bankName} onChange={handleChange} />
                 <EditField label="Account Holder Name" name="accountName" value={account.accountName} onChange={handleChange} />
-                <EditField label="Branch Name" name="branch" value={account.branch} onChange={handleChange} />
               </>
             ) : (
               <>
                 <DetailField label="Bank Name" value={account.bankName} />
                 <DetailField label="Account Holder Name" value={account.accountName} />
-                <DetailField label="Branch Name" value={account.branch} />
               </>
             )}
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             {isEditing ? (
               <>
-                {/* EDIT MODE: Shows FULL NUMBER (Input) */}
-                <EditField 
-                  label="Bank Account Number" 
-                  name="accountNumber" 
-                  value={account.accountNumber} 
-                  onChange={handleChange} 
-                  type="number" // Optional: Forces number keypad on mobile
+                <EditField
+                  label="Bank Account Number"
+                  name="accountNumber"
+                  value={account.accountNumber}
+                  onChange={handleChange}
+                  type="text" // Removes the up/down arrows
                 />
                 <EditField label="Bank IFSC Code" name="ifscCode" value={account.ifscCode} onChange={handleChange} />
               </>
             ) : (
               <>
-                {/* VIEW MODE: Shows MASKED NUMBER (Text) */}
-                <DetailField 
-                  label="Bank Account Number" 
-                  value={maskAccountNumber(account.accountNumber)} 
+                <DetailField
+                  label="Bank Account Number"
+                  value={maskAccountNumber(account.accountNumber)}
                 />
                 <DetailField label="Bank IFSC Code" value={account.ifscCode} />
               </>
             )}
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            {isEditing ? (
+              <EditField label="Branch Name" name="branch" value={account.branch} onChange={handleChange} />
+            ) : (
+              <DetailField label="Branch Name" value={account.branch} />
+            )}
+          </div>
         </div>
       </div>
 

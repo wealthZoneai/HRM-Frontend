@@ -1,4 +1,4 @@
- import { Bell, Headset, ChevronDown } from "lucide-react";
+import { Bell, Headset, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import DefaultAvatar from "../../../assets/user.png";
 import { useRef, useEffect, useState } from "react";
@@ -180,7 +180,9 @@ export default function Topbar({ name, id }: TopbarProps) {
             {localStorage.getItem("role") || "Employee"}
           </span>
         </h1>
-        {/* <p className="text-xs text-gray-500 font-medium">Employee ID: {id}</p> */}
+        <p className="text-xs text-gray-500 font-medium mt-0.5">
+          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+        </p>
       </div>
 
       {/* MIDDLE SECTION - Hidden on mobile */}
