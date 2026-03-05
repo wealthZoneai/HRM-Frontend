@@ -134,7 +134,7 @@ export default function EmployeeScreen() {
           <FiSearch size={20} className="text-gray-400" />
           <input
             type="text"
-            placeholder="Search employee by name, role, ID or Department"
+            placeholder="Search Employee By Name, Role, ID or Department"
             className="flex-1 py-1 outline-none text-gray-700 placeholder-gray-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
