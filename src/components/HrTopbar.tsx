@@ -80,7 +80,7 @@ export default function HrTopbar({ name, id }: TopbarProps) {
 
     // 3. Cleanup interval on unmount
     return () => clearInterval(interval);
-  }, []); 
+  }, []);
 
   // Close help dropdown when clicking outside
   useEffect(() => {

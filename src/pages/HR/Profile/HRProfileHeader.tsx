@@ -13,7 +13,7 @@ const HRProfileHeader = () => {
     const [imageSrc, setImageSrc] = useState<string>(Pic);
     const [data, setData] = useState<any>(null);
 
-    
+
 
     // 1. Fetch Profile Data on Mount
     const fetchProfileData = async () => {
@@ -87,10 +87,10 @@ const HRProfileHeader = () => {
     };
 
     // Determine Display Values (API Data -> LocalStorage -> Default)
-    const userName = data 
-        ? `${data.first_name} ${data.last_name}` 
+    const userName = data
+        ? `${data.first_name} ${data.last_name}`
         : (localStorage.getItem("userName") || "HR Manager");
-    
+
     const role = data?.user?.role || "Human Resources Manager";
     const department = data?.department || "HR Department";
     const employeeId = data?.employee_id || localStorage.getItem("empId") || "WZG-HR-001";

@@ -60,6 +60,8 @@ const Login: React.FC = () => {
           navigate(`/dm/dashboard`);
         } else if (response.data.role === "pm") {
           navigate(`/pm/dashboard`);
+        }else if (response.data.role === "management") {
+          navigate(`/ceo/dashboard`);
         }
 
         // store login time

@@ -12,7 +12,7 @@ import Logo from "../../assets/white_logo.png";
 import SidebarImage from "../../assets/Sidebar.png";
 import LogoutModal from "../../components/LogoutModal";
 import HrTopbar from "../../components/HrTopbar"; // Reusing HrTopbar for now as it likely has profile info
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 // import { clearAttendance } from "../../store/slice/attendanceSlice"; // If needed
 
 interface ManagerLayoutProps {

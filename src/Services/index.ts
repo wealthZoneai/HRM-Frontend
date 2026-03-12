@@ -73,8 +73,11 @@ httpClient.interceptors.response.use(
  
     // 2. Clear storage and redirect ONLY if it's a 401 AND NOT a login attempt
     if (error.response.status === 401 && !isLoginRequest) {
-      localStorage.clear();
-      window.location.href = "/";
+      // Allow CEO testing to bypass the automatic logout on 401
+      if (localStorage.getItem("role") !== "ceo") {
+        localStorage.clear();
+        window.location.href = "/";
+      }
     }
  
     return Promise.reject(error);

@@ -13,6 +13,7 @@ import ApplyLeaveSuccess from "../pages/Employee/leave-management/Apply-Leave/Ap
 import Payroll from "../pages/Employee/payroll/Payroll";
 import { Outlet } from "react-router-dom";
 import DashboardLayout from "../pages/Employee/dashboard/DashboardLayout";
+import CEODashboardLayout from "../pages/CEO/components/DashboardLayout";
 import HRHomeDashboard from "../pages/HR/HrDashboard/HRHomeDashboard";
 import HolidayCard from "../pages/HR/HolidayCard/HolidayCard";
 import Calendar from "../pages/Employee/calendar/Calendar";
@@ -39,6 +40,13 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { clearAttendance } from "../store/slice/attendanceSlice";
+import EmployeesPage from "../pages/CEO/pages/Employees/EmployeesPage";
+import Dashboard from "../pages/CEO/pages/Dashboard/Dashboard";
+import AttritionAnalysis from "../pages/CEO/pages/Attrition Analysis/Attrition Analysis";
+import PayrollPage from "../pages/CEO/pages/Payroll/PayrollPage";
+import AttendancePage from "../pages/CEO/pages/Attendance/AttendancePage";
+import ReportsPage from "../pages/CEO/pages/Reports/ReportsPage";
+import ProfilePage from "../pages/CEO/pages/Profile/ProfilePage";
 
 function AppRouters() {
   const navigate = useNavigate();
@@ -104,7 +112,10 @@ function AppRouters() {
         <Route path="notifications" element={<Notifications />} />
         <Route path="leave-management" element={<LeaveManagement />} />
         <Route path="leave-management/apply" element={<ApplyLeaveFormPage />} />
-        <Route path="leave-management/success" element={<ApplyLeaveSuccess />} />
+        <Route
+          path="leave-management/success"
+          element={<ApplyLeaveSuccess />}
+        />
         <Route path="payroll" element={<Payroll />} />
         <Route path="calendar" element={<Calendar />} />
         <Route path="policy" element={<Policies />} />
@@ -173,11 +184,58 @@ function AppRouters() {
       </Route>
 
       {/* Fallback for unauthorized or 404 */}
-      <Route path="/unauthorized" element={<div className="p-10 text-center text-red-600 font-bold">403 - Unauthorized Access</div>} />
+      <Route
+        path="/unauthorized"
+        element={
+          <div className="p-10 text-center text-red-600 font-bold">
+            403 - Unauthorized Access
+          </div>
+        }
+      />
       <Route path="*" element={<Navigate to="/login" replace />} />
 
+      <Route
+        path="/ceo/*"
+        element={
+          // <ProtectedRoute allowedRoles={["ceo"]}>
+          <CEODashboardLayout>
+            <Outlet />
+          </CEODashboardLayout>
+          // {/* </ProtectedRoute> */}
+        }
+      >
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="employees" element={<EmployeesPage />} />
+        <Route path="analytics" element={<AttritionAnalysis />} />
+        <Route path="payroll" element={<PayrollPage />} />
+        <Route path="attendance" element={<AttendancePage />} />
+        <Route path="reports" element={<ReportsPage />} />
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
     </Routes>
   );
 }
 
 export default AppRouters;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
