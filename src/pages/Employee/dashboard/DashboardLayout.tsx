@@ -98,7 +98,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const [currentUser, setCurrentUser] = useState({
     name: formattedUserName,
-    id: localStorage.getItem("empId") || "WZG-AI-0029"
+    id: localStorage.getItem("empId") || ""
   });
 
   const mainContentRef = React.useRef<HTMLDivElement>(null);
@@ -108,9 +108,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     if (!localStorage.getItem("empId")) {
       import("../../../Services/apiHelpers").then(api => {
         api.GetMyProfile().then(res => {
-          if (res.data && res.data.emp_id) {
-            localStorage.setItem("empId", res.data.emp_id);
-            setCurrentUser(prev => ({ ...prev, id: res.data.emp_id }));
+          const empId = res.data?.profile?.emp_id || res.data?.user?.id;
+          console.log(empId)
+          if (empId) {
+            localStorage.setItem("empId", empId);
+            setCurrentUser(prev => ({ ...prev, id: empId }));
           }
         }).catch(err => console.error("Layout: Failed to fetch profile", err));
       });

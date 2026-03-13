@@ -49,8 +49,8 @@ const ProfileHeader = ({ data }: { data?: any }) => {
   // If data is missing (still loading or error), can show skeleton or default
   // For now, using optional chaining fallback
 
-  const fullName = data?.first_name
-    ? `${data.first_name} ${data.middle_name || ''} ${data.last_name}`.trim()
+  const fullName = data?.profile.first_name
+    ? `${data?.profile.first_name} ${data?.profile.last_name}`
     : localStorage.getItem('userName')?.split('.')[0] || "User Name";
 
   return (
@@ -173,22 +173,22 @@ const ProfileHeader = ({ data }: { data?: any }) => {
             <div className="mt-6 flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-4">
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <Briefcase size={14} className="text-blue-500 shrink-0" />
-                <span>{data?.department || "Department"}</span>
+                <span>{data?.profile.department || "Department"}</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <IdCard size={14} className="text-purple-500 shrink-0" />
-                <span>{data?.emp_id || "ID"}</span>
+                <span>{data?.profile?.emp_id || "ID"}</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <MapPin size={14} className="text-red-500 shrink-0" />
-                <span>{data?.location || "Location"}</span>
+                <span>{data?.profile?.location || "Hyderabad"}</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-100">
                 <Calendar size={14} className="text-orange-500 shrink-0" />
-                <span>DOJ: {data?.start_date || "N/A"}</span>
+                <span>DOJ: {data?.profile?.start_date || "N/A"}</span>
               </div>
             </div>
           </div>

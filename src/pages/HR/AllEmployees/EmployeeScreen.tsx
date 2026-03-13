@@ -71,7 +71,7 @@ export default function EmployeeScreen() {
   const fetchEmployees = async () => {
     try {
       const response = await GetAllEmployes();
-      const rawData = response?.data?.results || [];
+      const rawData = response?.data?.results || response?.data || [];
       console.log("Fetched Employees:", rawData);
 
       const formattedData: Employee[] = rawData.map((emp: any) => {

@@ -96,7 +96,7 @@ const HRBankDetails = () => {
                 if (!extractedId && profile?.emp_id) {
                     try {
                         const allEmpsResponse = await GetAllEmployes();
-                        const allEmps = allEmpsResponse.data?.results || [];
+                        const allEmps = allEmpsResponse.data?.results || allEmpsResponse.data || [];
                         const found = allEmps.find((e: any) => e.emp_id === profile.emp_id);
                         if (found?.id) extractedId = found.id;
                     } catch (err) {

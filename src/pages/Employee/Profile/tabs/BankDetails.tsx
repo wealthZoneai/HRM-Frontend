@@ -102,11 +102,11 @@ const BankDetails = ({ data }: { data?: any }) => {
     if (data) {
       const bankData = data.bank || data;
       const initialData = {
-        bankName: bankData.bank_name || '',
-        accountNumber: bankData.account_number || '', // Expected: Full Number (e.g., "1234567890")
-        ifscCode: bankData.ifsc_code || '',
-        branch: bankData.branch || '',
-        accountName: bankData.account_holder_name || '',
+        bankName: bankData?.profile?.bank_name || '',
+        accountNumber: bankData?.profile?.masked_account_number || '', // Expected: Full Number (e.g., "1234567890")
+        ifscCode: bankData?.profile?.ifsc_code || '',
+        branch: bankData?.profile?.branch || 'Hyderabad',
+        accountName: `${bankData?.profile?.first_name || ""} ${bankData?.profile?.last_name}`
       };
       setAccount(initialData);
       setBackup(initialData);

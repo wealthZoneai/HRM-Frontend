@@ -39,19 +39,21 @@ export default function HRLayout({ children }: HRLayoutProps) {
   }, [location.pathname]);
 
   const [currentUser, setCurrentUser] = useState({
-    name: localStorage.getItem("userName") || "Raviteja",
-    id: localStorage.getItem("empId") || "WZG-AI-0029",
+    name: localStorage.getItem("userName") || "",
+    id: localStorage.getItem("empId") || "",
   });
 
   useEffect(() => {
     // If empId is missing or is the default, try to fetch it from the profile
     const currentId = localStorage.getItem("empId");
-    if (!currentId || currentId === "WZG-AI-0029") {
+    if (!currentId) {
       import("../../Services/apiHelpers").then(api => {
         api.GetMyProfile().then(res => {
-          if (res.data && res.data.emp_id) {
-            localStorage.setItem("empId", res.data.emp_id);
-            setCurrentUser(prev => ({ ...prev, id: res.data.emp_id }));
+          const empId = res.data?.profile?.emp_id || res.data?.user?.id;
+          console.log(empId)
+          if (empId) {
+            localStorage.setItem("empId", empId);
+            setCurrentUser(prev => ({ ...prev, id: empId }));
           }
         }).catch(err => console.error("HRLayout: Failed to fetch profile", err));
       });

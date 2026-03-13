@@ -16,6 +16,7 @@ import {
     FiArrowUpRight,
     FiActivity
 } from 'react-icons/fi';
+import { GetAdminTotalEmployees } from '../../../../Services/apiHelpers';
 
 // Mock Data for Charts
 const hiringData = [
@@ -185,6 +186,36 @@ const Dashboard: React.FC = () => {
         type: ''
     });
 
+    const [totalEmployees, setTotalEmployees] = useState<{ value: string | number; trend: string; isPositive: boolean }>({
+        value: '...',
+        trend: 'Loading...',
+        isPositive: true
+    });
+
+    useEffect(() => {
+        const fetchTotalEmployees = async () => {
+            try {
+                const res = await GetAdminTotalEmployees();
+                if (res.data) {
+                    setTotalEmployees({
+                        value: res.data.total_employees || '0',
+                        trend: res.data.trend || 'Updated just now',
+                        isPositive: res.data.is_positive !== false
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to fetch total employees:", error);
+                setTotalEmployees({
+                    value: 'N/A',
+                    trend: 'Error fetching data',
+                    isPositive: false
+                });
+            }
+        };
+
+        fetchTotalEmployees();
+    }, []);
+
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 1024);
@@ -202,9 +233,9 @@ const Dashboard: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 px-1 lg:px-0">
                 <StatCard
                     title="Total Employees"
-                    value="70"
-                    trend="+15% from last month"
-                    isPositive={true}
+                    value={totalEmployees.value}
+                    trend={totalEmployees.trend}
+                    isPositive={totalEmployees.isPositive}
                     onClick={() => setSelectedStat({
                         isOpen: true,
                         title: 'Total Employees',

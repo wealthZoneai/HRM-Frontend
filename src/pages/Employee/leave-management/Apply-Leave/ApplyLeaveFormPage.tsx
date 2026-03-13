@@ -11,7 +11,7 @@ export default function ApplyLeaveFormPage() {
     type: "",
     from: "",
     to: "",
-    id: localStorage.getItem("empId") || "WZG-AI-0029",
+    id: localStorage.getItem("empId") || "",
     role: localStorage.getItem("role") || "Employee",
     reason: "",
     document: null as File | null,

@@ -20,6 +20,10 @@ const endpoints = {
     hrAnnouncements: '/api/announcement/list/',
     totalAttendance: "api/attendance/days/",
 
+    // --- ADMIN / CEO ---
+    adminTotalEmployees: "api/admin/total-employees/",
+    
+
     // --- POST (Create) ---
     createEmployes: 'api/hr/create-employee/',
     createAnnouncement: 'api/announcement/create/',

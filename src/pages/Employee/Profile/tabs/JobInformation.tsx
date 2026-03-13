@@ -63,17 +63,17 @@ const JobInformation = ({ data }: { data?: any }) => {
     if (data) {
       const jobData = data.job || data;
       const mappedData = {
-        jobTitle: jobData.job_title || '',
-        department: jobData.department || '',
-        teamLead: jobData.team_lead?.display || '',
-        employmentType: jobData.employment_type || '',
-        startDate: jobData.start_date || '',
-        location: jobData.location || '',
-        workEmail: data.work_email || jobData.work_email || '',
-        employeeId: data.emp_id || jobData.emp_id || '',
-        idCardFront: data.protected_id_image_url ? `http://127.0.0.1:8000${data.protected_id_image_url}` : '',
-        idCardBack: data.protected_id_image_url ? `http://127.0.0.1:8000${data.protected_id_image_url}` : '',
-        jobDescription: jobData.job_description || '',
+        jobTitle: jobData?.profile?.job_title || '',
+        department: jobData?.profile?.department || '',
+        teamLead: jobData?.profile?.team_lead?.display || '',
+        employmentType: jobData?.profile?.employment_type || '',
+        startDate: jobData?.profile?.start_date || '',
+        location: jobData?.profile?.location || 'Hyderabad',
+        workEmail: data?.profile?.work_email || jobData.work_email || '',
+        employeeId: data?.profile?.emp_id || jobData.emp_id || '',
+        idCardFront: data?.profile?.protected_id_image_url ? `http://127.0.0.1:8000${data.protected_id_image_url}` : '',
+        idCardBack: data?.profile?.protected_id_image_url ? `http://127.0.0.1:8000${data.protected_id_image_url}` : '',
+        jobDescription: jobData?.profile?.job_description || '',
       };
       setFormData(mappedData);
       setOriginalData(mappedData);

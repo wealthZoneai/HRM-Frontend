@@ -106,6 +106,10 @@ export const gettotalAttendance = () => {
   return server.get(endpoints.totalAttendance, { requiresAuth: true });
 };
 
+export const GetAdminTotalEmployees = () => {
+  return server.get(endpoints.adminTotalEmployees, { requiresAuth: true });
+};
+
 export function CreateEmployes(body: any) {
   return server.post(endpoints.createEmployes, body, { requiresAuth: true });
 }

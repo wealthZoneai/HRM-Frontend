@@ -116,20 +116,21 @@ const ContactInformation = () => {
       setIsLoading(true);
       const response = await GetMyProfile();
       const data = response.data;
+      console.log(data);
 
       const state = {
-        employeeId: data.emp_id || "",
-        firstName: data.first_name || "",
-        middleName: data.middle_name || "",
-        lastName: data.last_name || "",
-        workMail: data.work_email || "",
-        personalMail: data.personal_email || "",
-        phone: data.phone_number || "",
-        alternativeNumber: data.alternate_number || "",
-        dob: data.dob || "",
-        bloodGroup: data.blood_group || "",
-        gender: data.gender || "",
-        maritalStatus: data.marital_status || "",
+        employeeId: data.profile?.emp_id || "",
+        firstName: data?.profile?.first_name || "",
+        middleName: data?.profile?.middle_name || "",
+        lastName: data?.profile?.last_name || "",
+        workMail: data?.profile?.work_email || "",
+        personalMail: data?.profile?.personal_email || "",
+        phone: data?.profile?.phone_number || "",
+        alternativeNumber: data?.profile?.alternate_number || "",
+        dob: data?.profile?.dob || "",
+        bloodGroup: data?.profile?.blood_group || "",
+        gender: data?.profile?.gender || "",
+        maritalStatus: data?.profile?.marital_status || "",
       };
 
       setData(state);

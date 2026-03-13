@@ -142,7 +142,7 @@ export default function HRHomeDashboard() {
         const res = await GetAllEmployes();
 
         // ✅ FIX: Django paginated response
-        const employees: Employee[] = res.data?.results || [];
+        const employees: Employee[] = res.data?.results || res.data || [];
 
         const formatted = buildDeptData(employees);
         setDeptData(formatted);

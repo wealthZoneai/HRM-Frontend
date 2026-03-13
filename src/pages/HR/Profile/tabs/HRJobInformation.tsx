@@ -42,7 +42,7 @@ const HRJobInformation = () => {
                 if (!extractedId && data?.emp_id) {
                     try {
                         const allEmpsResponse = await GetAllEmployes();
-                        const allEmps = allEmpsResponse.data?.results || [];
+                        const allEmps = allEmpsResponse.data?.results || allEmpsResponse.data || [];
                         const found = allEmps.find((e: any) => e.emp_id === data.emp_id);
                         if (found && found.id) {
                             extractedId = found.id;
