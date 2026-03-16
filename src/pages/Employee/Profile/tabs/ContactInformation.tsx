@@ -116,7 +116,6 @@ const ContactInformation = () => {
       setIsLoading(true);
       const response = await GetMyProfile();
       const data = response.data;
-      console.log(data);
 
       const state = {
         employeeId: data.profile?.emp_id || "",

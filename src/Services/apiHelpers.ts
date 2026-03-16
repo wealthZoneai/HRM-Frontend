@@ -61,6 +61,11 @@ export function ForgotPassword(email: string) {
   return server.post(endpoints.forgotPassword, body, { requiresAuth: false })
 }
 
+export function OTPVerify({ email, otp }: any) {
+  const body = { email, otp };
+  return server.post((endpoints as any).verifyOtp, body, { requiresAuth: false })
+}
+
 export function ResetPassword({ email, otp, new_password, confirm_password }: any) {
   const body = { email, otp, new_password, confirm_password };
   return server.post(endpoints.resetPassword, body, { requiresAuth: false })
@@ -108,6 +113,86 @@ export const gettotalAttendance = () => {
 
 export const GetAdminTotalEmployees = () => {
   return server.get(endpoints.adminTotalEmployees, { requiresAuth: true });
+};
+
+export const GetAdminNewJoinees = () => {
+  return server.get(endpoints.adminNewJoinees, { requiresAuth: true });
+};
+
+export const GetAdminDepartments = () => {
+  return server.get(endpoints.adminDepartments, { requiresAuth: true });
+};
+
+export const GetAdminMonthlyEmployees = () => {
+  return server.get(endpoints.adminMonthlyEmployees, { requiresAuth: true });
+};
+
+export const GetAdminAttrition = () => {
+  return server.get(endpoints.adminAttrition, { requiresAuth: true });
+};
+
+export const GetAdminRiskAlerts = () => {
+  return server.get(endpoints.adminRiskAlerts, { requiresAuth: true });
+};
+
+export const GetAdminClients = () => {
+  return server.get(endpoints.adminClients, { requiresAuth: true });
+};
+
+export const GetAdminAnnualGrowth = () => {
+  return server.get(endpoints.adminAnnualGrowth, { requiresAuth: true });
+};
+
+export const GetAdminDepartmentWise = () => {
+  return server.get(endpoints.adminDepartmentWise, { requiresAuth: true });
+};
+
+export const GetAdminOnLeave = () => {
+  return server.get(endpoints.adminOnLeave, { requiresAuth: true });
+};
+
+export const GetAdminPendingRequests = () => {
+  return server.get(endpoints.adminPendingRequests, { requiresAuth: true });
+};
+
+export const GetAdminLateArrivals = () => {
+  return server.get(endpoints.adminLateArrivals, { requiresAuth: true });
+};
+
+export const GetAdminLeaveTypeBreakdown = () => {
+  return server.get(endpoints.adminLeaveBreakdown, { requiresAuth: true });
+};
+
+export const GetAdminEmployeesOnLeaveDeptWise = () => {
+  return server.get(endpoints.adminEmployeesOnLeaveDeptWise, { requiresAuth: true });
+};
+
+export const GetAdminAttendanceTrend = () => {
+  return server.get(endpoints.adminAttendanceTrend, { requiresAuth: true });
+};
+
+export const GetAdminTotalPresent = () => {
+  return server.get(endpoints.adminTotalPresent, { requiresAuth: true });
+};
+
+export const GetAdminLongLeaveDashboard = () => {
+  return server.get(endpoints.adminLongLeaveDashboard, { requiresAuth: true });
+};
+
+export const GetAdminDashboard = () => {
+  return server.get(endpoints.adminDashboard, { requiresAuth: true });
+};
+
+export const GetAdminProjects = () => {
+  return server.get(endpoints.adminProjects, { requiresAuth: true });
+};
+
+export const GetAdminManagers = () => {
+  return server.get(endpoints.adminManagers, { requiresAuth: true });
+};
+
+export const GetAdminModuleProgress = () => {
+  return server.get(endpoints.adminModuleProgress, { requiresAuth: true });
 };
 
 export function CreateEmployes(body: any) {

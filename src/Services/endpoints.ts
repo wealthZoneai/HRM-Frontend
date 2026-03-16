@@ -5,6 +5,7 @@ const endpoints = {
     login: '/api/login/',
     register: '/api/auth/candidateSignup',
     forgotPassword: 'api/forgot-password/',
+    verifyOtp: 'api/verify-otp/',
     resetPassword: 'api/reset-password/',
     refresh: 'api/refresh/',
 
@@ -22,7 +23,30 @@ const endpoints = {
 
     // --- ADMIN / CEO ---
     adminTotalEmployees: "api/admin/total-employees/",
-    
+    adminNewJoinees: "api/admin/new-joinees-this-month/",
+    adminDepartments: "api/admin/departments/",
+    adminMonthlyEmployees: "api/admin/monthly-employees/",
+    adminAttrition: "api/admin/attrition/dashboard/",
+    adminRiskAlerts: "api/admin/risk-alerts/",
+    adminClients: "api/admin/clients/",
+    adminAnnualGrowth: "api/admin/annual-growth/",
+    adminDepartmentWise: "api/admin/department-wise/",
+
+    // Attendance & Leave (CEO)
+    adminOnLeave: "api/admin/on-leave/",
+    adminPendingRequests: "api/admin/pending-requests/",
+    adminLateArrivals: "api/admin/late-arrivals/",
+    adminLeaveBreakdown: "api/admin/leave-breakdown/",
+    adminEmployeesOnLeaveDeptWise: "api/admin/employees-on-leave-dept-wise/",
+    adminAttendanceTrend: "api/admin/attendance-trend/",
+    adminTotalPresent: "api/admin/total-present/",
+    adminLongLeaveDashboard: "api/admin/long-leave-dashboard/",
+
+    // Reports
+    adminDashboard: "api/admin/dashboard/",
+    adminProjects: "api/admin/projects/",
+    adminManagers: "api/admin/managers/",
+    adminModuleProgress: "api/admin/module-progress/",
 
     // --- POST (Create) ---
     createEmployes: 'api/hr/create-employee/',

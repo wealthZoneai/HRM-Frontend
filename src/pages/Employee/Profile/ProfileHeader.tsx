@@ -24,7 +24,7 @@ const ProfileHeader = ({ data }: { data?: any }) => {
             requiresAuth: true,
             params: { t: new Date().getTime() } // Cache busting
           });
-
+          console.log(response.data)
           if (active) {
             objectUrl = URL.createObjectURL(response.data);
             setImageSrc(objectUrl);
@@ -64,7 +64,6 @@ const ProfileHeader = ({ data }: { data?: any }) => {
       <div className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
 
-          {/* Profile Image */}
           {/* Profile Image */}
           <div className="relative shrink-0 mx-auto sm:mx-0 group">
             <img

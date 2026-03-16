@@ -18,10 +18,10 @@ const ProfileTabs = ({ data }: { data?: any }) => {
 
   const renderTab = () => {
     switch (active) {
-      case 0: return <ContactInformation data={data} />;
+      case 0: return <ContactInformation />;
       case 1: return <JobInformation data={data} />;
       case 2: return <BankDetails data={data} />; // Assuming BankDetails will also be updated
-      case 3: return <Identification data={data} />;
+      case 3: return <Identification />;
       case 4: return <PFDetails />;
       default: return null;
     }
