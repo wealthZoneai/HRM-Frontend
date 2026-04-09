@@ -77,7 +77,7 @@ const ProfilePage: React.FC = () => {
         <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Success Modal */}
             {showSuccess.show && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 border border-gray-100 text-center relative animate-in zoom-in-95 duration-300">
                         <div className="flex justify-end absolute top-6 right-6">
                             <button onClick={() => setShowSuccess({ show: false, message: '' })} className="p-3 hover:bg-gray-100 rounded-2xl transition-all duration-300 text-gray-400 hover:text-gray-900 group">
@@ -106,7 +106,7 @@ const ProfilePage: React.FC = () => {
 
             {/* Password Change Modal */}
             {isPasswordModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 border border-gray-100 animate-in zoom-in-95 duration-300">
                         <div className="flex justify-between items-center mb-8">
                             <div className="flex items-center gap-3">
@@ -191,7 +191,7 @@ const ProfilePage: React.FC = () => {
 
             {/* Header / Banner Area */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden relative">
-                <div className="h-40 bg-gradient-to-r from-blue-600 to-indigo-700 w-full relative">
+                <div className="h-40 bg-linear-to-r from-blue-600 to-indigo-700 w-full relative">
                     <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]"></div>
                 </div>
 
@@ -361,7 +361,7 @@ const ProfilePage: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden group">
+                    <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden group">
                         <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
                         <h3 className="text-lg font-black mb-2 tracking-tight">Need Support?</h3>
                         <p className="text-sm text-blue-100 font-medium mb-6">Contact IT department for any account related help.</p>

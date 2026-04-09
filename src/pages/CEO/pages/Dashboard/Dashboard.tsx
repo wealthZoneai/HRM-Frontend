@@ -6,8 +6,6 @@ import {
     YAxis,
     Tooltip,
     ResponsiveContainer,
-    AreaChart,
-    Area
 } from 'recharts';
 import {
     FiUsers,
@@ -34,15 +32,7 @@ import {
     GetAdminLeaveTypeBreakdown,
 } from '../../../../Services/apiHelpers';
 
-// Static payroll data (no backend API yet)
-const payrollData = [
-    { name: 'Mar 2025', value: 32 },
-    { name: 'May 2025', value: 35 },
-    { name: 'Jul 2025', value: 42 },
-    { name: 'Sep 2025', value: 48 },
-    { name: 'Nov 2025', value: 50 },
-    { name: 'Jan 2026', value: 56 },
-];
+
 
 const StatCard = ({ title, value, trend, isPositive, secondaryLabel, onClick }: any) => (
     <div
@@ -75,7 +65,7 @@ const StatModal = ({ isOpen, onClose, title, data, type }: any) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-6">
+        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 md:p-6">
             <div
                 className="absolute inset-0 bg-gray-900/40 backdrop-blur-md animate-in fade-in duration-500"
                 onClick={onClose}
@@ -102,7 +92,7 @@ const StatModal = ({ isOpen, onClose, title, data, type }: any) => {
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-gradient-to-b from-white to-gray-50/30 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-linear-to-b from-white to-gray-50/30 custom-scrollbar">
                     {/* List View (Clients, Joinees) */}
                     {type === 'list' && (
                         <div className="space-y-4">
@@ -688,7 +678,7 @@ const Dashboard: React.FC = () => {
                             <p className="text-gray-400 text-sm">Loading alerts...</p>
                         ) : riskAlerts.length === 0 ? (
                             <div className="p-3 md:p-4 bg-green-50 rounded-xl border border-green-100 flex gap-3 md:gap-4">
-                                <div className="text-green-600 text-md md:text-lg flex-shrink-0 mt-0.5">✓</div>
+                                <div className="text-green-600 text-md md:text-lg shrink-0 mt-0.5">✓</div>
                                 <div>
                                     <p className="text-green-800 font-bold text-xs md:text-sm">No active alerts</p>
                                     <p className="text-green-600/60 text-[10px] md:text-[11px] font-bold mt-1">All systems healthy</p>
@@ -704,7 +694,7 @@ const Dashboard: React.FC = () => {
                             const color = colorSet[severity] || alertColors[idx % 3] || 'amber';
                             return (
                                 <div key={idx} className={`p-3 md:p-4 bg-${color}-50 rounded-xl border border-${color}-100 flex gap-3 md:gap-4 transition-all hover:scale-[1.01]`}>
-                                    <div className={`text-${color}-600 text-md md:text-lg flex-shrink-0 mt-0.5`}>
+                                    <div className={`text-${color}-600 text-md md:text-lg shrink-0 mt-0.5`}>
                                         <FiAlertTriangle />
                                     </div>
                                     <div>

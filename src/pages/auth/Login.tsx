@@ -25,6 +25,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("Employee");
 
   const handleForgotPassword = () => {
     navigate('/forgot-password')
@@ -176,6 +177,24 @@ const Login: React.FC = () => {
         {/* RIGHT SECTION */}
         <div className="relative z-10 p-8 md:p-12 top-[30px] flex flex-col justify-center">
           <form onSubmit={handleSubmit} className="space-y-6">
+
+            {/* ROLE TABS */}
+            <div className="flex gap-2 p-1 bg-white/20 rounded-lg backdrop-blur-sm">
+              {['Management', 'Employee', 'HR'].map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 py-2 text-sm font-medium rounded-md transition-all duration-300 ${
+                    activeTab === tab
+                      ? 'bg-white text-[#0047AB] shadow-sm'
+                      : 'text-white hover:bg-white/30'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
 
             {/* USERNAME */}
             <div>

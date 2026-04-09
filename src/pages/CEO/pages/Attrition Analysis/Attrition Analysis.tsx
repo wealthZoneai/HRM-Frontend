@@ -210,13 +210,13 @@ const AttritionAnalysis: React.FC = () => {
                                 <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                                     <div className="flex items-center gap-2 flex-1 min-w-0">
                                         <div
-                                            className="w-2 h-2 rounded-full flex-shrink-0"
+                                            className="w-2 h-2 rounded-full shrink-0"
                                             style={{ backgroundColor: DEPT_COLORS[idx % DEPT_COLORS.length] }}
                                         />
                                         <span className="text-xs md:text-sm font-bold text-gray-700 truncate">{dept.name}</span>
                                     </div>
                                     <div className="flex items-center gap-3 w-full sm:w-48">
-                                        <span className="text-[10px] md:text-xs font-bold text-gray-900 w-8 md:w-10 text-right flex-shrink-0">{dept.value}</span>
+                                        <span className="text-[10px] md:text-xs font-bold text-gray-900 w-8 md:w-10 text-right shrink-0">{dept.value}</span>
                                         <div className="h-1.5 md:h-2 flex-1 bg-gray-100 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full rounded-full transition-all duration-1000"
@@ -278,7 +278,7 @@ const AttritionAnalysis: React.FC = () => {
                     <div className="w-full lg:w-[45%] grid grid-cols-1 gap-3 px-2 lg:px-0">
                         {reasonsData.map((item, index) => (
                             <div key={index} className="flex items-center gap-3">
-                                <div className="w-4 h-4 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
+                                <div className="w-4 h-4 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
                                 <span className="text-[12px] md:text-[14px] font-semibold text-gray-700 flex-1">{item.name}</span>
                                 <span className="text-[12px] font-bold" style={{ color: item.color }}>{item.percentage}</span>
                             </div>

@@ -7,28 +7,11 @@ import { GetMyProfile, UpdateMyProfileImage } from '../../../Services/apiHelpers
 import server from '../../../Services/index';
 import { showSuccess, showError } from '../../../utils/toast';
 
-const HRProfileHeader = () => {
+const HRProfileHeader = ({ data }: { data?: any }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
     const [imageSrc, setImageSrc] = useState<string>(Pic);
-    const [data, setData] = useState<any>(null);
-
-
-
-    // 1. Fetch Profile Data on Mount
-    const fetchProfileData = async () => {
-        try {
-            const response = await GetMyProfile();
-            setData(response.data);
-        } catch (error) {
-            console.error("Failed to load profile data", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchProfileData();
-    }, []);
-
+    console.log(data);
     // 2. Fetch Secure Image Blob when URL is available
     useEffect(() => {
         let active = true;
@@ -75,8 +58,7 @@ const HRProfileHeader = () => {
             try {
                 await UpdateMyProfileImage(formData);
                 showSuccess("Profile photo updated successfully!");
-                // Refresh data to get the new image URL
-                await fetchProfileData();
+                // Image will be refreshed on next data prop update
             } catch (err: any) {
                 showError(err.response?.data?.detail || "Failed to update profile photo.");
                 console.error(err);
@@ -88,14 +70,15 @@ const HRProfileHeader = () => {
 
     // Determine Display Values (API Data -> LocalStorage -> Default)
     const userName = data
-        ? `${data.first_name} ${data.last_name}`
+        ? data?.user?.username
         : (localStorage.getItem("userName") || "HR Manager");
 
     const role = data?.user?.role || "Human Resources Manager";
-    const department = data?.department || "HR Department";
-    const employeeId = data?.employee_id || localStorage.getItem("empId") || "WZG-HR-001";
-    const location = data?.location || "Hyderabad, India";
-    const doj = data?.date_of_joining || "01/01/2023";
+    const department = data?.user?.department || "HR Department";
+    const employeeId = data?.user?.employee_id || "WZG-HR-001";
+    console.log(employeeId)
+    const location = data?.user?.location || "Hyderabad, India";
+    const doj = data?.user?.date_of_joining || "01/01/2023";
 
     return (
         <motion.div
