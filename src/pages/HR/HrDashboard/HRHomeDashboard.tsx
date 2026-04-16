@@ -213,7 +213,7 @@ export default function HRHomeDashboard() {
           actionLabel="Clock in"
           onAction={handleClockIn}
           loading={loading && status !== "Working"}
-          disabled={status === "Working"}
+          disabled={!!clockInTime}
         />
 
         <TimeCard

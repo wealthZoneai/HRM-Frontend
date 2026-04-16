@@ -87,7 +87,7 @@ export default function EmployeeScreen() {
           name: fullName,
           role: emp.job_title || emp.role || "Employee",
           employeeId: emp.emp_id,
-          status: "Active",
+          status: emp.is_active ? "Active" : "Inactive",
           profile_photo: photoUrl ? photoUrl : fallbackAvatar,
         };
       });

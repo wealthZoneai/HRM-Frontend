@@ -172,7 +172,26 @@ const attendanceSlice = createSlice({
         });
         builder.addCase(fetchTodayAttendance.fulfilled, (state, action: PayloadAction<any>) => {
             state.loading = false;
-            const { clock_in, clock_out, total_hours_workdone, duration_seconds } = action.payload;
+            
+            // The backend endpoint returns an array of today's attendances (usually just one)
+            const attendanceData = Array.isArray(action.payload) ? action.payload[0] : action.payload;
+            
+            if (!attendanceData) {
+                // No attendance record for today yet
+                state.clockInTime = null;
+                state.clockOutTime = null;
+                state.totalHours = null;
+                state.status = 'Not Started';
+                saveState({
+                    clockInTime: null,
+                    clockOutTime: null,
+                    totalHours: null,
+                    status: 'Not Started'
+                });
+                return;
+            }
+
+            const { clock_in, clock_out, total_hours_workdone, duration_seconds } = attendanceData;
 
             const serverClockIn = toFullISO(clock_in);
             const serverClockOut = toFullISO(clock_out);

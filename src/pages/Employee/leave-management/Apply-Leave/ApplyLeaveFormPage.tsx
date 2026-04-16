@@ -1,21 +1,50 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { ApplyLeave } from "../../../../Services/apiHelpers";
-import { showSuccess, showError } from "../../../../utils/toast"; // Assuming this path based on previous usage
+import { useState, useEffect } from "react";
+import { ApplyLeave, GetMyProfile } from "../../../../Services/apiHelpers";
+import { showSuccess, showError } from "../../../../utils/toast";
 
 export default function ApplyLeaveFormPage() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
-    name: localStorage.getItem("userName") || "Raviteja",
+    name: "Loading...",
     type: "",
     from: "",
     to: "",
-    id: localStorage.getItem("empId") || "",
-    role: localStorage.getItem("role") || "Employee",
+    id: "",
+    role: "Employee",
     reason: "",
     document: null as File | null,
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await GetMyProfile();
+        const data = response.data;
+        const user = data.user;
+        const profile = data.profile;
+
+        setForm((prev) => ({
+          ...prev,
+          name: `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username,
+          id: profile?.emp_id || "N/A",
+          role: user.role.toUpperCase(),
+        }));
+      } catch (error) {
+        console.error("Failed to fetch profile", error);
+        // Fallback to localStorage if API fails
+        setForm((prev) => ({
+          ...prev,
+          name: localStorage.getItem("userName") || "Employee",
+          id: localStorage.getItem("empId") || "",
+          role: localStorage.getItem("role") || "Employee",
+        }));
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -37,7 +66,6 @@ export default function ApplyLeaveFormPage() {
     const start = new Date(form.from);
     const end = new Date(form.to);
 
-    // Basic validation to prevent negative days
     if (end < start) return "Invalid date range";
 
     const diff = end.getTime() - start.getTime();
@@ -47,6 +75,7 @@ export default function ApplyLeaveFormPage() {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
       const formData = new FormData();
       formData.append("leave_type", form.type);
       formData.append("start_date", form.from);
@@ -63,6 +92,8 @@ export default function ApplyLeaveFormPage() {
       console.error(error);
       const msg = error.response?.data?.detail || "Failed to submit leave application.";
       showError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,19 +106,10 @@ export default function ApplyLeaveFormPage() {
     return Math.round(diff / (1000 * 3600 * 24)) + 1;
   })();
 
-  // Document is required for:
-  // 1. Sick leave longer than 4 days
-  // 2. Maternity/Paternity leave (always required)
   const isDocumentRequired =
     (form.type === "SICK" && durationDays > 4) ||
     form.type === "MATERNITY" ||
     form.type === "PATERNITY";
-
-  // Show document upload for any sick leave, but only require it for >4 days
-  // const showDocumentUpload = 
-  //   form.type === "Sick Leave" ||
-  //   form.type === "Maternity Leave" ||
-  //   form.type === "Paternity Leave";
 
   const isFormValid =
     form.type !== "" &&
@@ -307,12 +329,12 @@ export default function ApplyLeaveFormPage() {
           <div className="md:col-span-2 flex justify-end mt-3 sm:mt-4">
             <button
               type="submit"
-              disabled={!isFormValid}
+              disabled={!isFormValid || loading}
               className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium shadow-sm transition-colors w-full sm:w-auto
-                ${!isFormValid ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}
+                ${!isFormValid || loading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}
               `}
             >
-              Submit For Leave
+              {loading ? "Submitting..." : "Submit For Leave"}
             </button>
           </div>
         </form>

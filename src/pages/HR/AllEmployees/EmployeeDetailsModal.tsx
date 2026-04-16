@@ -24,37 +24,20 @@ import {
   UpdateEmployeeJobAndBank,
 } from "../../../Services/apiHelpers";
 
-// --- 1. YUP VALIDATION SCHEMA ---
 const validationSchema = Yup.object({
-  // Contact Info
-  work_email: Yup.string()
-    .email("Invalid email format")
-    .required("Work Email is required"),
   personal_email: Yup.string()
     .email("Invalid email format")
-    .required("Personal Email is required"),
-  phone_number: Yup.string()
-    .matches(/^[0-9]+$/, "Must be only digits")
-    .length(10, "Must be exactly 10 digits")
-    .required("Phone Number is required"),
-
-  alternate_number: Yup.string()
-    .matches(/^[0-9]+$/, "Must be only digits")
-    .length(10, "Must be exactly 10 digits")
     .nullable(),
-
-  location: Yup.string().required("Location is required"),
-
-  // Bank Info - OPTIONAL
-  account_holder_name: Yup.string().nullable(),
-  bank_name: Yup.string().nullable(),
-  branch: Yup.string().nullable(),
-  account_number: Yup.string().nullable(),
-  ifsc_code: Yup.string().nullable(),
-
-  // Job Info
-  job_description: Yup.string().nullable(),
-  reports_to: Yup.string().nullable(),
+  work_email: Yup.string()
+    .email("Invalid email format")
+    .nullable(),
+  phone_number: Yup.string()
+    .matches(/^[0-9]*$/, "Must be only digits")
+    .nullable(),
+  alternate_number: Yup.string()
+    .matches(/^[0-9]*$/, "Must be only digits")
+    .nullable(),
+  start_date: Yup.date().nullable(),
 });
 
 // --- 2. HELPER COMPONENT ---
@@ -71,16 +54,6 @@ const EditableField = ({
   prefix = null,
   maxLength,
 }: any) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-    if (inputType === "numeric") {
-      value = value.replace(/[^0-9]/g, "");
-    } else if (inputType === "alpha") {
-      value = value.replace(/[^a-zA-Z\s]/g, "");
-    }
-    formik.setFieldValue(name, value);
-  };
-
   return (
     <div
       className={`p-3 bg-white shadow-sm rounded-xl ${
@@ -107,6 +80,7 @@ const EditableField = ({
                                         : "border-blue-300 focus:border-blue-600"
                                     }`}
                 >
+                  <option value="">Select {label}</option>
                   {options.map((opt: any) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
@@ -121,10 +95,18 @@ const EditableField = ({
                     </span>
                   )}
                   <input
-                    type="text"
+                    type={inputType === "date" ? "date" : "text"}
                     name={name}
                     value={formik.values[name] || ""}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      let val = e.target.value;
+                      if (inputType === "numeric") {
+                        val = val.replace(/[^0-9]/g, "");
+                      } else if (inputType === "alpha") {
+                        val = val.replace(/[^a-zA-Z\s]/g, "");
+                      }
+                      formik.setFieldValue(name, val);
+                    }}
                     onBlur={formik.handleBlur}
                     placeholder={placeholder}
                     maxLength={maxLength}
@@ -148,7 +130,9 @@ const EditableField = ({
           ) : (
             <p className="text-gray-700 font-medium truncate">
               {prefix && formik.values[name] ? `${prefix} ` : ""}
-              {formik.values[name] || "—"}
+              {(options && formik.values[name]) 
+                ? options.find((o: any) => o.value === formik.values[name])?.label || formik.values[name]
+                : formik.values[name] || "—"}
             </p>
           )}
         </div>
@@ -157,19 +141,6 @@ const EditableField = ({
   );
 };
 
-const InfoCard = ({ icon: Icon, title, value, className = "" }: any) => (
-  <div
-    className={`p-4 bg-white rounded-2xl shadow-md hover:shadow-lg transition duration-300 ${className}`}
-  >
-    <div className="flex items-center gap-3">
-      <Icon className="w-6 h-6 text-blue-600" />
-      <div>
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        <p className="text-lg font-semibold text-gray-800">{value || "—"}</p>
-      </div>
-    </div>
-  </div>
-);
 
 export default function EmployeeDetailsModal({
   open,
@@ -185,11 +156,20 @@ export default function EmployeeDetailsModal({
 
   const formik = useFormik({
     initialValues: {
+      first_name: "",
+      last_name: "",
       work_email: "",
       personal_email: "",
       phone_number: "",
       alternate_number: "",
       location: "",
+      job_title: "",
+      department: "",
+      employment_type: "",
+      gender: "",
+      marital_status: "",
+      blood_group: "",
+      start_date: "",
       account_holder_name: "",
       bank_name: "",
       branch: "",
@@ -200,43 +180,70 @@ export default function EmployeeDetailsModal({
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
+      console.log("onSubmit triggered with values:", values);
       try {
         setLoading(true);
         setApiError(null);
 
         const contactPayload = {
+          first_name: values.first_name,
+          last_name: values.last_name,
           phone_number: values.phone_number,
-          work_email: values.work_email,
           personal_email: values.personal_email,
+          work_email: values.work_email, // Now editable
           alternate_number: values.alternate_number,
+          gender: values.gender,
+          marital_status: values.marital_status,
+          blood_group: values.blood_group,
+          is_active: status === "Active",
         };
 
         const jobBankPayload = {
+          job_title: values.job_title,
+          department: values.department,
+          employment_type: values.employment_type,
+          start_date: values.start_date
+            ? new Date(values.start_date).toISOString().split("T")[0]
+            : null,
           location: values.location,
-          account_holder_name: values.account_holder_name,
           bank_name: values.bank_name,
           account_number: values.account_number,
           ifsc_code: values.ifsc_code,
           branch: values.branch,
           job_description: values.job_description,
+          team_lead: values.reports_to,
         };
+
+        console.log("Sending payloads:", { contactPayload, jobBankPayload });
 
         await Promise.all([
           UpdateEmployeeContact(employee.id, contactPayload),
           UpdateEmployeeJobAndBank(employee.id, jobBankPayload),
         ]);
 
-        setFullData((prev: any) => ({ ...prev, ...values }));
+        console.log("Updates successful, refetching...");
+        await fetchEmployeeDetails(employee.id);
         if (onUpdate) onUpdate();
         setIsEditing(false);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to save", error);
-        setApiError("Failed to save changes. Please try again.");
+        const errorMsg =
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to save changes. Please try again.";
+        setApiError(errorMsg);
       } finally {
         setLoading(false);
       }
     },
   });
+
+  // Log validation errors if submission is attempted but fails
+  useEffect(() => {
+    if (formik.submitCount > 0 && !formik.isValid) {
+      console.log("Validation Errors:", formik.errors);
+    }
+  }, [formik.submitCount, formik.isValid, formik.errors]);
 
   useEffect(() => {
     if (open && employee?.id) {
@@ -256,21 +263,31 @@ export default function EmployeeDetailsModal({
       const response = await GetEmployeeById(id);
       const data = response.data;
       setFullData(data);
-      setStatus(data.status || "Active");
+      setStatus(data.is_active ? "Active" : "Inactive");
 
       formik.setValues({
+        first_name: data.first_name || "",
+        last_name: data.last_name || "",
         work_email: data.work_email || "",
         personal_email: data.personal_email || "",
         phone_number: data.phone_number || "",
         alternate_number: data.alternate_number || "",
         location: data.location || "",
+        job_title: data.job_title || "",
+        department: data.department || "",
+        employment_type: data.employment_type || "",
+        gender: data.gender || "",
+        marital_status: data.marital_status || "",
+        blood_group: data.blood_group || "",
+        start_date: data.start_date || "",
         account_holder_name: data.account_holder_name || "",
         bank_name: data.bank_name || "",
         branch: data.branch || "",
         account_number: data.account_number || "",
         ifsc_code: data.ifsc_code || "",
         job_description: data.job_description || "",
-        reports_to: data.team_lead?.display || "",
+        reports_to:
+          data.team_lead?.id?.toString() || data.team_lead?.username || "",
       });
     } catch (err: any) {
       console.error("Error fetching employee details:", err);
@@ -281,44 +298,48 @@ export default function EmployeeDetailsModal({
   };
 
   const handleCancelEdit = () => {
-    formik.resetForm();
+    setIsEditing(false);
     if (fullData) {
       formik.setValues({
+        first_name: fullData.first_name || "",
+        last_name: fullData.last_name || "",
         work_email: fullData.work_email || "",
         personal_email: fullData.personal_email || "",
         phone_number: fullData.phone_number || "",
         alternate_number: fullData.alternate_number || "",
         location: fullData.location || "",
+        job_title: fullData.job_title || "",
+        department: fullData.department || "",
+        employment_type: fullData.employment_type || "",
+        gender: fullData.gender || "",
+        marital_status: fullData.marital_status || "",
+        blood_group: fullData.blood_group || "",
+        start_date: fullData.start_date || "",
         account_holder_name: fullData.account_holder_name || "",
         bank_name: fullData.bank_name || "",
         branch: fullData.branch || "",
         account_number: fullData.account_number || "",
         ifsc_code: fullData.ifsc_code || "",
         job_description: fullData.job_description || "",
-        reports_to: fullData.team_lead?.display || "",
+        reports_to:
+          fullData.team_lead?.id?.toString() ||
+          fullData.team_lead?.username ||
+          "",
       });
+      setStatus(fullData.is_active ? "Active" : "Inactive");
     }
-    setIsEditing(false);
     setApiError(null);
   };
 
   if (!open || !employee) return null;
 
-  const toggleStatus = () => {
+  const toggleStatus = async () => {
     const newStatus = status === "Active" ? "Inactive" : "Active";
     setStatus(newStatus);
+    // Note: Persistent status update requires backend changes to HR serializers which was requested to be avoided.
+    // Keeping it local or you can add a dedicated status update view in backend if needed.
   };
 
-  // --- HELPER TO FORMAT TEXT (Capitalize & remove underscores) ---
-  const formatDisplayValue = (val: string | null | undefined) => {
-    if (!val) return "—";
-    // 1. Replace underscore with space
-    // 2. Capitalize first letter of every word
-    return val
-      .toString()
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase());
-  };
 
   const statusColor =
     status === "Active" ? "bg-green-500 text-white" : "bg-red-500 text-white";
@@ -328,10 +349,49 @@ export default function EmployeeDetailsModal({
   )}`;
 
   const locationOptions = [
-    { value: "", label: "Select Location" },
     { value: "Head Office", label: "Head Office" },
     { value: "Branch Office", label: "Branch Office" },
     { value: "Remote", label: "Remote" },
+  ];
+
+  const employmentTypeOptions = [
+    { value: "full_time", label: "Full Time" },
+    { value: "part_time", label: "Part Time" },
+    { value: "contract", label: "Contract" },
+    { value: "internship", label: "Internship" },
+  ];
+
+  const genderOptions = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Other" },
+  ];
+
+  const martialStatusOptions = [
+    { value: "single", label: "Single" },
+    { value: "married", label: "Married" },
+    { value: "divorced", label: "Divorced" },
+    { value: "widowed", label: "Widowed" },
+  ];
+
+  const bloodGroupOptions = [
+    { value: "A+", label: "A+" },
+    { value: "A-", label: "A-" },
+    { value: "B+", label: "B+" },
+    { value: "B-", label: "B-" },
+    { value: "AB+", label: "AB+" },
+    { value: "AB-", label: "AB-" },
+    { value: "O+", label: "O+" },
+    { value: "O-", label: "O-" },
+  ];
+
+  const departmentOptions = [
+    { value: "Development", label: "Development" },
+    { value: "Design", label: "Design" },
+    { value: "Marketing", label: "Marketing" },
+    { value: "HR", label: "HR" },
+    { value: "Sales", label: "Sales" },
+    { value: "Management", label: "Management" },
   ];
 
   return (
@@ -359,20 +419,25 @@ export default function EmployeeDetailsModal({
             <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
             <p className="text-gray-500 font-medium">Processing...</p>
           </div>
-        ) : apiError ? (
-          <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
-            <p className="text-red-600 font-semibold">{apiError}</p>
-            <button
-              onClick={() => fetchEmployeeDetails(employee.id)}
-              className="mt-4 text-blue-600 underline"
-            >
-              Try Again
-            </button>
-          </div>
         ) : (
           <div className="flex-1 overflow-y-auto no-scrollbar grid grid-cols-1 lg:grid-cols-3">
             {/* LEFT COLUMN: PROFILE SUMMARY */}
             <div className="lg:col-span-1 bg-gray-100 p-6 space-y-8 shadow-inner-r">
+              {/* API ERROR DISPLAY (SMALL BANNER) */}
+              {apiError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="flex items-center gap-2">
+                    <XCircle size={20} className="shrink-0" />
+                    <p className="text-sm font-medium">{apiError}</p>
+                  </div>
+                  <button
+                    onClick={() => setApiError(null)}
+                    className="text-red-500 hover:text-red-700 transition"
+                  >
+                    <FiX size={18} />
+                  </button>
+                </div>
+              )}
               <div className="text-center">
                 <img
                   src={
@@ -386,12 +451,45 @@ export default function EmployeeDetailsModal({
                 />
 
                 <div className="mt-4 space-y-2">
-                  <h3 className="text-3xl font-extrabold text-gray-900">
-                    {fullData?.name || employee.name}
-                  </h3>
-                  <p className="text-blue-600 text-xl font-medium">
-                    {fullData?.job_title || employee.role}
-                  </p>
+                  {isEditing ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        name="first_name"
+                        value={formik.values.first_name}
+                        onChange={formik.handleChange}
+                        placeholder="First Name"
+                        className="w-full border-b border-blue-300 focus:border-blue-600 outline-none text-xl font-bold bg-transparent py-1"
+                      />
+                      <input
+                        type="text"
+                        name="last_name"
+                        value={formik.values.last_name}
+                        onChange={formik.handleChange}
+                        placeholder="Last Name"
+                        className="w-full border-b border-blue-300 focus:border-blue-600 outline-none text-xl font-bold bg-transparent py-1"
+                      />
+                    </div>
+                  ) : (
+                    <h3 className="text-3xl font-extrabold text-gray-900">
+                      {fullData?.first_name} {fullData?.last_name}
+                    </h3>
+                  )}
+                  
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="job_title"
+                      value={formik.values.job_title}
+                      onChange={formik.handleChange}
+                      placeholder="Job Title"
+                      className="w-full border-b border-blue-300 focus:border-blue-600 outline-none text-blue-600 font-medium bg-transparent py-1"
+                    />
+                  ) : (
+                    <p className="text-blue-600 text-xl font-medium">
+                      {fullData?.job_title || employee.role}
+                    </p>
+                  )}
                 </div>
 
                 <p className="text-sm text-gray-500 mt-1">
@@ -410,24 +508,47 @@ export default function EmployeeDetailsModal({
                 </div>
               </div>
 
-              {/* CORE INFO (READ-ONLY) */}
+              {/* CORE INFO (EDITABLE IN EDIT MODE) */}
               <div className="space-y-4">
                 <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
                   <FiUsers className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm text-gray-500">Department</p>
-                    <p className="font-medium text-gray-800">
-                      {fullData?.department || "—"}
-                    </p>
+                  <div className="w-full">
+                    <p className="text-xs text-gray-500 mb-0.5">Department</p>
+                    {isEditing ? (
+                      <select
+                        name="department"
+                        value={formik.values.department}
+                        onChange={formik.handleChange}
+                        className="w-full border-b border-blue-300 focus:border-blue-600 outline-none text-gray-800 bg-transparent py-0.5"
+                      >
+                        {departmentOptions.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="font-medium text-gray-800">
+                        {fullData?.department || "—"}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
                   <FiCalendar className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm text-gray-500">Joining Date</p>
-                    <p className="font-medium text-gray-800">
-                      {fullData?.start_date || "—"}
-                    </p>
+                  <div className="w-full">
+                    <p className="text-xs text-gray-500 mb-0.5">Joining Date</p>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        name="start_date"
+                        value={formik.values.start_date}
+                        onChange={formik.handleChange}
+                        className="w-full border-b border-blue-300 focus:border-blue-600 outline-none text-gray-800 bg-transparent py-0.5"
+                      />
+                    ) : (
+                      <p className="font-medium text-gray-800">
+                        {fullData?.start_date || "—"}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm">
@@ -443,7 +564,7 @@ export default function EmployeeDetailsModal({
                           onChange={formik.handleChange}
                           className="w-full border-b border-blue-300 focus:border-blue-600 outline-none text-gray-800 bg-transparent py-0.5
                                          placeholder:text-gray-400 placeholder:opacity-60"
-                          placeholder="Reports To"
+                          placeholder="Team Lead (Email or ID)"
                         />
                       ) : (
                         <p className="font-medium text-gray-800">
@@ -480,31 +601,38 @@ export default function EmployeeDetailsModal({
 
             {/* RIGHT COLUMN: DETAILED INFO */}
             <div className="lg:col-span-2 p-6 space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <InfoCard
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <EditableField
                   icon={FiClock}
-                  title="Work Type"
-                  value={formatDisplayValue(fullData?.employment_type)}
+                  label="Work Type"
+                  name="employment_type"
+                  isEditing={isEditing}
+                  formik={formik}
+                  options={employmentTypeOptions}
                 />
-                <InfoCard
+                <EditableField
                   icon={FiAward}
-                  title="Gender"
-                  value={formatDisplayValue(fullData?.gender)}
+                  label="Gender"
+                  name="gender"
+                  isEditing={isEditing}
+                  formik={formik}
+                  options={genderOptions}
                 />
-                <InfoCard
+                <EditableField
                   icon={FiFolder}
-                  title="Marital Status"
-                  value={formatDisplayValue(fullData?.marital_status)}
+                  label="Marital Status"
+                  name="marital_status"
+                  isEditing={isEditing}
+                  formik={formik}
+                  options={martialStatusOptions}
                 />
-                <InfoCard
+                <EditableField
                   icon={DollarSign}
-                  title="Blood Group"
-                  // Special Case: Blood group usually looks best in all caps (e.g. B+)
-                  value={
-                    fullData?.blood_group
-                      ? fullData.blood_group.toUpperCase()
-                      : "—"
-                  }
+                  label="Blood Group"
+                  name="blood_group"
+                  isEditing={isEditing}
+                  formik={formik}
+                  options={bloodGroupOptions}
                 />
               </div>
 
@@ -514,59 +642,54 @@ export default function EmployeeDetailsModal({
                   <FiPhone className="text-blue-600" /> Contact & Location
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Work Email - Full Width (Read Only) */}
                   <EditableField
                     icon={FiMail}
                     label="Work Email"
                     name="work_email"
                     fullWidth={true}
                     formik={formik}
-                    isEditing={false}
+                    isEditing={isEditing}
                   />
 
-                  {/* Personal Email - Full Width (Read Only) */}
                   <EditableField
                     icon={FiMail}
                     label="Personal Email"
                     name="personal_email"
                     fullWidth={true}
                     formik={formik}
-                    isEditing={false} // READ-ONLY
+                    isEditing={isEditing}
                   />
 
-                  {/* Phone - EDITABLE */}
                   <EditableField
                     icon={FiPhone}
                     label="Phone Number"
                     name="phone_number"
                     inputType="numeric"
                     formik={formik}
-                    isEditing={false}
+                    isEditing={isEditing}
                     prefix="+91"
                     maxLength={10}
                   />
 
-                  {/* Alternate Number - READ ONLY */}
                   <EditableField
                     icon={FiSmartphone}
                     label="Alternative Number"
                     name="alternate_number"
                     inputType="numeric"
                     formik={formik}
-                    isEditing={false} // CHANGED: READ ONLY
+                    isEditing={isEditing}
                     prefix="+91"
                     maxLength={10}
                     placeholder="Optional"
                   />
 
-                  {/* Location - Full Width - READ ONLY */}
                   <EditableField
                     icon={FiMapPin}
                     label="Current Location"
                     name="location"
                     fullWidth={true}
                     formik={formik}
-                    isEditing={false} // CHANGED: READ ONLY
+                    isEditing={isEditing}
                     options={locationOptions}
                   />
                 </div>
@@ -578,14 +701,13 @@ export default function EmployeeDetailsModal({
                   <DollarSign className="text-blue-600" /> Banking Details
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Account Holder Name - Full Width */}
                   <EditableField
                     label="Account Holder Name"
                     name="account_holder_name"
                     inputType="alpha"
                     fullWidth={true}
                     formik={formik}
-                    isEditing={isEditing}
+                    isEditing={false} // READ-ONLY in backend
                   />
 
                   <EditableField
@@ -671,7 +793,10 @@ export default function EmployeeDetailsModal({
                 <XCircle size={18} /> Cancel
               </button>
               <button
-                onClick={() => formik.handleSubmit()}
+                onClick={() => {
+                  console.log("Save button clicked");
+                  formik.handleSubmit();
+                }}
                 disabled={loading}
                 type="button"
                 className="px-6 py-2 bg-green-600 text-white rounded-xl flex items-center gap-2 font-medium hover:bg-green-700 transition shadow-md disabled:opacity-70"

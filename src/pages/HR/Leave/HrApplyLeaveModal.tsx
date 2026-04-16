@@ -1,114 +1,136 @@
 import React, { useState, useEffect } from "react";
 import { FiX, FiUploadCloud } from "react-icons/fi";
-import { GetMyProfile } from "../../../Services/apiHelpers"; 
-import { showError } from "../../../utils/toast"; 
+import { GetMyProfile, ApplyLeave } from "../../../Services/apiHelpers";
+import { showSuccess, showError } from "../../../utils/toast";
 
 interface Props {
-    isOpen: boolean;
-    onClose: () => void;
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
-    const [form, setForm] = useState({
-        name: "", 
-        type: "",
-        from: "",
-        to: "",
-        empId: "", 
-        role: "", 
-        reason: "",
-        document: null as File | null,
-    });
-    const [isLoading, setIsLoading] = useState(false);
+export default function HrApplyLeaveModal({ isOpen, onClose, onSuccess }: Props) {
+  const [form, setForm] = useState({
+    name: "Loading...",
+    type: "",
+    from: "",
+    to: "",
+    empId: "",
+    role: "HR",
+    reason: "",
+    document: null as File | null,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    
-    useEffect(() => {
-        if (isOpen) {
-            const fetchUserData = async () => {
-                setIsLoading(true);
-                try {
-                    const response = await GetMyProfile(); //
-                    const data = response.data; //
-                    
-                    setForm(prev => ({
-                        ...prev,
-                        // Mapping backend fields to form state
-                        name: `${data.first_name} ${data.last_name}`, //
-                        empId: data.emp_id || "", //
-                        role: data.role || "HR", //
-                    }));
-                } catch (error) {
-                    showError("Failed to load user information."); //
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-            fetchUserData();
+  useEffect(() => {
+    if (isOpen) {
+      const fetchUserData = async () => {
+        setIsLoading(true);
+        try {
+          const response = await GetMyProfile();
+          const data = response.data;
+          const user = data.user;
+          const profile = data.profile;
+
+          setForm((prev) => ({
+            ...prev,
+            name: `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username,
+            empId: profile?.emp_id || "N/A",
+            role: user.role.toUpperCase(),
+          }));
+        } catch (error) {
+          console.error("Failed to fetch profile", error);
+          showError("Failed to load user information.");
+        } finally {
+          setIsLoading(false);
         }
-    }, [isOpen]);
+      };
+      fetchUserData();
+    }
+  }, [isOpen]);
 
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    const handleChange = (
-        e: React.ChangeEvent<
-            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-        >
-    ) => {
-        const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
-    };
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setForm({ ...form, document: e.target.files[0] });
-        }
-    };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setForm({ ...form, document: e.target.files[0] });
+    }
+  };
 
-    const calculateDuration = () => {
-        if (!form.from || !form.to) return "";
-        const start = new Date(form.from);
-        const end = new Date(form.to);
-        if (end < start) return "Invalid date range";
-        const diff = end.getTime() - start.getTime();
-        const days = Math.round(diff / (1000 * 3600 * 24)) + 1;
-        return days > 0 ? `${days} Day(s)` : "";
-    };
+  const calculateDuration = () => {
+    if (!form.from || !form.to) return "";
+    const start = new Date(form.from);
+    const end = new Date(form.to);
+    if (end < start) return "Invalid date range";
+    const diff = end.getTime() - start.getTime();
+    const days = Math.round(diff / (1000 * 3600 * 24)) + 1;
+    return days > 0 ? `${days} Day(s)` : "";
+  };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Submitting Leave Application:", form);
-        alert("Leave application submitted successfully!");
-        onClose();
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      const formData = new FormData();
+      formData.append("leave_type", form.type);
+      formData.append("start_date", form.from);
+      formData.append("end_date", form.to);
+      formData.append("reason", form.reason);
+      if (form.document) {
+        formData.append("document", form.document);
+      }
 
-    const durationDays = (() => {
-        if (!form.from || !form.to) return 0;
-        const start = new Date(form.from);
-        const end = new Date(form.to);
-        if (end < start) return 0;
-        const diff = end.getTime() - start.getTime();
-        return Math.round(diff / (1000 * 3600 * 24)) + 1;
-    })();
+      await ApplyLeave(formData);
+      showSuccess("Leave application submitted successfully!");
+      if (onSuccess) onSuccess();
+      onClose();
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.detail || "Failed to submit leave application.";
+      showError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    const isDocumentRequired =
-        (form.type === "Sick Leave" && durationDays > 4) ||
-        form.type === "Maternity Leave" ||
-        form.type === "Paternity Leave";
+  const durationDays = (() => {
+    if (!form.from || !form.to) return 0;
+    const start = new Date(form.from);
+    const end = new Date(form.to);
+    if (end < start) return 0;
+    const diff = end.getTime() - start.getTime();
+    return Math.round(diff / (1000 * 3600 * 24)) + 1;
+  })();
 
-    const showDocumentUpload = 
-        form.type === "Sick Leave" ||
-        form.type === "Maternity Leave" ||
-        form.type === "Paternity Leave";
+  const isDocumentRequired =
+    (form.type === "SICK" && durationDays > 4) ||
+    form.type === "MATERNITY" ||
+    form.type === "PATERNITY";
 
-    const isFormValid =
-        form.type !== "" &&
-        form.from !== "" &&
-        form.to !== "" &&
-        form.reason !== "" &&
-        durationDays > 0 &&
-        (!isDocumentRequired || form.document !== null);
+  const showDocumentUpload =
+    form.type === "SICK" ||
+    form.type === "MATERNITY" ||
+    form.type === "PATERNITY";
 
-    const today = new Date().toISOString().split("T")[0];
+  const isFormValid =
+    form.type !== "" &&
+    form.from !== "" &&
+    form.to !== "" &&
+    form.reason !== "" &&
+    durationDays > 0 &&
+    (!isDocumentRequired || form.document !== null);
+
+  const today = new Date().toISOString().split("T")[0];
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -182,10 +204,10 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
                                     required
                                 >
                                     <option value="">Select Category</option>
-                                    <option value="Casual Leave">Casual Leave</option>
-                                    <option value="Sick Leave">Sick Leave</option>
-                                    <option value="Maternity Leave">Maternity Leave</option>
-                                    <option value="Paternity Leave">Paternity Leave</option>
+                                    <option value="CASUAL">Casual Leave</option>
+                                    <option value="SICK">Sick Leave</option>
+                                    <option value="MATERNITY">Maternity Leave</option>
+                                    <option value="PATERNITY">Paternity Leave</option>
                                 </select>
                             </div>
 
@@ -273,12 +295,12 @@ export default function HrApplyLeaveModal({ isOpen, onClose }: Props) {
                     </button>
                     <button
                         onClick={handleSubmit}
-                        disabled={!isFormValid || isLoading}
+                        disabled={!isFormValid || isSubmitting}
                         className={`px-6 py-2.5 rounded-lg text-sm font-medium text-white shadow-lg transition-all transform active:scale-95
-                        ${!isFormValid || isLoading ? "bg-gray-400 cursor-not-allowed shadow-none" : "bg-blue-600 hover:bg-blue-700"}
+                        ${!isFormValid || isSubmitting ? "bg-gray-400 cursor-not-allowed shadow-none" : "bg-blue-600 hover:bg-blue-700"}
                     `}
                     >
-                        Submit Application
+                        {isSubmitting ? "Submitting..." : "Submit Application"}
                     </button>
                 </div>
             </div>

@@ -41,7 +41,8 @@ const ForgotPassword: React.FC = () => {
     } catch (err: any) {
       console.error("Forgot password error: ", err);
 
-      const errorMessage = err.response?.data?.email?.[0] || err.response?.data?.detail || "Failed to send OTP. Please try again.";
+      const emailError = err.response?.data?.email;
+      const errorMessage = Array.isArray(emailError) ? emailError[0] : emailError || err.response?.data?.detail || "Failed to send OTP. Please try again.";
       showError(errorMessage);
     } finally {
       setIsLoading(false);
